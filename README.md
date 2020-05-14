@@ -2,7 +2,7 @@
 Aplikacja webowa klasy ERP. \
 W ciągłej budowie.
 
-Główne funkcjonalności, które chciałbym zaimplementować:
+Główne funkcjonalności, które chciałbym zaimplementować:\
 -przyjęcia na magazyn surowców, towarów, półproduktów,\
 -wydania rzeczy na produkcje, do klienta,\
 -tworzenie i przepływ dokumentów (magazynowe, produkcyjne, sprzedażowe, zakupowe i jakościowe),\
