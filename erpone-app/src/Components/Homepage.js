@@ -1,12 +1,14 @@
-import React from "react";
+import React, { Component } from 'react';
 import { Link } from "react-router-dom"
-export default function Homepage()
+
+export default class Homepage extends Component
 {
-	return (
-		<div className="Homepage">
-			<button className="thingsNavigate">
-				<Link to="/warehouses/things">Things</Link>
+	render()
+	{
+		return (<div className="Homepage">
+			<button className="SignIn">
+				<Link to="/signin">Sign In</Link>
 			</button>
-		</div>
-	);
+		</div>)
+	}
 }
