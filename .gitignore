@@ -1,2 +1,5 @@
 src/main/resources/application.properties
 target
+.vscode
+.settings
+.mvn/wrapper
