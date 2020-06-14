@@ -1,6 +1,5 @@
 # erpone
-Aplikacja webowa klasy ERP. \
-W ciągłej budowie.
+W ciągłej budowie.\
 
 Główne funkcjonalności, które chciałbym zaimplementować:\
 -przyjęcia na magazyn surowców, towarów, półproduktów,\
