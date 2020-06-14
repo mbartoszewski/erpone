@@ -1,5 +1,5 @@
-# erpone\
-W ciągłej budowie.
+# erpone
+W ciągłej budowie.\
 
 Główne funkcjonalności, które chciałbym zaimplementować:\
 -przyjęcia na magazyn surowców, towarów, półproduktów,\
