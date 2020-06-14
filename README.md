@@ -1,5 +1,4 @@
-# erpone
-Aplikacja webowa klasy ERP. \
+# erpone\
 W ciągłej budowie.
 
 Główne funkcjonalności, które chciałbym zaimplementować:\
