@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.bartoszewski.erpone.Entity.User;
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
@@ -29,36 +30,46 @@ import org.springframework.lang.NonNull;
 
 @Entity
 @JsonIgnoreProperties(value = { "documentDetails" }, allowSetters = true)
-public class Documents
-{
+public class Documents {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
+
     @CreationTimestamp
     @Column(name = "CreatedAt", nullable = false)
     private LocalDateTime createdAt;
+
     @UpdateTimestamp
     @Column(name = "UpdatedAt", nullable = false)
     private LocalDateTime updatedAt;
+
     @Column(name = "Description")
     private String description;
+
     @Column(name = "Status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private StatusTypeEnum statusTypeEnum = StatusTypeEnum.Open;
+    private StatusTypeEnum statusTypeEnum = StatusTypeEnum.open;
+
     @Column(name = "Type", nullable = false)
     @Enumerated(EnumType.STRING)
     private DocumentTypeEnum documentTypeEnum;
+
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @NonNull
     @JsonProperty("documentDetails")
-    private List<DocumentDetails> documentsDetails = new ArrayList<>(0);
+    private List<DocumentDetails> documentDetails = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "User_Id")
     @NonNull
     private User user;
 
-    public Documents(){}
+    @OneToOne(cascade = CascadeType.ALL)
+    PurchaseOrderDetails purchaseOrderDetails;
+
+    public Documents() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -107,19 +118,32 @@ public class Documents
         this.documentTypeEnum = documentTypeEnum;
     }
 
-    public List<DocumentDetails> getDocumentsDetails() {
-        return documentsDetails;
+    public List<DocumentDetails> getDocumentDetails() {
+        return documentDetails;
     }
 
-    public void setDocumentsDetails(List<DocumentDetails> documentsDetails) {
-        this.documentsDetails = documentsDetails;
-        documentsDetails.stream().forEach(dD -> dD.setDocument(this));
+    public void setDocumentDetails(List<DocumentDetails> documentDetails) {
+        this.documentDetails = documentDetails;
+        documentDetails.stream().forEach(dD -> dD.setDocument(this));
     }
+
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public PurchaseOrderDetails getPurchaseOrderDetails() {
+        return purchaseOrderDetails;
+    }
+
+    public void setPurchaseOrderDetails(PurchaseOrderDetails purchaseOrderDetails) {
+        if (documentTypeEnum == DocumentTypeEnum.po) {
+            this.purchaseOrderDetails = purchaseOrderDetails;
+            this.purchaseOrderDetails.setDocument(this);
+        }
+
     }
 }

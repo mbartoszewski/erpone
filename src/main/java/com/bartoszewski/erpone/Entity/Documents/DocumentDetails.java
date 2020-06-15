@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.lang.NonNull;
 
 @Entity
-@JsonIgnoreProperties(value = { "document", "price"}, allowSetters = true)
+@JsonIgnoreProperties(value = { "document", "price" }, allowSetters = true)
 public class DocumentDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,5 +84,4 @@ public class DocumentDetails {
 		this.document = document;
 	}
 
-	
 }

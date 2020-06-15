@@ -3,6 +3,7 @@ package com.bartoszewski.erpone.Repository;
 import java.time.LocalDate;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
+import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,10 +12,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DocumentDetailsRepository extends BaseRepository<DocumentDetails, Long>
-{
-@Query("SELECT dd FROM DocumentDetails dd LEFT JOIN FETCH Documents doc ON doc.id = dd.document.id WHERE dd.thing.id = :thingId AND (doc.createdAt >= CONCAT(:startDate, 'T00:00:00') AND doc.createdAt <= CONCAT(:endDate, 'T23:59:59')) AND (doc.documentTypeEnum = 'Pw' OR doc.documentTypeEnum = 'Pz')")
-public Page<DocumentDetails> findAllIncomeByThing(Pageable pageable, @Param("thingId")Long thingId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
-@Query("SELECT dd FROM DocumentDetails dd LEFT JOIN FETCH Documents doc ON doc.id = dd.document.id WHERE dd.thing.id = :thingId AND (doc.createdAt >= CONCAT(:startDate, 'T00:00:00') AND doc.createdAt <= CONCAT(:endDate, 'T23:59:59')) AND (doc.documentTypeEnum = 'Wz' OR doc.documentTypeEnum = 'Wzz' OR doc.documentTypeEnum = 'Rw')")
-public Page<DocumentDetails> findAllOutgoingsByThing(Pageable pageable, @Param("thingId")Long thingId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+public interface DocumentDetailsRepository extends BaseRepository<DocumentDetails, Long> {
+	@Query("SELECT dd FROM DocumentDetails dd LEFT JOIN Documents doc ON doc.id = dd.document.id WHERE dd.thing.id = :thing AND ((:startDate IS NULL OR doc.createdAt >= CONCAT(:startDate, 'T00:00:00')) AND (:endDate IS NULL OR doc.createdAt <= CONCAT(:endDate, 'T23:59:59'))) AND (doc.documentTypeEnum = 'pw' OR doc.documentTypeEnum = 'pz')")
+	public Page<DocumentDetails> findAllIncomeByThing(Pageable pageable, @Param("thing") Long thing,
+			@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+	@Query("SELECT dd FROM DocumentDetails dd LEFT JOIN Documents doc ON doc.id = dd.document.id WHERE dd.thing.id = :thing AND ((:startDate IS NULL OR doc.createdAt >= CONCAT(:startDate, 'T00:00:00')) AND (:endDate IS NULL OR doc.createdAt <= CONCAT(:endDate, 'T23:59:59'))) AND (doc.documentTypeEnum = 'wz' OR doc.documentTypeEnum = 'wzz' OR doc.documentTypeEnum = 'rw')")
+	public Page<DocumentDetails> findAllOutgoingsByThing(Pageable pageable, @Param("thing") Long thing,
+			@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+	@Query("SELECT dd FROM DocumentDetails dd LEFT JOIN Documents doc ON doc.id = dd.document.id WHERE dd.thing.id = :thing AND ((:startDate IS NULL OR doc.createdAt >= CONCAT(:startDate, 'T00:00:00')) AND (:endDate IS NULL OR doc.createdAt <= CONCAT(:endDate, 'T23:59:59'))) AND (:type IS NULL OR doc.documentTypeEnum = :type)")
+	public Page<DocumentDetails> findAllOperationsByThingAndType(Pageable pageable, @Param("thing") Long thing,
+			@Param("type") DocumentTypeEnum type, @Param("startDate") LocalDate startDate,
+			@Param("endDate") LocalDate endDate);
 }

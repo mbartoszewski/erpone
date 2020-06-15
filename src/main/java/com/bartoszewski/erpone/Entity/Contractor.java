@@ -14,18 +14,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.bartoszewski.erpone.Entity.Documents.PurchaseOrderDetails;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.springframework.lang.NonNull;
 
 @Entity
-@JsonIgnoreProperties(value =
-{
-        "foreignCodes", "contactDetails", "address", "defaultCurrency"
-}, allowSetters = true)
-public class Contractor
-{
+@JsonIgnoreProperties(value = { "foreignCodes", "contactDetails", "address", "defaultCurrency",
+        "purchaseDocument" }, allowSetters = true)
+public class Contractor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
@@ -55,99 +53,102 @@ public class Contractor
     @OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonProperty("foreignCodes")
     private List<ForeignCode> foreignCodes;
-   
-    public String getName()
-    {
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY)
+    @JsonProperty("purchaseDocument")
+    private List<PurchaseOrderDetails> purchaseOrderDetails;
+
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getNip()
-    {
+    public String getNip() {
         return nip;
     }
 
-    public void setNip(String nip)
-    {
+    public void setNip(String nip) {
         this.nip = nip;
     }
 
-    public String getRegon()
-    {
+    public String getRegon() {
         return regon;
     }
 
-    public void setRegon(String regon)
-    {
+    public void setRegon(String regon) {
         this.regon = regon;
     }
 
-    public Currency getDefaultCurrency()
-    {
+    public Currency getDefaultCurrency() {
         return defaultCurrency;
     }
 
-    public void setDefaultCurrency(Currency defaultCurrency)
-    {
+    public void setDefaultCurrency(Currency defaultCurrency) {
         this.defaultCurrency = defaultCurrency;
     }
 
-    public ContactDetail getContactDetails()
-    {
+    public ContactDetail getContactDetails() {
         return contactDetails;
     }
 
-    public void setContactDetails(ContactDetail contactDetails)
-    {
+    public void setContactDetails(ContactDetail contactDetails) {
         this.contactDetails = contactDetails;
         // contactDetails.setContractor(this);
     }
 
-    public Address getAddress()
-    {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(Address address)
-    {
+    public void setAddress(Address address) {
         this.address = address;
         // address.setContractor(this);
     }
 
-    public List<ForeignCode> getForeignCodes()
-    {
+    public List<ForeignCode> getForeignCodes() {
         return foreignCodes;
     }
 
-    public void setForeignCodes(List<ForeignCode> foreignCodes)
-    {
+    public void setForeignCodes(List<ForeignCode> foreignCodes) {
         this.foreignCodes = foreignCodes;
     }
 
-    public void addForeignCode(ForeignCode foreignCode)
-    {
+    public void addForeignCode(ForeignCode foreignCode) {
         foreignCodes.add(foreignCode);
         foreignCode.setContractor(this);
     }
 
-    public void removeForeignCode(ForeignCode foreignCode)
-    {
+    public void removeForeignCode(ForeignCode foreignCode) {
         foreignCodes.remove(foreignCode);
         foreignCode.setContractor(null);
     }
 
-    public Long getId()
-    {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Long id)
-    {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<PurchaseOrderDetails> getPurchaseOrderDetails() {
+        return purchaseOrderDetails;
+    }
+
+    public void setPurchaseOrderDetails(List<PurchaseOrderDetails> purchaseOrderDetails) {
+        this.purchaseOrderDetails = purchaseOrderDetails;
+    }
+
+    public void addPurchaseOrderDetail(PurchaseOrderDetails purchaseOrderDetails) {
+        this.purchaseOrderDetails.add(purchaseOrderDetails);
+        purchaseOrderDetails.setSupplier(this);
+    }
+
+    public void removePurchaseOrderDetail(PurchaseOrderDetails purchaseOrderDetails) {
+        this.purchaseOrderDetails.remove(purchaseOrderDetails);
+        purchaseOrderDetails.setSupplier(null);
     }
 
     @Override
@@ -179,6 +180,4 @@ public class Contractor
     public String toString() {
         return "Contractor [name=" + name + ", nip=" + nip + "]";
     }
-
-    
 }

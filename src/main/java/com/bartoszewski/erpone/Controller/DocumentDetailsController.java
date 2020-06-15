@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,27 +22,33 @@ public class DocumentDetailsController extends BaseController<DocumentDetails, L
 	DocumentDetailsService documentDetailsService;
 
 	@Autowired
-	public DocumentDetailsController(BaseService<DocumentDetails, Long> service, DocumentDetailsService documentDetailsService) {
+	public DocumentDetailsController(BaseService<DocumentDetails, Long> service,
+			DocumentDetailsService documentDetailsService) {
 		super(service);
 		this.documentDetailsService = documentDetailsService;
 	}
 
-	@GetMapping("/purchase/{thingId}")
-	public ResponseEntity<Page<DocumentDetails>> findAllIncomeByThing(Pageable pageable, 
-			@RequestParam("startDate") 
-			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate, 
-			@RequestParam("endDate") 
-			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@PathVariable("thingId") Long thingId) {
-		return documentDetailsService.findAllIncomeByThing(pageable, thingId, startDate, endDate);
+	@GetMapping("/purchase")
+	public ResponseEntity<Page<DocumentDetails>> findAllIncomeByThing(Pageable pageable,
+			@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+			@RequestParam("thing") Long thing) {
+		return documentDetailsService.findAllIncomeByThing(pageable, thing, startDate, endDate);
 	}
-	@GetMapping("/sales/{thingId}")
-	public ResponseEntity<Page<DocumentDetails>> findAllOutgoingsByThing(Pageable pageable, 
-			@RequestParam("startDate") 
-			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate, 
-			@RequestParam("endDate") 
-			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@PathVariable("thingId") Long thingId) {
-		return documentDetailsService.findAllOutgoingsByThing(pageable, thingId, startDate, endDate);	
+
+	@GetMapping("/sales")
+	public ResponseEntity<Page<DocumentDetails>> findAllOutgoingsByThing(Pageable pageable,
+			@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+			@RequestParam("thing") Long thing) {
+		return documentDetailsService.findAllOutgoingsByThing(pageable, thing, startDate, endDate);
+	}
+
+	@GetMapping("")
+	public ResponseEntity<Page<DocumentDetails>> findAllOperationsByThingAndType(Pageable pageable,
+			@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+			@RequestParam("thing") Long thing, @RequestParam(value = "type", required = false) String type) {
+		return documentDetailsService.findAllOperationsByThingAndType(pageable, thing, type, startDate, endDate);
 	}
 }

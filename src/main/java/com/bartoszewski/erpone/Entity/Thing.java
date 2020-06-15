@@ -22,12 +22,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.lang.NonNull;
 
 @Entity
-@JsonIgnoreProperties(value =
-{
-        "foreignCodes", "documentsDetails", "price"
-}, allowSetters = true)
-public class Thing
-{
+@JsonIgnoreProperties(value = { "foreignCodes", "documentsDetails", "price" }, allowSetters = true)
+public class Thing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
@@ -65,131 +61,96 @@ public class Thing
     @NonNull
     private Unit unit;
 
-    public Thing()
-    {
+    public Thing() {
     }
 
-    public String getCode()
-    {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(String code)
-    {
+    public void setCode(String code) {
         this.code = code;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Double getQuantity()
-    {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Double quantity)
-    {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
 
-    public int getActive()
-    {
+    public int getActive() {
         return active;
     }
 
-    public void setActive(int active)
-    {
+    public void setActive(int active) {
         this.active = active;
     }
 
-    public List<ForeignCode> getForeignCodes()
-    {
+    public List<ForeignCode> getForeignCodes() {
         return foreignCodes;
     }
 
-    public void setForeignCodes(List<ForeignCode> foreignCodes)
-    {
+    public void setForeignCodes(List<ForeignCode> foreignCodes) {
         this.foreignCodes = foreignCodes;
     }
 
-    public void addForeignCodes(ForeignCode foreignCode)
-    {
+    public void addForeignCodes(ForeignCode foreignCode) {
         foreignCodes.add(foreignCode);
         foreignCode.setThing(this);
     }
 
-    public void removeForeignCodes(ForeignCode foreignCode)
-    {
+    public void removeForeignCodes(ForeignCode foreignCode) {
         foreignCodes.remove(foreignCode);
         foreignCode.setThing(null);
     }
 
-    public Warehouse getWarehouse()
-    {
+    public Warehouse getWarehouse() {
         return warehouse;
     }
 
-    public void setWarehouse(Warehouse warehouse)
-    {
+    public void setWarehouse(Warehouse warehouse) {
         this.warehouse = warehouse;
     }
 
-    public Unit getUnit()
-    {
+    public Unit getUnit() {
         return unit;
     }
 
-    public void setUnit(Unit unit)
-    {
+    public void setUnit(Unit unit) {
         this.unit = unit;
     }
 
-    public void addDocumentsDetails(DocumentDetails documentsDetail)
-    {
-        documentsDetails.add(documentsDetail);
-        documentsDetail.setThing(this);
-    }
-
-    public void removeDocumentsDetails(DocumentDetails documentsDetail)
-    {
-        documentsDetails.remove(documentsDetail);
-        documentsDetail.setThing(null);
-    }
-
-    public List<DocumentDetails> getDocumentsDetails()
-    {
+    public List<DocumentDetails> getDocumentsDetails() {
         return documentsDetails;
     }
 
-    public void setDocumentsDetails(List<DocumentDetails> documentsDetails)
-    {
+    public void setDocumentsDetails(List<DocumentDetails> documentsDetails) {
         this.documentsDetails = documentsDetails;
     }
 
-    public Price getPrice()
-    {
+    public Price getPrice() {
         return price;
     }
 
-    public void setPrice(Price price)
-    {
+    public void setPrice(Price price) {
         this.price = price;
     }
 
-    public Long getId()
-    {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Long id)
-    {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -222,5 +183,5 @@ public class Thing
     public String toString() {
         return "Thing [code=" + code + ", name=" + name + ", quantity=" + quantity + ", unit=" + unit + "]";
     }
-    
+
 }

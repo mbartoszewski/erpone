@@ -3,6 +3,7 @@ package com.bartoszewski.erpone.Service;
 import java.time.LocalDate;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
+import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 import com.bartoszewski.erpone.Repository.DocumentDetailsRepository;
 import com.bartoszewski.erpone.Repository.ThingRepository;
 
@@ -16,64 +17,69 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class DocumentDetailsServiceImpl implements DocumentDetailsService
-{
-	DocumentDetailsRepository documentsDetailsRepository;
+public class DocumentDetailsServiceImpl implements DocumentDetailsService {
+	DocumentDetailsRepository documentDetailsRepository;
 	ThingRepository thingsRepository;
 
 	@Autowired
-	public DocumentDetailsServiceImpl(DocumentDetailsRepository documentsDetailsRepository,
-	    ThingRepository thingsRepository)
-	{
-		this.documentsDetailsRepository = documentsDetailsRepository;
+	public DocumentDetailsServiceImpl(DocumentDetailsRepository documentDetailsRepository,
+			ThingRepository thingsRepository) {
+		this.documentDetailsRepository = documentDetailsRepository;
 		this.thingsRepository = thingsRepository;
 	}
 
 	@Override
-	public ResponseEntity<DocumentDetails> create(DocumentDetails entity, Authentication authentication)
-	{
-		return new ResponseEntity<>(documentsDetailsRepository.save(entity), HttpStatus.OK);
+	public ResponseEntity<DocumentDetails> create(DocumentDetails entity, Authentication authentication) {
+		return new ResponseEntity<>(documentDetailsRepository.save(entity), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<Page<DocumentDetails>> readAll(Pageable pageable)
-	{
-		return new ResponseEntity<Page<DocumentDetails>>(documentsDetailsRepository.findAll(pageable), HttpStatus.OK);
+	public ResponseEntity<Page<DocumentDetails>> readAll(Pageable pageable) {
+		return new ResponseEntity<Page<DocumentDetails>>(documentDetailsRepository.findAll(pageable), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<DocumentDetails> readById(Long id)
-	{
-		return new ResponseEntity<>(documentsDetailsRepository.findById(id)
-		    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)), HttpStatus.OK);
+	public ResponseEntity<DocumentDetails> readById(Long id) {
+		return new ResponseEntity<>(documentDetailsRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<DocumentDetails> updateById(Long id, DocumentDetails entity)
-	{
-		DocumentDetails documentsDetail = documentsDetailsRepository.findById(id)
-		    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-		documentsDetail.setQuantity(entity.getQuantity());
-		return new ResponseEntity<>(documentsDetailsRepository.save(documentsDetail), HttpStatus.OK);
+	public ResponseEntity<DocumentDetails> updateById(Long id, DocumentDetails entity) {
+		DocumentDetails documentDetail = documentDetailsRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		documentDetail.setQuantity(entity.getQuantity());
+		return new ResponseEntity<>(documentDetailsRepository.save(documentDetail), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<?> deleteById(Long id)
-	{
-		if (documentsDetailsRepository.getOne(id) != null)
-		{
-			documentsDetailsRepository.deleteById(id);
+	public ResponseEntity<?> deleteById(Long id) {
+		if (documentDetailsRepository.getOne(id) != null) {
+			documentDetailsRepository.deleteById(id);
 			return new ResponseEntity<>("Deleted", HttpStatus.OK);
 		}
 		return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
 	}
 
 	@Override
-	public ResponseEntity<Page<DocumentDetails>> findAllIncomeByThing(Pageable pageable, Long thingId, LocalDate startDate, LocalDate endDate) {
-		return new ResponseEntity<>(documentsDetailsRepository.findAllIncomeByThing(pageable, thingId,  startDate, endDate), HttpStatus.OK);
+	public ResponseEntity<Page<DocumentDetails>> findAllIncomeByThing(Pageable pageable, Long thing,
+			LocalDate startDate, LocalDate endDate) {
+		return new ResponseEntity<>(documentDetailsRepository.findAllIncomeByThing(pageable, thing, startDate, endDate),
+				HttpStatus.OK);
 	}
+
 	@Override
-	public ResponseEntity<Page<DocumentDetails>> findAllOutgoingsByThing(Pageable pageable, Long thingId, LocalDate startDate, LocalDate endDate) {
-		return new ResponseEntity<>(documentsDetailsRepository.findAllOutgoingsByThing(pageable, thingId,  startDate, endDate), HttpStatus.OK);
+	public ResponseEntity<Page<DocumentDetails>> findAllOutgoingsByThing(Pageable pageable, Long thing,
+			LocalDate startDate, LocalDate endDate) {
+		return new ResponseEntity<>(
+				documentDetailsRepository.findAllOutgoingsByThing(pageable, thing, startDate, endDate), HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<DocumentDetails>> findAllOperationsByThingAndType(Pageable pageable, Long thing,
+			String type, LocalDate startDate, LocalDate endDate) {
+		DocumentTypeEnum typeEnum = type != null ? DocumentTypeEnum.valueOf(type) : null;
+		return new ResponseEntity<>(documentDetailsRepository.findAllOperationsByThingAndType(pageable, thing, typeEnum,
+				startDate, endDate), HttpStatus.OK);
 	}
 }

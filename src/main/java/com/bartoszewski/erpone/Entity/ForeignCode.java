@@ -16,8 +16,7 @@ import org.springframework.lang.NonNull;
 
 @Entity
 @JsonIgnoreProperties(value = { "thing" }, allowSetters = true)
-public class ForeignCode
-{
+public class ForeignCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
@@ -37,43 +36,35 @@ public class ForeignCode
     @JsonProperty("contractor")
     Contractor contractor;
 
-    public String getCode()
-    {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(String code)
-    {
+    public void setCode(String code) {
         this.code = code;
     }
 
-    public Thing getThing()
-    {
+    public Thing getThing() {
         return thing;
     }
 
-    public void setThing(Thing thing)
-    {
+    public void setThing(Thing thing) {
         this.thing = thing;
     }
 
-    public Contractor getContractor()
-    {
+    public Contractor getContractor() {
         return contractor;
     }
 
-    public void setContractor(Contractor contractor)
-    {
+    public void setContractor(Contractor contractor) {
         this.contractor = contractor;
     }
 
-    public Long getId()
-    {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Long id)
-    {
+    public void setId(Long id) {
         this.id = id;
     }
 
