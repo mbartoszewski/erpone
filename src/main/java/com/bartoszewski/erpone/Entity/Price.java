@@ -13,114 +13,95 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.lang.NonNull;
 
 @Entity
-@JsonIgnoreProperties(value =
-{
-        "documentsDetails", "thing"
-}, allowSetters = true)
-public class Price
-{
+@JsonIgnoreProperties(value = { "documentsDetails", "thing" }, allowSetters = true)
+public class Price {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
 	private Long id;
 	@Column(name = "Date")
 	@CreationTimestamp
+	@NotNull
 	private LocalDateTime date;
-	@Column(name = "Price", nullable = false)
+	@NotNull
+	@Column(name = "Price")
 	private Double price;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "Thing_Id")
-	@JsonProperty("thing")
 	private Thing thing;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "Currency_Id", nullable = false)
-	@NonNull
+	@JoinColumn(name = "Currency_Id")
+	@NotNull
 	private Currency currency;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "price")
-	@JsonProperty("documentsDetails")
 	private List<DocumentDetails> documentsDetails;
 
-	public LocalDateTime getDate()
-	{
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(LocalDateTime date)
-	{
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 
-	public Double getPrice()
-	{
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(Double price)
-	{
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
-	public Currency getCurrency()
-	{
+	public Currency getCurrency() {
 		return currency;
 	}
 
-	public void setCurrency(Currency currency)
-	{
+	public void setCurrency(Currency currency) {
 		this.currency = currency;
 	}
 
-	public Thing getThing()
-	{
+	public Thing getThing() {
 		return thing;
 	}
 
-	public void setThing(Thing thing)
-	{
+	public void setThing(Thing thing) {
 		this.thing = thing;
 	}
 
-	public List<DocumentDetails> getDocumentsDetails()
-	{
+	public List<DocumentDetails> getDocumentsDetails() {
 		return documentsDetails;
 	}
 
-	public void setDocumentsDetails(List<DocumentDetails> documentsDetails)
-	{
+	public void setDocumentsDetails(List<DocumentDetails> documentsDetails) {
 		this.documentsDetails = documentsDetails;
 	}
 
-	public void addDocumentsDetails(DocumentDetails documentsDetails)
-	{
+	public void addDocumentsDetails(DocumentDetails documentsDetails) {
 		this.documentsDetails.add(documentsDetails);
 		documentsDetails.setPrice(this);
 	}
 
-	public void removeDocumentsDetails(DocumentDetails documentsDetails)
-	{
+	public void removeDocumentsDetails(DocumentDetails documentsDetails) {
 		this.documentsDetails.remove(documentsDetails);
 		documentsDetails.setPrice(null);
 	}
 
-	public Long getId()
-	{
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id)
-	{
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -165,5 +146,5 @@ public class Price
 	public String toString() {
 		return "Price [currency=" + currency + ", date=" + date + ", price=" + price + "]";
 	}
-	
+
 }

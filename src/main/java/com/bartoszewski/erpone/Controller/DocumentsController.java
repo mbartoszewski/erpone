@@ -35,4 +35,25 @@ public class DocumentsController extends BaseController<Documents, Long> {
 			@RequestParam(value = "status", required = false) String status) {
 		return documentsService.findAllByType(pageable, thing, type, status, startDate, endDate);
 	}
+
+	@GetMapping("/orders/purchase")
+	public ResponseEntity<Page<Documents>> findPurchaseOrderByDetails(Pageable pageable,
+			@RequestParam(value = "startTargetDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+			@RequestParam(value = "endTargetDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+			@RequestParam(value = "thing", required = false) Long thing,
+			@RequestParam(value = "type", required = false) String type,
+			@RequestParam(value = "status", required = false) String status,
+			@RequestParam(value = "contractor", required = false) String contractor) {
+		return documentsService.findPurchaseOrderByDetails(pageable, thing, type, status, startDate, endDate,
+				contractor);
+	}
+
+	@GetMapping("/orders/production")
+	public ResponseEntity<Page<Documents>> findProductionOrderByDetails(Pageable pageable,
+			@RequestParam(value = "startTargetDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+			@RequestParam(value = "endTargetDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+			@RequestParam(value = "status", required = false) String status,
+			@RequestParam(value = "recipe", required = false) Long recipe) {
+		return documentsService.findProductionOrderByDetails(pageable, status, startDate, endDate, recipe);
+	}
 }

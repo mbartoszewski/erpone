@@ -12,19 +12,16 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@JsonIgnoreProperties(value = { "user" }, allowSetters = true)
-public class Role
-{
+@JsonIgnoreProperties(value = { "users" }, allowSetters = true)
+public class Role {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	@ManyToMany(mappedBy = "roles")
-	@JsonProperty("user")
 	private Collection<User> users;
 
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -33,60 +30,49 @@ public class Role
 
 	private String name;
 
-	public Role()
-	{
+	public Role() {
 		super();
 	}
 
-	public Role(final String name)
-	{
+	public Role(final String name) {
 		super();
 		this.name = name;
 	}
 
-	public Long getId()
-	{
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(final Long id)
-	{
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 
-	public void setName(final String name)
-	{
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-	public Collection<User> getUsers()
-	{
+	public Collection<User> getUsers() {
 		return users;
 	}
 
-	public void setUsers(final Collection<User> users)
-	{
+	public void setUsers(final Collection<User> users) {
 		this.users = users;
 	}
 
-	public Collection<Privilege> getPrivileges()
-	{
+	public Collection<Privilege> getPrivileges() {
 		return privileges;
 	}
 
-	public void setPrivileges(final Collection<Privilege> privileges)
-	{
+	public void setPrivileges(final Collection<Privilege> privileges) {
 		this.privileges = privileges;
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -94,31 +80,25 @@ public class Role
 	}
 
 	@Override
-	public boolean equals(final Object obj)
-	{
-		if (this == obj)
-		{
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
 		}
-		if (obj == null)
-		{
+		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass())
-		{
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		final Role role = (Role) obj;
-		if (!name.equals(role.name))
-		{
+		if (!name.equals(role.name)) {
 			return false;
 		}
 		return true;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("Role [name=").append(name).append("]").append("[id=").append(id).append("]");
 		return builder.toString();

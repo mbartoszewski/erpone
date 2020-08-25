@@ -8,11 +8,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.springframework.lang.NonNull;
 
 @Entity
 @JsonIgnoreProperties(value = { "thing" }, allowSetters = true)
@@ -21,19 +19,18 @@ public class ForeignCode {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @Column(name = "Code", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "Code", unique = true)
     private String code;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NonNull
+    @NotNull
     @JoinColumn(name = "Thing_Id")
-    @JsonProperty("thing")
     Thing thing;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NonNull
+    @NotNull
     @JoinColumn(name = "Contractor_Id")
-    @JsonProperty("contractor")
     Contractor contractor;
 
     public String getCode() {

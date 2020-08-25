@@ -9,15 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@JsonIgnoreProperties(value =
-{
-        "contractor"
-}, allowSetters = true)
-public class ContactDetail
-{
+@JsonIgnoreProperties(value = { "contractor" }, allowSetters = true)
+public class ContactDetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
@@ -27,46 +22,37 @@ public class ContactDetail
 	@Column(name = "Email")
 	private String email;
 	@OneToOne(fetch = FetchType.LAZY)
-	@JsonProperty("contractor")
 	private Contractor contractor;
 
-	public String getPhone()
-	{
+	public String getPhone() {
 		return phone;
 	}
 
-	public void setPhone(String phone)
-	{
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 
-	public String getEmail()
-	{
+	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email)
-	{
+	public void setEmail(String email) {
 		this.email = email;
 	}
 
-	public Contractor getContractor()
-	{
+	public Contractor getContractor() {
 		return contractor;
 	}
 
-	public void setContractor(Contractor contractor)
-	{
+	public void setContractor(Contractor contractor) {
 		this.contractor = contractor;
 	}
 
-	public Long getId()
-	{
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id)
-	{
+	public void setId(Long id) {
 		this.id = id;
 	}
 

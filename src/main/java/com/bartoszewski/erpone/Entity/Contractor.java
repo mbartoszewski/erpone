@@ -13,49 +13,44 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
-import com.bartoszewski.erpone.Entity.Documents.PurchaseOrderDetails;
+import com.bartoszewski.erpone.Entity.Documents.OrderDocumentDetails;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.springframework.lang.NonNull;
 
 @Entity
-@JsonIgnoreProperties(value = { "foreignCodes", "contactDetails", "address", "defaultCurrency",
-        "purchaseDocument" }, allowSetters = true)
+@JsonIgnoreProperties(value = { "foreignCodes", "contactDetails", "address", "defaultCurrency", "orderDocumentDetails",
+        "nip", "regon" }, allowSetters = true)
 public class Contractor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @Column(name = "Name", unique = false, nullable = false)
+    @NotNull
+    @Column(name = "Name", unique = false)
     private String name;
-    @Column(name = "NIP", unique = true, nullable = false)
+    @NotNull
+    @Column(name = "NIP", unique = true)
     private String nip;
     @Column(name = "Regon", unique = true)
     private String regon;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Currency_Id")
-    @JsonProperty("defaultCurrency")
-    @NonNull
+    @NotNull
     private Currency defaultCurrency;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "Contact_Details_Id")
-    @JsonProperty("contactDetails")
     private ContactDetail contactDetails;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "Address_Id")
-    @JsonProperty("address")
     private Address address;
 
     @OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonProperty("foreignCodes")
     private List<ForeignCode> foreignCodes;
-    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY)
-    @JsonProperty("purchaseDocument")
-    private List<PurchaseOrderDetails> purchaseOrderDetails;
+    @OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY)
+    private List<OrderDocumentDetails> orderDocumentDetails;
 
     public String getName() {
         return name;
@@ -133,22 +128,22 @@ public class Contractor {
         this.id = id;
     }
 
-    public List<PurchaseOrderDetails> getPurchaseOrderDetails() {
-        return purchaseOrderDetails;
+    public List<OrderDocumentDetails> getOrderDocumentDetails() {
+        return orderDocumentDetails;
     }
 
-    public void setPurchaseOrderDetails(List<PurchaseOrderDetails> purchaseOrderDetails) {
-        this.purchaseOrderDetails = purchaseOrderDetails;
+    public void setOrderDocumentDetails(List<OrderDocumentDetails> orderDocumentDetails) {
+        this.orderDocumentDetails = orderDocumentDetails;
     }
 
-    public void addPurchaseOrderDetail(PurchaseOrderDetails purchaseOrderDetails) {
-        this.purchaseOrderDetails.add(purchaseOrderDetails);
-        purchaseOrderDetails.setSupplier(this);
+    public void addOrderDocumentDetail(OrderDocumentDetails orderDocumentDetails) {
+        this.orderDocumentDetails.add(orderDocumentDetails);
+        orderDocumentDetails.setContractor(this);
     }
 
-    public void removePurchaseOrderDetail(PurchaseOrderDetails purchaseOrderDetails) {
-        this.purchaseOrderDetails.remove(purchaseOrderDetails);
-        purchaseOrderDetails.setSupplier(null);
+    public void removeOrderDocumentDetail(OrderDocumentDetails orderDocumentDetails) {
+        this.orderDocumentDetails.remove(orderDocumentDetails);
+        orderDocumentDetails.setContractor(null);
     }
 
     @Override

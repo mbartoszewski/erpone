@@ -10,83 +10,72 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @DynamicUpdate
-@JsonIgnoreProperties(value =
-{
-        "things"
-}, allowSetters = true)
-public class Unit
-{
+@JsonIgnoreProperties(value = { "things" }, allowSetters = true)
+public class Unit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @Column(name = "Code", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "Code", unique = true)
     private String code;
-    @Column(name = "Name", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "Name", unique = true)
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "unit")
-    @JsonProperty("things")
     private List<Thing> things = new ArrayList<>(0);
 
-    public Unit(){}
-    public String getCode()
-    {
+    public Unit() {
+    }
+
+    public String getCode() {
         return code;
     }
 
-    public void setCode(String code)
-    {
+    public void setCode(String code) {
         this.code = code;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public List<Thing> getThings()
-    {
+    public List<Thing> getThings() {
         return things;
     }
 
-    public void setThings(List<Thing> things)
-    {
+    public void setThings(List<Thing> things) {
         this.things = things;
     }
 
-    public void addThings(Thing thing)
-    {
+    public void addThings(Thing thing) {
         things.add(thing);
         thing.setUnit(this);
     }
 
-    public void removeThings(Thing thing)
-    {
+    public void removeThings(Thing thing) {
         things.remove(thing);
         thing.setUnit(null);
     }
 
-    public Long getId()
-    {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Long id)
-    {
+    public void setId(Long id) {
         this.id = id;
     }
 

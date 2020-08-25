@@ -14,58 +14,68 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.User;
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 import com.bartoszewski.erpone.Enum.StatusTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.lang.NonNull;
 
 @Entity
-@JsonIgnoreProperties(value = { "documentDetails" }, allowSetters = true)
+@JsonIgnoreProperties(value = { "documentDetails", "updatedAt", "relatedDocuments" }, allowSetters = true)
 public class Documents {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
 
+    @NotNull
     @CreationTimestamp
-    @Column(name = "CreatedAt", nullable = false)
+    @Column(name = "Created_At")
     private LocalDateTime createdAt;
 
+    @NotNull
     @UpdateTimestamp
-    @Column(name = "UpdatedAt", nullable = false)
+    @Column(name = "Updated_At")
     private LocalDateTime updatedAt;
 
     @Column(name = "Description")
     private String description;
 
-    @Column(name = "Status", nullable = false)
+    @NotNull
+    @Column(name = "Status")
     @Enumerated(EnumType.STRING)
     private StatusTypeEnum statusTypeEnum = StatusTypeEnum.open;
 
-    @Column(name = "Type", nullable = false)
+    @NotNull
+    @Column(name = "Type")
     @Enumerated(EnumType.STRING)
     private DocumentTypeEnum documentTypeEnum;
 
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonProperty("documentDetails")
+    @NotNull
     private List<DocumentDetails> documentDetails = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "User_Id")
-    @NonNull
+    @NotNull
     private User user;
 
     @OneToOne(cascade = CascadeType.ALL)
-    PurchaseOrderDetails purchaseOrderDetails;
+    OrderDocumentDetails orderDocumentDetails;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    ProductionOrderDocumentDetails productionOrderDocumentDetails;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Documents> relatedDocuments;
 
     public Documents() {
     }
@@ -135,15 +145,58 @@ public class Documents {
         this.user = user;
     }
 
-    public PurchaseOrderDetails getPurchaseOrderDetails() {
-        return purchaseOrderDetails;
+    public OrderDocumentDetails getOrderDocumentDetails() {
+        return orderDocumentDetails;
     }
 
-    public void setPurchaseOrderDetails(PurchaseOrderDetails purchaseOrderDetails) {
-        if (documentTypeEnum == DocumentTypeEnum.po) {
-            this.purchaseOrderDetails = purchaseOrderDetails;
-            this.purchaseOrderDetails.setDocument(this);
-        }
+    public void setOrderDocumentDetails(OrderDocumentDetails orderDocumentDetails) {
+        switch (documentTypeEnum) {
+            case pw:
+                break;
+            case pz:
+                break;
+            case rw:
+                break;
+            case wz:
+                break;
+            case wzz:
+                break;
+            case zm:
+            case zmw:
+                this.orderDocumentDetails = orderDocumentDetails;
+                this.orderDocumentDetails.setDocument(this);
+                break;
+            case zp:
+                break;
+            default:
+                break;
 
+        }
+    }
+
+    public ProductionOrderDocumentDetails getProductionDocumentDetails() {
+        return productionOrderDocumentDetails;
+    }
+
+    public void setProductionDocumentDetails(ProductionOrderDocumentDetails productionOrderDocumentDetails) {
+        this.productionOrderDocumentDetails = productionOrderDocumentDetails;
+    }
+
+    public List<Documents> getRelatedDocuments() {
+        return relatedDocuments;
+    }
+
+    public void setRelatedDocuments(List<Documents> relatedDocuments) {
+        this.relatedDocuments = relatedDocuments;
+    }
+
+    public void addRelatedDocuments(Documents document) {
+        this.relatedDocuments.add(document);
+        document.setRelatedDocuments(relatedDocuments);
+    }
+
+    public void removeRelatedDocuments(Documents document) {
+        this.relatedDocuments.remove(document);
+        document.setRelatedDocuments(null);
     }
 }

@@ -9,13 +9,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Price;
+import com.bartoszewski.erpone.Entity.Recipe;
 import com.bartoszewski.erpone.Entity.Thing;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.springframework.lang.NonNull;
 
 @Entity
 @JsonIgnoreProperties(value = { "document", "price" }, allowSetters = true)
@@ -24,22 +23,24 @@ public class DocumentDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
 	private Long id;
-	@Column(name = "Quantity", nullable = false)
+	@NotNull
+	@Column(name = "Quantity")
 	private Double quantity;
 
 	@ManyToOne
-	@NonNull
+	@NotNull
 	@JoinColumn(name = "Thing_Id")
-	@JsonProperty("thing")
 	private Thing thing;
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "Price_Id")
-	@JsonProperty("price")
 	private Price price;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonProperty("document")
 	@JoinColumn(name = "Document_Id")
 	private Documents document;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "Recipe_Id")
+	private Recipe recipe;
 
 	public DocumentDetails() {
 	}
@@ -82,6 +83,14 @@ public class DocumentDetails {
 
 	public void setDocument(Documents document) {
 		this.document = document;
+	}
+
+	public Recipe getRecipe() {
+		return recipe;
+	}
+
+	public void setRecipe(Recipe recipe) {
+		this.recipe = recipe;
 	}
 
 }

@@ -9,9 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @JsonIgnoreProperties(value = { "prices", "contractors" }, allowSetters = true)
@@ -20,16 +20,16 @@ public class Currency {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @Column(name = "Code", nullable = false)
+    @NotNull
+    @Column(name = "Code")
     private String code;
-    @Column(name = "Name", nullable = false)
+    @NotNull
+    @Column(name = "Name")
     private String name;
 
     @OneToMany(mappedBy = "currency", fetch = FetchType.LAZY)
-    @JsonProperty("prices")
     private List<Price> prices;
     @OneToMany(mappedBy = "defaultCurrency", fetch = FetchType.LAZY)
-    @JsonProperty("contractors")
     private List<Contractor> contractors;
 
     public String getCode() {

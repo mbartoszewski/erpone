@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.bartoszewski.erpone.Entity.Contractor;
 import com.bartoszewski.erpone.Entity.Thing;
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
 import com.bartoszewski.erpone.Entity.Documents.Documents;
@@ -43,8 +44,9 @@ public class DocumentsServiceImpl implements DocumentsService {
 	@Override
 	public ResponseEntity<?> create(Documents entity, Authentication authentication) {
 		switch (entity.getDocumentTypeEnum()) {
-			case po:
-				return makePurchaseOrder(entity, authentication);
+			case zmw:
+			case zm:
+				return makeOrder(entity, authentication);
 			case pw:
 			case pz:
 				return makeIncomeOperation(entity, authentication);
@@ -53,7 +55,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 			case wzz:
 				return makeOutgoingOperation(entity, authentication);
 			case zp:
-				return null;
+				return makeProductionOrder(entity, authentication);
 			default:
 				return null;
 		}
@@ -97,8 +99,25 @@ public class DocumentsServiceImpl implements DocumentsService {
 				HttpStatus.OK);
 	}
 
+	@Override
+	public ResponseEntity<Page<Documents>> findPurchaseOrderByDetails(Pageable pageable, Long thing, String type,
+			String status, LocalDate startTargetDate, LocalDate endTargetDate, String contractor) {
+		StatusTypeEnum statusEnum = status != null ? StatusTypeEnum.valueOf(status) : null;
+		DocumentTypeEnum typeEnum = type != null ? DocumentTypeEnum.valueOf(type) : null;
+		return new ResponseEntity<>(documentsRepository.findPurchaseOrderByDetails(pageable, thing, typeEnum,
+				statusEnum, startTargetDate, endTargetDate, contractor), HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<Documents>> findProductionOrderByDetails(Pageable pageable, String status,
+			LocalDate startTargetDate, LocalDate endTargetDate, Long recipe) {
+		StatusTypeEnum statusEnum = status != null ? StatusTypeEnum.valueOf(status) : null;
+		return new ResponseEntity<>(documentsRepository.findProductionOrderByDetails(pageable, statusEnum,
+				startTargetDate, endTargetDate, recipe), HttpStatus.OK);
+	}
+
 	private ResponseEntity<?> makeOutgoingOperation(Documents entity, Authentication authentication) {
-		List<DocumentDetails> detailsWithoutStock = new ArrayList<>();
+		List<DocumentDetails> detailsWithoutStock = new ArrayList<>(0);
 		for (Iterator<DocumentDetails> documentsDetails = entity.getDocumentDetails().iterator(); documentsDetails
 				.hasNext();) {
 			DocumentDetails documentDetail = documentsDetails.next();
@@ -127,10 +146,11 @@ public class DocumentsServiceImpl implements DocumentsService {
 		return new ResponseEntity<>(documentsRepository.save(entity), HttpStatus.CREATED);
 	}
 
-	private ResponseEntity<?> makePurchaseOrder(Documents entity, Authentication authentication) {
-		List<DocumentDetails> disabledDetails = new ArrayList<>();
-		if (entity.getPurchaseOrderDetails().getTargetDateTime() != null
-				&& entity.getPurchaseOrderDetails().getSupplier() != null) {
+	private ResponseEntity<?> makeOrder(Documents entity, Authentication authentication) {
+		List<DocumentDetails> disabledDetails = new ArrayList<>(0);
+		Contractor contractor = contractorRepository.getOne(entity.getOrderDocumentDetails().getContractor().getId());
+		if (entity.getOrderDocumentDetails().getTargetDateTime() != null
+				&& entity.getOrderDocumentDetails().getContractor() != null) {
 			for (Iterator<DocumentDetails> documentsDetails = entity.getDocumentDetails().iterator(); documentsDetails
 					.hasNext();) {
 				DocumentDetails documentDetail = documentsDetails.next();
@@ -140,13 +160,18 @@ public class DocumentsServiceImpl implements DocumentsService {
 				}
 				documentDetail.setThing(thingsRepository.getOne(documentDetail.getThing().getId()));
 			}
-			entity.getPurchaseOrderDetails()
-					.setSupplier(contractorRepository.getOne(entity.getPurchaseOrderDetails().getSupplier().getId()));
+			entity.getOrderDocumentDetails().setContractor(contractor);
 			entity.setUser(userRepository.findByEmail(authentication.getName()));
 			return disabledDetails.size() > 0 ? new ResponseEntity<>(disabledDetails, HttpStatus.BAD_REQUEST)
 					: new ResponseEntity<>(documentsRepository.save(entity), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+	}
+
+	private ResponseEntity<?> makeProductionOrder(Documents entity, Authentication authentication) {
+		List<DocumentDetails> detailsWithoutStock = new ArrayList<>(0);
+
+		return new ResponseEntity<>("status", HttpStatus.OK);
 	}
 }

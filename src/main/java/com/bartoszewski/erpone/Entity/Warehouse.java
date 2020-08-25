@@ -12,9 +12,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "Warehouses")
@@ -24,13 +24,14 @@ public class Warehouse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @Column(name = "Code", nullable = false, updatable = true, unique = true)
+    @NotNull
+    @Column(name = "Code", updatable = true, unique = true)
     private String code;
-    @Column(name = "Name", nullable = false, updatable = true, unique = true)
+    @NotNull
+    @Column(name = "Name", updatable = true, unique = true)
     private String name;
 
     @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonProperty("things")
     private List<Thing> things = new ArrayList<>(0);
 
     public String getCode() {

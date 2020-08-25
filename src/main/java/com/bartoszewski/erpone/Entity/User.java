@@ -15,36 +15,33 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.springframework.lang.NonNull;
 
 @Entity
-@JsonIgnoreProperties(value = { "documents", "password"}, allowSetters = true)
-public class User
-{
+@JsonIgnoreProperties(value = { "documents", "password", "firstName", "lastName", "enabled",
+		"roles" }, allowSetters = true)
+public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
 	private Long id;
 	@Column(name = "Email", unique = true)
-	@NonNull
+	@NotNull
 	private String email;
 	@Column(name = "Password", length = 60)
-	@NonNull
-	@JsonProperty("password")
+	@NotNull
 	private String password;
 	@Column(name = "First_Name")
-	@NonNull
+	@NotNull
 	private String firstName;
 	@Column(name = "Last_Name")
-	@NonNull
+	@NotNull
 	private String lastName;
 	@Column(name = "Enabled")
-	@NonNull
+	@NotNull
 	private boolean enabled = true;
 
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -52,85 +49,70 @@ public class User
 	private Collection<Role> roles;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JsonProperty("documents")
 	private List<Documents> documents = new ArrayList<>(0);
-	public User() 
-	{
+
+	public User() {
 	}
 
 	public User(User user) {
 	}
 
-	public Long getId()
-	{
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(final Long id)
-	{
+	public void setId(final Long id) {
 		this.id = id;
 	}
 
-	public String getEmail()
-	{
+	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(final String email)
-	{
+	public void setEmail(final String email) {
 		this.email = email;
 	}
 
-	public String getPassword()
-	{
+	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(final String password)
-	{
+	public void setPassword(final String password) {
 		this.password = password;
 	}
 
-	public String getFirstName()
-	{
+	public String getFirstName() {
 		return firstName;
 	}
 
-	public void setFirstName(final String firstName)
-	{
+	public void setFirstName(final String firstName) {
 		this.firstName = firstName;
 	}
 
-	public String getLastName()
-	{
+	public String getLastName() {
 		return lastName;
 	}
 
-	public void setLastName(final String lastName)
-	{
+	public void setLastName(final String lastName) {
 		this.lastName = lastName;
 	}
 
-	public boolean isEnabled()
-	{
+	public boolean isEnabled() {
 		return enabled;
 	}
 
-	public void setEnabled(final boolean enabled)
-	{
+	public void setEnabled(final boolean enabled) {
 		this.enabled = enabled;
 	}
 
-	public Collection<Role> getRoles()
-	{
+	public Collection<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(final Collection<Role> roles)
-	{
+	public void setRoles(final Collection<Role> roles) {
 		this.roles = roles;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

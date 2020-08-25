@@ -18,4 +18,15 @@ public interface DocumentsRepository extends BaseRepository<Documents, Long> {
 	public Page<Documents> findAllByType(Pageable pageable, @Param("thing") Long thing,
 			@Param("type") DocumentTypeEnum type, @Param("status") StatusTypeEnum status,
 			@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+	@Query("SELECT DISTINCT d FROM Documents d LEFT JOIN DocumentDetails dd ON dd.document.id = d.id LEFT JOIN OrderDocumentDetails odd ON odd.document.id = d.id WHERE (:thing IS NULL OR dd.thing.id = :thing) AND ((:startTargetDate IS NULL OR odd.targetDateTime >= CONCAT(:startTargetDate, 'T00:00:00')) AND (:endTargetDate IS NULL OR odd.targetDateTime <= CONCAT(:endTargetDate, 'T23:59:59'))) AND (:type IS NULL OR d.documentTypeEnum = :type) AND (:status IS NULL OR d.statusTypeEnum = :status) AND (:contractor IS NULL OR odd.contractor.name LIKE %:contractor%)")
+	public Page<Documents> findPurchaseOrderByDetails(Pageable pageable, @Param("thing") Long thing,
+			@Param("type") DocumentTypeEnum type, @Param("status") StatusTypeEnum status,
+			@Param("startTargetDate") LocalDate startTargetDate, @Param("endTargetDate") LocalDate endTargetDate,
+			@Param("contractor") String contractor);
+
+	@Query("SELECT d FROM Documents d LEFT JOIN ProductionOrderDocumentDetails podd ON podd.document.id = d.id WHERE (:status IS NULL OR d.statusTypeEnum = :status) AND ((:startTargetDate IS NULL OR podd.targetDateTime >= CONCAT(:startTargetDate, 'T00:00:00')) AND (:endTargetDate IS NULL OR podd.targetDateTime <= CONCAT(:endTargetDate, 'T23:59:59'))) AND (:recipe IS NULL OR podd.recipe.id = :recipe) AND d.documentTypeEnum = 'zp'")
+	public Page<Documents> findProductionOrderByDetails(Pageable pageable, @Param("status") StatusTypeEnum status,
+			@Param("startTargetDate") LocalDate startTargetDate, @Param("endTargetDate") LocalDate endTargetDate,
+			@Param("recipe") Long recipe);
 }

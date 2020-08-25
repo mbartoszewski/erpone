@@ -14,23 +14,23 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.springframework.lang.NonNull;
 
 @Entity
-@JsonIgnoreProperties(value = { "foreignCodes", "documentsDetails", "price" }, allowSetters = true)
+@JsonIgnoreProperties(value = { "foreignCodes", "documentsDetails", "price", "recipe" }, allowSetters = true)
 public class Thing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @Column(name = "Code", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "Code", unique = true)
     private String code;
-    @Column(name = "Name", updatable = true, nullable = false)
+    @NotNull
+    @Column(name = "Name", updatable = true)
     private String name;
     @Column(name = "Quantity", updatable = true)
     private Double quantity = 0.0;
@@ -39,26 +39,24 @@ public class Thing {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "thing", fetch = FetchType.LAZY)
     @JoinColumn(name = "Price_Id")
-    @JsonProperty("price")
     private Price price;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "thing", fetch = FetchType.LAZY)
-    @JsonProperty("foreignCodes")
     private List<ForeignCode> foreignCodes = new ArrayList<>(0);
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "thing", fetch = FetchType.LAZY)
-    @JsonProperty("documentsDetails")
     private List<DocumentDetails> documentsDetails = new ArrayList<>(0);
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "thing", fetch = FetchType.LAZY)
+    private List<Recipe> recipe = new ArrayList<>(0);
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Warehouse_Id")
-    @JsonProperty("warehouse")
-    @NonNull
+    @NotNull
     private Warehouse warehouse;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Unit_Id")
-    @JsonProperty("unit")
-    @NonNull
+    @NotNull
     private Unit unit;
 
     public Thing() {
