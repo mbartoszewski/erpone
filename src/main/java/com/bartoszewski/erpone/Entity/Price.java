@@ -35,7 +35,7 @@ public class Price {
 	@Column(name = "Price")
 	private Double price;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "Thing_Id")
 	private Thing thing;
 

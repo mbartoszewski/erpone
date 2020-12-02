@@ -1,5 +1,7 @@
 package com.bartoszewski.erpone.Service;
 
+import java.io.Console;
+
 import com.bartoszewski.erpone.Entity.Thing;
 import com.bartoszewski.erpone.Repository.ThingRepository;
 import com.bartoszewski.erpone.Repository.UnitRepository;
@@ -26,6 +28,7 @@ public class ThingServiceImpl implements ThingService {
 
 	@Override
 	public ResponseEntity<Thing> create(Thing entity, Authentication authentication) {
+		System.out.println(entity.getWarehouse());
 		return new ResponseEntity<>(thingsRepository.save(entity), HttpStatus.OK);
 	}
 

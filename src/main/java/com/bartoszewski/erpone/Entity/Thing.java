@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
@@ -37,9 +36,8 @@ public class Thing {
     @Column(name = "Active", updatable = true)
     private int active = 1;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "thing", fetch = FetchType.LAZY)
-    @JoinColumn(name = "Price_Id")
-    private Price price;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "thing", fetch = FetchType.LAZY)
+    private List<Price> prices;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "thing", fetch = FetchType.LAZY)
     private List<ForeignCode> foreignCodes = new ArrayList<>(0);
@@ -136,14 +134,6 @@ public class Thing {
         this.documentsDetails = documentsDetails;
     }
 
-    public Price getPrice() {
-        return price;
-    }
-
-    public void setPrice(Price price) {
-        this.price = price;
-    }
-
     public Long getId() {
         return id;
     }
@@ -182,4 +172,29 @@ public class Thing {
         return "Thing [code=" + code + ", name=" + name + ", quantity=" + quantity + ", unit=" + unit + "]";
     }
 
+    public List<Price> getPrices() {
+        return prices;
+    }
+
+    public void setPrices(List<Price> prices) {
+        this.prices = prices;
+    }
+
+    public List<Recipe> getRecipe() {
+        return recipe;
+    }
+
+    public void setRecipe(List<Recipe> recipe) {
+        this.recipe = recipe;
+    }
+
+    public void addPrice(Price price) {
+        prices.add(price);
+        price.setThing(this);
+    }
+
+    public void removePrice(Price price) {
+        prices.remove(price);
+        price.setThing(null);
+    }
 }
