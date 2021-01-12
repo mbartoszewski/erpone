@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import {Divider, IconButton, Typography } from '@material-ui/core';
+import {IconButton, Typography } from '@material-ui/core';
 import { useParams, Link } from "react-router-dom";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -15,18 +15,40 @@ const useStyles = makeStyles((theme) => ({
 	detailsHeader: {
 		width: '100%',
 		top: '0',
-		position: 'fixed',
-		marginLeft: '1px',
-	background: 'white'},
+		zIndex: '1000',
+		backgroundColor: '#ddf6dd',
+		position: 'sticky',
+		borderBottom: '1px solid'
+	},
+	headerTitle: {
+		position: 'relative',
+		flex: '0 0 100%',
+		marginLeft: theme.spacing(1),
+		marginRight: theme.spacing(1),
+		fontSize: '1.5em',
+		fontWeight: 'bold'
+	},
+	headerDescription: {
+		position: 'relative',
+		flex: '0 0 100%',
+		marginLeft: theme.spacing(1),
+		marginRight: theme.spacing(1),
+		fontSize: '1em'
+	},
+	headerEditThing: {
+		position: 'relative',
+		flex: '0 0 100%'
+	},
 	detailsDiv: {
-		paddingTop: '90px',
-		 margin: '32px' },
+		margin: theme.spacing(3),
+ },
 	navigateNext: {
-		marginLeft: 'auto',
-		width: '3em',
-	padding: '0'},
+		position: 'relative',
+		flex: '0 0 100%',
+		justifyContent: 'flex-end'
+	},
 	card: {
-		marginBottom: '16px'
+		marginBottom: theme.spacing(2)
 	},
 }))
 function ThingsDetails()
@@ -36,8 +58,8 @@ function ThingsDetails()
 	return (
 		<div className={classes.root}>
 			<div className={classes.detailsHeader}>
-				<h1 style={{ paddingLeft: '8px' }}>Tutaj jest header z kodem i nazwa surowca o danym id: {id}</h1>
-				<Divider/>
+				<Typography className={classes.headerTitle}>Tutaj jest header z kodem surowca o danym id: {id}</Typography>
+				<Typography className={classes.headerDescription}>Tutaj jest header z opisem surowca o danym id: {id}</Typography>
 			</div>
 			<div className={classes.detailsDiv}>
 			{ThingsDetailsItems.map(each => (
@@ -54,7 +76,6 @@ function ThingsDetails()
 									</IconButton>}>
 						</CardHeader>
 						<CardContent>
-							<Typography>Karty można dowolnie sortować, przypinać u góry.</Typography>
 							{React.createElement(each.component)}
 						</CardContent>
 						<CardActions className={classes.navigateNext}>

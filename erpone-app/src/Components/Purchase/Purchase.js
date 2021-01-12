@@ -51,7 +51,7 @@ export default function ThingsTable()
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, selectedFlatRows, state: {selectedRowIds} } = useTable({
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} = useTable({
     columns,
     data,
   }, useSortBy, useRowSelect,

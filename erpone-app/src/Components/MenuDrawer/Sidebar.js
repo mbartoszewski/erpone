@@ -18,23 +18,17 @@ import MenuIcon from '@material-ui/icons/Menu';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
- 
   nested: {
     paddingLeft: theme.spacing(4),
 	},
-	drawerRoot: {
+  drawerRoot: {
     width: '100%',
     maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
   },
-	SidebarParent: {
+  SidebarParent: {
 		background: '#ffffff',
-		maxWidth: '240px',
-    height: '100vh',
-	},
-	a: {
-		textDecoration: 'none',
-		color: 'black'
+    borderRight: '1px solid rgba(0, 0, 0, 0.12)'
 	},
 	menuButton: {
     marginRight: 36,
@@ -48,9 +42,8 @@ const useStyles = makeStyles((theme) => ({
   	closeButtonHidden: {
     display: 'none',
 	},
-	drawerPaper: {
+  drawerPaper: {
     position: 'relative',
-    whiteSpace: 'nowrap',
     width: drawerWidth,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -68,12 +61,6 @@ const useStyles = makeStyles((theme) => ({
       width: theme.spacing(9),
     },
 	},
-	paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
 }));
 
 function Sidebar({defaultActive})
@@ -98,15 +85,8 @@ function Sidebar({defaultActive})
   return (
     <>
 		  <div className={classes.SidebarParent}>
-			  <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-        }}
-        open={open}
-      >
+        <Drawer variant="permanent" classes={{ paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose), }} open={open} >
         <div>
-
 			<IconButton
             color="inherit"
             aria-label="open drawer"
@@ -156,7 +136,7 @@ function Sidebar({defaultActive})
 		</Collapse>
 			</React.Fragment>
 		))}
-				  </List>
+      </List>
 		</Drawer>		  
 	</div>
       <div style={{maxWidth: '240px'}}/>

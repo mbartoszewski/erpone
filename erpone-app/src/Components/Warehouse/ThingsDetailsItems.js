@@ -41,7 +41,7 @@ const ThingsDetailsItems = [
     avatar: MonetizationOnIcon,
     route: "prices",
     component: PriceCard,
-    subTitle: "Wykres pokazujący ceny w aktualnym roku w odniesieniu do roku ostatniego. Wchodząc w szczegóły tej karty możesz zobaczyć historię cen danego towaru/artykułu. Wykresy zwybranego przez siebie okresu i wiele więcej."
+    subTitle: "Wykres pokazujący ceny z ostatnich 6 miesięcy. Wchodząc w szczegóły tej karty możesz zobaczyć historię cen danego towaru/artykułu. Wykresy z wybranego przez siebie okresu i wiele więcej."
   },
             {
     id: "5",

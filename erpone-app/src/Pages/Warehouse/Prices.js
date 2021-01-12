@@ -1,6 +1,5 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
@@ -17,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
 }))
+
 function Prices()
 {
 	const classes = useStyles();

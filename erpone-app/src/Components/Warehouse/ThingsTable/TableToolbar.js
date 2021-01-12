@@ -17,6 +17,14 @@ const useToolbarStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
+    backgroundColor: '#ddf6dd'
+  },
+
+  addThingButton: {
+    flex: '1 1 100%',
+  },
+   title: {
+    flex: '0 0 100%',
   },
   highlight:
     theme.palette.type === 'light'
@@ -28,24 +36,8 @@ const useToolbarStyles = makeStyles(theme => ({
           color: theme.palette.text.primary,
           backgroundColor: theme.palette.secondary.dark,
         },
-  title: {
-    flex: '1 1 100%',
-  },
 }))
-const warehouse = [
-  {
-    value: 'MS',
-    label: 'Magazyn Surowców'
-  },
-   {
-    value: 'MT',
-    label: 'Magazyn Towarów'
-  },
-  {
-    value: 'MP',
-    label: 'Magazyn Produkcyjny'
-  },
-]
+
 const TableToolbar = props => {
   const classes = useToolbarStyles()
   const {
@@ -61,42 +53,19 @@ const TableToolbar = props => {
         [classes.highlight]: numSelected > 0,
       })}
     >
-      <AddThingDialog addThingHandler={addThingHandler} />
-      <TextField style={{width: '128px'}}
-       margin="normal"
-      
-        label="Warehouses"
-        placeholder="Warehouses"
-        size="medium"
-          >
-            {warehouse.map((warehouse) => (
-              <MenuItem value={warehouse.value} label={warehouse.value}> {warehouse.label}</MenuItem>
-            ))}
-          </TextField>
-      {numSelected > 0 ? (
-        <Typography
-          className={classes.title}
-          color="inherit"
-          variant="subtitle1"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : null}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <GlobalFilter
+      <div className = {classes.addThingButton}>
+        <AddThingDialog addThingHandler={addThingHandler} />
+      </div>
+      {numSelected > 0 ? (<Typography className = {classes.title}>{numSelected} selected</Typography>) : 
+      (
+        <div className={classes.searchBox}>
+          <GlobalFilter 
           preGlobalFilteredRows={preGlobalFilteredRows}
           globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-        />
-      )}
-    </Toolbar>
+          setGlobalFilter={setGlobalFilter}/>
+      </div>)}
+  
+    </Toolbar>    
   )
 }
 

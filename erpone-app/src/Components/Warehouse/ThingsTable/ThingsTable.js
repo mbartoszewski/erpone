@@ -17,6 +17,22 @@ import {
   useTable,
 } from 'react-table'
 
+const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref) =>
+{
+	const defaultRef = React.useRef()
+	const resolvedRef = ref || defaultRef
+
+	React.useEffect(() =>
+	{
+		resolvedRef.current.indeterminate = indeterminate
+	}, [resolvedRef, indeterminate])
+
+	return (
+		<>
+			<Checkbox ref={resolvedRef} {...rest}/>
+		</>
+	)
+})
 const ThingsTable = ({data, columns}) =>
 	{
 	const {
@@ -25,41 +41,79 @@ const ThingsTable = ({data, columns}) =>
 		headerGroups,
 		rows,
 		prepareRow,
-		} = useTable({ data, columns })
+		preGlobalFilteredRows,
+		setGlobalFilter,
+		state:{globalFilter, selectedRowIds},
+	} = useTable({ data, columns }, useGlobalFilter, useRowSelect,
+		hooks =>
+		{
+			hooks.visibleColumns.push(columns => [
+				// Let's make a column for selection
+				{
+					id: 'selection',
+					// The header can use the table's getToggleAllRowsSelectedProps method
+					// to render a checkbox
+					Header: ({ getToggleAllRowsSelectedProps }) => (
+						<div>
+							<IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+						</div>
+					),
+					// The cell can use the individual row's getToggleRowSelectedProps method
+					// to the render a checkbox
+					Cell: ({ row }) => (
+						<div>
+							<IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+						</div>
+					),
+				},
+				...columns,
+			])
+		})
 		
-		return	(
-			<MaUTable {...getTableProps()}>
-				<TableHead>
-					{headerGroups.map(headerGroup => (
-						<TableRow {...headerGroup.getHeaderGroupProps()}>
-							{headerGroup.headers.map(column => (
-								<TableCell {...column.getHeaderProps()}>
-									{column.render('Header')}
-								</TableCell>))}
-						</TableRow>))}
-				</TableHead>
-				<TableBody {...getTableBodyProps()}>
-					{
-						rows.map(row =>
+	return (
+		<TableContainer>
+				<TableToolbar
+				numSelected={Object.keys(selectedRowIds).length}
+				preGlobalFilteredRows={preGlobalFilteredRows}
+				setGlobalFilter={setGlobalFilter}
+				globalFilter={globalFilter}/>
+				<MaUTable {...getTableProps()}>
+					<TableHead>
+						{headerGroups.map(headerGroup => (
+							<TableRow {...headerGroup.getHeaderGroupProps()}>
+								{headerGroup.headers.map(column => (
+									<TableCell {...column.getHeaderProps()}>
+										{column.render('Header')}
+									</TableCell>))}
+							</TableRow>))}
+					</TableHead>
+					<TableBody {...getTableBodyProps()}>
 						{
-							prepareRow(row)
-							return (
-								<TableRow {...row.getRowProps()}>
-									{
-										row.cells.map(cell => 
+							rows.map(row =>
+							{
+								prepareRow(row)
+								return (
+									<TableRow {...row.getRowProps()} >
 										{
-											return (
-												<TableCell {...cell.getCellProps()}>
-													{cell.render('Cell')}
-												</TableCell>)
-										})
-									}
-							</TableRow>
-							)
-						})
-					}
-				</TableBody>
-			</MaUTable>
+											row.cells.map(cell => 
+											{
+												return cell.getCellProps().key.includes("selection") ?  (
+													<TableCell {...cell.getCellProps()} >
+														{cell.render('Cell')}
+													</TableCell>) :
+															 (
+													<TableCell {...cell.getCellProps()} component={Link} to={`/warehouse/things/${row.original.id}`}>
+															{cell.render('Cell')}
+													</TableCell>)
+											})
+										}
+								</TableRow>
+								)
+							})
+						}
+					</TableBody>
+				</MaUTable>			
+			</TableContainer>
 		);
 };
 export default ThingsTable;

@@ -1,6 +1,6 @@
 package com.bartoszewski.erpone.Service;
 
-import java.io.Console;
+import java.util.List;
 
 import com.bartoszewski.erpone.Entity.Thing;
 import com.bartoszewski.erpone.Repository.ThingRepository;
@@ -61,5 +61,17 @@ public class ThingServiceImpl implements ThingService {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		thing.setActive(0);
 		return new ResponseEntity<>(thingsRepository.save(thing), HttpStatus.NOT_FOUND);
+	}
+
+	@Override
+	public ResponseEntity<Page<Thing>> searchThingByPropertiesWithLike(Pageable pageable, String searchQuery) {
+		return new ResponseEntity<>(thingsRepository.searchThingByPropertiesWithLike(pageable, searchQuery),
+				HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<Thing>> searchThingByPropertiesWithMatchAgainst(Pageable pageable, String searchQuery) {
+		return new ResponseEntity<>(thingsRepository.searchThingByPropertiesWithMatchAgainst(pageable, searchQuery),
+				HttpStatus.OK);
 	}
 }

@@ -1,43 +1,48 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
+import { useParams } from "react-router-dom";
+import moment from 'moment'
+import { apiStates, useApi } from '../../Components/Fetch'
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 		display: 'flex',
+		flexDirection: 'column',
 		alignItems: 'center',
-		justifyContent: 'center'
+		'& > *': {
+      margin: theme.spacing(1),
+    },
   },
 }))
+  
 function PriceCard()
 {
 	const classes = useStyles();
-const data = [
-      {name: '2020-01-01', uv: 4000, pv: 2400, amt: 2400},
-      {name: '2020-02-01', uv: 3000, pv: 1398, amt: 2210},
-      {name: '2020-03-01', uv: 2000, pv: 9800, amt: 2290},
-      {name: '2020-04-01', uv: 2780, pv: 3908, amt: 2000},
-      {name: '2020-05-01', uv: 1890, pv: 4800, amt: 2181},
-      {name: '2020-06-01', uv: 2390, pv: 3800, amt: 2500},
-      {name: '2020-07-01', uv: 3490, pv: 4300, amt: 2100},
-];
-	return (
-		<div className={classes.root}>
-					<LineChart width={900} height={350} data={data}
-           				 margin={{top: 7, right: 10, left: 10, bottom: 5}}>
-						<XAxis dataKey="name"/>
-						<YAxis/>
-						<CartesianGrid strokeDasharray="3 3"/>
-						<Tooltip/>
-						<Legend />
-						<Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{r: 8}}/>
-						<Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-					</LineChart>		
-		</div>
-	
-	);
+	const { id } = useParams();
+	const currentDate = moment.utc().subtract(6, 'month').format('YYYY-MM-DD');
+	const { state, error, data } = useApi(`http://localhost:5000/api/things/${id}/price?startDate=${currentDate}`);
+	switch (state)
+	{
+		case apiStates.ERROR:
+		return <p className={classes.root}>Error: {error} || 'General error'</p>;
+		case apiStates.SUCCESS:
+		return (
+			<div className={classes.root}>
+				<LineChart width={1400} height={350} data={data} margin={{top: 7, right: 5, left: 5, bottom: 5}}>
+					<XAxis dataKey="date"/>
+					<YAxis/>
+					<CartesianGrid strokeDasharray="3 3"/>
+					<Tooltip/>
+					<Legend />
+					<Line type="monotone" dataKey="price" stroke="#8884d8"/>
+				</LineChart>
+			</div>	
+		);
+		default:
+		return <p className={classes.errorMsg}>Loading....</p>;
+	}	
 };
 export default PriceCard;
