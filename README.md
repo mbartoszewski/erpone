@@ -9,4 +9,10 @@ Główne funkcjonalności, które chciałbym zaimplementować:\
 -tworzenie i obsługa planów produkcyjnych,\
 -analiza stanów magazynowych na podstawie obrotów.\
 
-Java 13 + Spring + React
+<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/colapsed_menu_drawer.jpg">
+<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/thing_add_fullscreen_dialog.jpg">
+<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/thing_details_view.jpg">
+<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/thing_search.jpg">
+<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/thing_selected.jpg">
+<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/warehouse.jpg">
+
