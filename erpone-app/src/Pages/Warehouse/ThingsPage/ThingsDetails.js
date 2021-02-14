@@ -8,7 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import ThingsDetailsItems from '../../Components/Warehouse/ThingsDetailsItems';
+import ThingsDetailsItems from './ThingsDetailsItems';
 
 const useStyles = makeStyles((theme) => ({
 	root: {},

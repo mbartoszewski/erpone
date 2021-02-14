@@ -3,6 +3,8 @@ package com.bartoszewski.erpone.Controller;
 import java.time.LocalDate;
 
 import com.bartoszewski.erpone.Entity.Documents.Documents;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsProjection;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsWithDetailsProjection;
 import com.bartoszewski.erpone.Service.BaseService;
 import com.bartoszewski.erpone.Service.DocumentsService;
 
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,5 +58,16 @@ public class DocumentsController extends BaseController<Documents, Long> {
 			@RequestParam(value = "status", required = false) String status,
 			@RequestParam(value = "recipe", required = false) Long recipe) {
 		return documentsService.findProductionOrderByDetails(pageable, status, startDate, endDate, recipe);
+	}
+
+	@GetMapping("/all")
+	public ResponseEntity<Page<DocumentsProjection>> getAllDocuments(Pageable pageable) {
+		return documentsService.getDocuments(pageable);
+	}
+
+	@GetMapping("/{id}/details")
+	public ResponseEntity<Page<DocumentsWithDetailsProjection>> getDocumentDetailsById(Pageable pageable,
+			@PathVariable(value = "id") Long id) {
+		return documentsService.getDocumentDetailsById(pageable, id);
 	}
 }

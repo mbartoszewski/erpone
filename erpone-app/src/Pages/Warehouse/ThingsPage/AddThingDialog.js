@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add'
 import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import IconButton from '@material-ui/core/IconButton'
 import PropTypes from 'prop-types'
@@ -11,13 +10,13 @@ import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
 import Tooltip from '@material-ui/core/Tooltip'
 import { InputLabel, Select, MenuItem } from '@material-ui/core'
-import globalStateContext from '../../ErpOneApp'
-import { apiStates, useApi } from '../../Fetch'
+import { globalStateContext } from '../../ErpOneApp'
 import Slide from '@material-ui/core/Slide';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
+import { apiStates, useApi} from '../../../Components/Fetch';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -32,8 +31,8 @@ const useStyles = makeStyles((theme) => ({
 const initialThing = {
   code: '',
   description: '',
-  unit: '',
-  warehouse: '',
+  unit: {id: ''},
+  warehouse: {id: ''}, 
 }
 
 const Transition = React.forwardRef(function Transition(props, ref)
@@ -48,12 +47,7 @@ const AddThingDialog = props =>
   const { addThingHandler } = props
   const [open, setOpen] = React.useState(false)
   const [switchState, setSwitchState] = React.useState({addMultiple: false,})
-  const { state: stateUnits, error: errorUnits, data: dataUnits } = useApi('http://localhost:5000/api/units/');
-  const { state: stateWarehouses, error: errorWarehouses, data: dataWarehouses } = useApi('http://localhost:5000/api/warehouses/');
-
-
   const globalContext = useContext(globalStateContext);
-
 
   const handleSwitchChange = thingInfo => event => {
     setSwitchState({ ...switchState, [thingInfo]: event.target.checked })
@@ -71,17 +65,16 @@ const AddThingDialog = props =>
     setOpen(false)
     resetSwitch()
   }
-
+  
   const handleAdd = event => {
-    addThingHandler(thing)
     setThing(initialThing)
+    console.log(thing);
     switchState.addMultiple ? setOpen(true) : setOpen(false)
   }
 
   const handleChange = name => ({ target: { value } }) => {
     setThing({ ...thing, [name]: value })
   }
-
   return (
     <div>
       <IconButton aria-label="Add thing" onClick={handleClickOpen}>
@@ -129,12 +122,12 @@ const AddThingDialog = props =>
             onChange={handleChange('description')}
           />
           <InputLabel id="unit">Unit</InputLabel>
-            <Select fullWidth margin="dense" select labelId ="unit" id="selectUnit">
-            {dataUnits.map((unit) => { return <MenuItem value = {unit.code}>{unit.name}</MenuItem>})}
-            </Select>
+          <Select fullWidth margin="dense" select='true' labelId="unit" id="selectUnit" onChange={handleChange('unit')}>
+            {globalContext.dataUnits.map((unit) => { return <MenuItem key={unit.id} value = {unit.id}>{unit.name}</MenuItem>})}
+          </Select>
            <InputLabel id="warehouse">Warehouse</InputLabel>
-            <Select fullWidth margin="dense" select labelId ="warehouse" id="selectWarehouse">
-            {dataWarehouses.map((warehouses) => { return <MenuItem value = {warehouses.code}>{warehouses.name}</MenuItem>})}
+            <Select fullWidth margin="dense" select='true' labelId ="warehouse" id="selectWarehouse" onChange={handleChange('warehouse')}>
+            {globalContext.dataWarehouses.map((warehouses) => { return <MenuItem key={warehouses.id} value = {warehouses.id}>{warehouses.name}</MenuItem>})}
             </Select>
         </DialogContent>
       </Dialog>
@@ -146,4 +139,4 @@ AddThingDialog.propTypes = {
   addThingHandler: PropTypes.func.isRequired,
 }
 
-export default AddThingDialog
+export default AddThingDialog;

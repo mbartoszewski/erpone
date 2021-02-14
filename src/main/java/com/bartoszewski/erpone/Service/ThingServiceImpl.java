@@ -1,7 +1,5 @@
 package com.bartoszewski.erpone.Service;
 
-import java.util.List;
-
 import com.bartoszewski.erpone.Entity.Thing;
 import com.bartoszewski.erpone.Repository.ThingRepository;
 import com.bartoszewski.erpone.Repository.UnitRepository;

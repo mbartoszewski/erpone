@@ -109,4 +109,11 @@ public class Unit {
         return "Unit [code=" + code + ", name=" + name + "]";
     }
 
+    public Unit(Long id, @NotNull String code, @NotNull String name, List<Thing> things) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.things = things;
+    }
+
 }

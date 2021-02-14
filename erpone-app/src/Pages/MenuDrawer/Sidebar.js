@@ -108,7 +108,7 @@ function Sidebar({defaultActive})
 		<List component="nav" className={classes.drawerRoot}>
 		{SidebarItems.map(each => (
 			<React.Fragment key={each.id}>
-			<ListItem button onClick={() => handleListItemClick(each.id)}>
+			<ListItem key={each.id} button onClick={() => handleListItemClick(each.id)}>
 				<Tooltip title={each.nameHeader} TransitionComponent="zoom" placement="right">
 				<ListItemIcon>
 					{React.createElement(each.icon)}
@@ -121,7 +121,7 @@ function Sidebar({defaultActive})
 		<Collapse in={expand.find(expand => expand.id === each.id).isExpand} timeout="auto" unmountOnExit>
 				<List component="div" disablePadding>
             {each.subMenu.map(subMenuData => (
-          <Link to={subMenuData.route} className={classes.a}>
+          <Link key={subMenuData.id} to={subMenuData.route} className={classes.a}>
 					<ListItem key={subMenuData.id} className={classes.nested}>
 					<Tooltip title={subMenuData.name} TransitionComponent={Zoom} placement="right">
 						<ListItemIcon>

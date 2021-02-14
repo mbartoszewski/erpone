@@ -3,7 +3,6 @@ package com.bartoszewski.erpone.Controller;
 import com.bartoszewski.erpone.Entity.Thing;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import com.bartoszewski.erpone.Entity.Price;
 import com.bartoszewski.erpone.Service.BaseService;

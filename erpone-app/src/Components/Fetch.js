@@ -4,6 +4,7 @@ export const apiStates = {
   LOADING: 'Loading',
   SUCCESS: 'Success',
   ERROR: 'Error',
+  EMPTY: 'Empty',
 };
 
 export const useApi = (url, options) =>
@@ -11,7 +12,7 @@ export const useApi = (url, options) =>
   const [data, setData] = useState({
     state: apiStates.LOADING,
     error: '',
-    data: [{}],
+    data: [null],
   });
 
   const setPartData = (partialData) => setData({ ...data, ...partialData });
@@ -20,10 +21,20 @@ export const useApi = (url, options) =>
     .then((response) => response.json())
     .then((data) =>
     {
+    if (data.content.length >= 1) {
+       {console.log("połączenie: " + url + " data:  " + data.content)}
       setPartData({
         state: apiStates.SUCCESS,
         data: data.content
       });
+    } else
+    {
+       setPartData({
+        state: apiStates.EMPTY,
+        error: 'Empty response'
+      });
+      }
+     
     })
     .catch(() =>
     {

@@ -1,5 +1,6 @@
 package com.bartoszewski.erpone.Entity.Documents;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
+import com.bartoszewski.erpone.Entity.Contractor;
 import com.bartoszewski.erpone.Entity.User;
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 import com.bartoszewski.erpone.Enum.StatusTypeEnum;
@@ -29,18 +31,22 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@JsonIgnoreProperties(value = { "documentDetails", "updatedAt", "relatedDocuments" }, allowSetters = true)
+@JsonIgnoreProperties(value = {}, allowSetters = true)
 public class Documents {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
 
+    @Column(name = "Document_number")
+    private String docNumber;
+
     @NotNull
     @CreationTimestamp
     @Column(name = "Created_At")
     private LocalDateTime createdAt;
-
+    @Column(name = "Target_Date_Time")
+    private LocalDateTime targetDateTime;
     @NotNull
     @UpdateTimestamp
     @Column(name = "Updated_At")
@@ -63,15 +69,19 @@ public class Documents {
     @NotNull
     private List<DocumentDetails> documentDetails = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Contractor_Id")
+    @NotNull
+    private Contractor contractor;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "User_Id")
     @NotNull
     private User user;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     OrderDocumentDetails orderDocumentDetails;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     ProductionOrderDocumentDetails productionOrderDocumentDetails;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -162,7 +172,6 @@ public class Documents {
             case wzz:
                 break;
             case zm:
-            case zmw:
                 this.orderDocumentDetails = orderDocumentDetails;
                 this.orderDocumentDetails.setDocument(this);
                 break;
@@ -198,5 +207,39 @@ public class Documents {
     public void removeRelatedDocuments(Documents document) {
         this.relatedDocuments.remove(document);
         document.setRelatedDocuments(null);
+    }
+
+    public LocalDateTime getTargetDateTime() {
+        return targetDateTime;
+    }
+
+    public void setTargetDateTime(LocalDateTime targetDateTime) {
+        this.targetDateTime = targetDateTime;
+    }
+
+    public ProductionOrderDocumentDetails getProductionOrderDocumentDetails() {
+        return productionOrderDocumentDetails;
+    }
+
+    public void setProductionOrderDocumentDetails(ProductionOrderDocumentDetails productionOrderDocumentDetails) {
+        this.productionOrderDocumentDetails = productionOrderDocumentDetails;
+    }
+
+    public Contractor getContractor() {
+        return contractor;
+    }
+
+    public void setContractor(Contractor contractor) {
+        this.contractor = contractor;
+    }
+
+    public String getDocNumber() {
+        return docNumber;
+    }
+
+    public void setDocNumber(Long countByYear) {
+        String docQuery = this.getDocumentTypeEnum().toString().toUpperCase() + "/" + countByYear.toString() + "/"
+                + LocalDate.now().getYear();
+        this.docNumber = docQuery;
     }
 }

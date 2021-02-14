@@ -9,6 +9,8 @@ import com.bartoszewski.erpone.Entity.Contractor;
 import com.bartoszewski.erpone.Entity.Thing;
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
 import com.bartoszewski.erpone.Entity.Documents.Documents;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsProjection;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsWithDetailsProjection;
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 import com.bartoszewski.erpone.Enum.StatusTypeEnum;
 import com.bartoszewski.erpone.Repository.ContractorRepository;
@@ -44,7 +46,6 @@ public class DocumentsServiceImpl implements DocumentsService {
 	@Override
 	public ResponseEntity<?> create(Documents entity, Authentication authentication) {
 		switch (entity.getDocumentTypeEnum()) {
-			case zmw:
 			case zm:
 				return makeOrder(entity, authentication);
 			case pw:
@@ -130,6 +131,8 @@ public class DocumentsServiceImpl implements DocumentsService {
 				detailsWithoutStock.add(documentDetail);
 			}
 		}
+		Long c = documentsRepository.countByYear(LocalDate.now().getYear(), entity.getDocumentTypeEnum()) + 1;
+		entity.setDocNumber(c);
 		entity.setUser(userRepository.findByEmail(authentication.getName()));
 		return detailsWithoutStock.size() > 0 ? new ResponseEntity<>(detailsWithoutStock, HttpStatus.BAD_REQUEST)
 				: new ResponseEntity<>(documentsRepository.save(entity), HttpStatus.OK);
@@ -142,15 +145,16 @@ public class DocumentsServiceImpl implements DocumentsService {
 			Thing thing = thingsRepository.getOne(documentDetail.getThing().getId());
 			thing.setQuantity(thing.getQuantity() + documentDetail.getQuantity());
 		}
+		Long c = documentsRepository.countByYear(LocalDate.now().getYear(), entity.getDocumentTypeEnum()) + 1;
+		entity.setDocNumber(c);
 		entity.setUser(userRepository.findByEmail(authentication.getName()));
 		return new ResponseEntity<>(documentsRepository.save(entity), HttpStatus.CREATED);
 	}
 
 	private ResponseEntity<?> makeOrder(Documents entity, Authentication authentication) {
 		List<DocumentDetails> disabledDetails = new ArrayList<>(0);
-		Contractor contractor = contractorRepository.getOne(entity.getOrderDocumentDetails().getContractor().getId());
-		if (entity.getOrderDocumentDetails().getTargetDateTime() != null
-				&& entity.getOrderDocumentDetails().getContractor() != null) {
+		Contractor contractor = contractorRepository.getOne(entity.getContractor().getId());
+		if (entity.getTargetDateTime() != null && entity.getContractor() != null) {
 			for (Iterator<DocumentDetails> documentsDetails = entity.getDocumentDetails().iterator(); documentsDetails
 					.hasNext();) {
 				DocumentDetails documentDetail = documentsDetails.next();
@@ -158,9 +162,12 @@ public class DocumentsServiceImpl implements DocumentsService {
 					documentsDetails.remove();
 					disabledDetails.add(documentDetail);
 				}
-				documentDetail.setThing(thingsRepository.getOne(documentDetail.getThing().getId()));
+				// documentDetail.setThing(thingsRepository.getOne(documentDetail.getThing().getId()));
+				documentDetail.getPrice().setThing(thingsRepository.getOne(documentDetail.getThing().getId()));
 			}
-			entity.getOrderDocumentDetails().setContractor(contractor);
+			Long c = documentsRepository.countByYear(LocalDate.now().getYear(), entity.getDocumentTypeEnum()) + 1;
+			entity.setDocNumber(c);
+			entity.setContractor(contractor);
 			entity.setUser(userRepository.findByEmail(authentication.getName()));
 			return disabledDetails.size() > 0 ? new ResponseEntity<>(disabledDetails, HttpStatus.BAD_REQUEST)
 					: new ResponseEntity<>(documentsRepository.save(entity), HttpStatus.OK);
@@ -173,5 +180,17 @@ public class DocumentsServiceImpl implements DocumentsService {
 		List<DocumentDetails> detailsWithoutStock = new ArrayList<>(0);
 
 		return new ResponseEntity<>("status", HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<DocumentsProjection>> getDocuments(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return new ResponseEntity<>(documentsRepository.getDocuments(pageable), HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<DocumentsWithDetailsProjection>> getDocumentDetailsById(Pageable pageable, Long id) {
+		// TODO Auto-generated method stub
+		return new ResponseEntity<>(documentsRepository.getDocumentDetailsById(pageable, id), HttpStatus.OK);
 	}
 }

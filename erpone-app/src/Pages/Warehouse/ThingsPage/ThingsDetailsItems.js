@@ -3,11 +3,11 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import DomainIcon from '@material-ui/icons/Domain';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import TimelineIcon from '@material-ui/icons/Timeline';
-import PriceCard from './PriceCard';
-import DetailsCard from './DetailsCard';
-import StocksCard from './StocksCard';
-import DeliveriesCard from './DeliveriesCard.js';
-import UsagesCard from './UsagesCard.js';
+import PriceCard from './Cards/PriceCard';
+import DetailsCard from './Cards/DetailsCard';
+import StocksCard from './Cards/StocksCard';
+import PurchaseCard from './Cards/PurchaseCard';
+import SalesCard from './Cards/SalesCard';
 
 const ThingsDetailsItems = [
   
@@ -21,18 +21,18 @@ const ThingsDetailsItems = [
   },
     {
     id: "2",
-    nameHeader: "Dostawy",
+    nameHeader: "Zakup",
     avatar: AddShoppingCartIcon,
-    route: "deliveries",
-    component: DeliveriesCard,
+    route: "purchase",
+    component: PurchaseCard,
     subTitle: "Możesz tutaj zobaczyć ostatnie dostawy. Po wejściu w kartę zobaczysz wszystkie dostawy + zamówienia jakie były zrobione na dany towar. Dodatkowo analiza, która pokaże czy towar wjeżdza zgodnie z datą realizacji z zamówienia."
   },
   {
     id: "3",
-    nameHeader: "Zużycie",
+    nameHeader: "Sprzedaż",
     avatar: TimelineIcon,
-    route: "usages",
-    component: UsagesCard,
+    route: "sale",
+    component: SalesCard,
     subTitle: "Karta ta przedstawia średnie zużycie surowca/artykułu na podstawie dokumentów magazynowych/sprzedażowych w okresie 3,6,9,12 miesięcy. Po przejściu w szczegóły zobaczyć analizę zużycia wraz z wagami przypisanymi do danego okresu w roku np. większa sprzedaż wycieraczek do domu w okresie jesiennym. Wtedy też system podpowie ci aby zwiększyć stany magazynowe by podołać zapotrzebowaniu."
   },
           {

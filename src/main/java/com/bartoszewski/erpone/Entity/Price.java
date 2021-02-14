@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
@@ -35,6 +34,7 @@ public class Price {
 	@Column(name = "Price")
 	private Double price;
 
+	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "Thing_Id")
 	private Thing thing;

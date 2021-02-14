@@ -15,7 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
-import com.bartoszewski.erpone.Entity.Documents.OrderDocumentDetails;
+import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -50,7 +50,7 @@ public class Contractor {
     @OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ForeignCode> foreignCodes;
     @OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY)
-    private List<OrderDocumentDetails> orderDocumentDetails;
+    private List<Documents> documents;
 
     public String getName() {
         return name;
@@ -128,22 +128,22 @@ public class Contractor {
         this.id = id;
     }
 
-    public List<OrderDocumentDetails> getOrderDocumentDetails() {
-        return orderDocumentDetails;
+    public List<Documents> getOrderDocumentDetails() {
+        return documents;
     }
 
-    public void setOrderDocumentDetails(List<OrderDocumentDetails> orderDocumentDetails) {
-        this.orderDocumentDetails = orderDocumentDetails;
+    public void setOrderDocumentDetails(List<Documents> orderDocumentDetails) {
+        this.documents = orderDocumentDetails;
     }
 
-    public void addOrderDocumentDetail(OrderDocumentDetails orderDocumentDetails) {
-        this.orderDocumentDetails.add(orderDocumentDetails);
-        orderDocumentDetails.setContractor(this);
+    public void addOrderDocumentDetail(Documents documents) {
+        this.documents.add(documents);
+        documents.setContractor(this);
     }
 
-    public void removeOrderDocumentDetail(OrderDocumentDetails orderDocumentDetails) {
-        this.orderDocumentDetails.remove(orderDocumentDetails);
-        orderDocumentDetails.setContractor(null);
+    public void removeOrderDocumentDetail(Documents documents) {
+        this.documents.remove(documents);
+        documents.setContractor(null);
     }
 
     @Override

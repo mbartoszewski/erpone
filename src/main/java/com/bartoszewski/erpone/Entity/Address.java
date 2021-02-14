@@ -86,4 +86,10 @@ public class Address {
 		this.id = id;
 	}
 
+	@Override
+	public String toString() {
+		return "Address [city=" + city + ", country=" + country + ", number=" + number + ", postalCode=" + postalCode
+				+ ", street=" + street + "]";
+	}
+
 }

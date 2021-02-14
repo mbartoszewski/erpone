@@ -1,7 +1,5 @@
 package com.bartoszewski.erpone.Entity.Documents;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,9 +19,6 @@ public class ProductionOrderDocumentDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
 	private Long id;
-	@NotNull
-	@Column(name = "Target_Date_Time")
-	private LocalDateTime targetDateTime;
 	@OneToOne
 	@NotNull
 	@JoinColumn(name = "Recipe_Id")
@@ -39,14 +34,6 @@ public class ProductionOrderDocumentDetails {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public LocalDateTime getTargetDateTime() {
-		return targetDateTime;
-	}
-
-	public void setTargetDateTime(LocalDateTime targetDateTime) {
-		this.targetDateTime = targetDateTime;
 	}
 
 	public Recipe getRecipe() {

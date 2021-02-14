@@ -1,30 +1,34 @@
 import React from 'react'
 
-import AddThingDialog from './AddThingDialog'
+import AddThingDialog from '../ThingsPage/AddThingDialog'
 import clsx from 'clsx'
-import DeleteIcon from '@material-ui/icons/Delete'
-import GlobalFilter from './GlobalFilter'
-import IconButton from '@material-ui/core/IconButton'
+import GlobalFilter from '../ThingsPage/GlobalFilter'
 import { lighten, makeStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
-import Tooltip from '@material-ui/core/Tooltip'
-import TextField from '@material-ui/core/TextField'
-import { MenuItem } from '@material-ui/core'
+
 
 const useToolbarStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
-    backgroundColor: '#ddf6dd'
+              backgroundColor: '#ddf6dd',
+
   },
 
   addThingButton: {
-    flex: '1 1 100%',
+    flex: 'auto',
   },
    title: {
-    flex: '0 0 100%',
+    flex: '1 1 100%',
+  },
+    selected: {
+      flex: '1 1 100%',
+      margin: theme.spacing(1),
+  },
+    searchBox: {
+      flex: 'initial',
   },
   highlight:
     theme.palette.type === 'light'
@@ -41,6 +45,7 @@ const useToolbarStyles = makeStyles(theme => ({
 const TableToolbar = props => {
   const classes = useToolbarStyles()
   const {
+    title,
     numSelected,
     addThingHandler,
     preGlobalFilteredRows,
@@ -53,10 +58,13 @@ const TableToolbar = props => {
         [classes.highlight]: numSelected > 0,
       })}
     >
+      <Typography variant="h6">
+        {title}
+      </Typography>
       <div className = {classes.addThingButton}>
         <AddThingDialog addThingHandler={addThingHandler} />
       </div>
-      {numSelected > 0 ? (<Typography className = {classes.title}>{numSelected} selected</Typography>) : 
+      {numSelected > 0 ? (<Typography className = {classes.selected}>{numSelected} selected</Typography>) : 
       (
         <div className={classes.searchBox}>
           <GlobalFilter 
@@ -75,6 +83,7 @@ TableToolbar.propTypes = {
   setGlobalFilter: PropTypes.func.isRequired,
   preGlobalFilteredRows: PropTypes.array.isRequired,
   globalFilter: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
 }
 
 export default TableToolbar

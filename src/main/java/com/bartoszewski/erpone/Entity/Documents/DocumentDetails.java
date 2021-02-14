@@ -17,7 +17,7 @@ import com.bartoszewski.erpone.Entity.Thing;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@JsonIgnoreProperties(value = { "document", "price" }, allowSetters = true)
+@JsonIgnoreProperties(value = { "document" }, allowSetters = true)
 public class DocumentDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class DocumentDetails {
 	@NotNull
 	@JoinColumn(name = "Thing_Id")
 	private Thing thing;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "Price_Id")
 	private Price price;
 	@ManyToOne(fetch = FetchType.LAZY)

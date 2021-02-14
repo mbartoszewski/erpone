@@ -1,8 +1,10 @@
 package com.bartoszewski.erpone.Controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsProjection;
 import com.bartoszewski.erpone.Service.BaseService;
 import com.bartoszewski.erpone.Service.DocumentDetailsService;
 
@@ -50,5 +52,11 @@ public class DocumentDetailsController extends BaseController<DocumentDetails, L
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
 			@RequestParam("thing") Long thing, @RequestParam(value = "type", required = false) String type) {
 		return documentDetailsService.findAllOperationsByThingAndType(pageable, thing, type, startDate, endDate);
+	}
+
+	@GetMapping("/last")
+	public ResponseEntity<Page<DocumentsDetailsProjection>> test(Pageable pageable, @RequestParam("thing") Long thing,
+			@RequestParam(value = "type", required = false) List<String> type) {
+		return documentDetailsService.findByProjection(pageable, thing, type);
 	}
 }

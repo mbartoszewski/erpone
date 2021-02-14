@@ -1,8 +1,10 @@
 package com.bartoszewski.erpone.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsProjection;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,4 +19,6 @@ public interface DocumentDetailsService extends BaseService<DocumentDetails, Lon
 
 	public ResponseEntity<Page<DocumentDetails>> findAllOperationsByThingAndType(Pageable pageable, Long thing,
 			String type, LocalDate startDate, LocalDate endDate);
+
+	ResponseEntity<Page<DocumentsDetailsProjection>> findByProjection(Pageable pageable, Long thing, List<String> type);
 }

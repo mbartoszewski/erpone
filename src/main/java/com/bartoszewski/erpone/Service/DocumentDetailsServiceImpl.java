@@ -1,8 +1,11 @@
 package com.bartoszewski.erpone.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsProjection;
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 import com.bartoszewski.erpone.Repository.DocumentDetailsRepository;
 import com.bartoszewski.erpone.Repository.ThingRepository;
@@ -81,5 +84,17 @@ public class DocumentDetailsServiceImpl implements DocumentDetailsService {
 		DocumentTypeEnum typeEnum = type != null ? DocumentTypeEnum.valueOf(type) : null;
 		return new ResponseEntity<>(documentDetailsRepository.findAllOperationsByThingAndType(pageable, thing, typeEnum,
 				startDate, endDate), HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<DocumentsDetailsProjection>> findByProjection(Pageable pageable, Long thing,
+			List<String> type) {
+
+		List<DocumentTypeEnum> typeEnum = type != null
+				? type.stream().map((t) -> DocumentTypeEnum.valueOf(t)).collect(Collectors.toList())
+				: null;
+
+		return new ResponseEntity<>(
+				documentDetailsRepository.findbydDocumentsDetailsProjections(pageable, thing, typeEnum), HttpStatus.OK);
 	}
 }

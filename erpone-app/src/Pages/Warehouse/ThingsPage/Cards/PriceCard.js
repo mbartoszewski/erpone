@@ -1,11 +1,11 @@
-import React, {useContext} from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import { useParams } from "react-router-dom";
 import moment from 'moment'
-import { apiStates, useApi } from '../../Components/Fetch'
+import { apiStates, useApi } from '../../../../Components/Fetch'
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -26,7 +26,8 @@ function PriceCard()
 	const { state, error, data } = useApi(`http://localhost:5000/api/things/${id}/price?startDate=${currentDate}`);
 	switch (state)
 	{
-		case apiStates.ERROR:
+		 case apiStates.ERROR,
+      			apiStates.EMPTY:
 		return <p className={classes.root}>Error: {error} || 'General error'</p>;
 		case apiStates.SUCCESS:
 		return (

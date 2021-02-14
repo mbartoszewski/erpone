@@ -1,7 +1,9 @@
 package com.bartoszewski.erpone.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsProjection;
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 
@@ -25,4 +27,8 @@ public interface DocumentDetailsRepository extends BaseRepository<DocumentDetail
 	public Page<DocumentDetails> findAllOperationsByThingAndType(Pageable pageable, @Param("thing") Long thing,
 			@Param("type") DocumentTypeEnum type, @Param("startDate") LocalDate startDate,
 			@Param("endDate") LocalDate endDate);
+
+	@Query("SELECT dd FROM DocumentDetails dd WHERE dd.thing.id = :thing AND dd.document.documentTypeEnum IN :documentTypeEnum ORDER BY dd.document.createdAt DESC")
+	public Page<DocumentsDetailsProjection> findbydDocumentsDetailsProjections(Pageable pageable,
+			@Param("thing") Long thing, @Param("documentTypeEnum") List<DocumentTypeEnum> documentTypeEnum);
 }
