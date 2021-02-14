@@ -124,8 +124,8 @@ const WarehouseDocumentsDetails = () =>
 								</Grid>
 							  	<Grid item xs={12} sm={12} xl ={6}>
 								   <Typography>
-										Łuszczanowice, ul. Złota 178 {<br></br>}
-										97-410 Kleszczów, {<br></br>}
+										Miasto, ul. Główna 178 {<br></br>}
+										99-999 Daleko, {<br></br>}
 										Polska {<br></br>}
 						  			</Typography>
 							 	</Grid>
