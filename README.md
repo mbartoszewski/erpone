@@ -15,4 +15,8 @@ Główne funkcjonalności, które chciałbym zaimplementować:\
 <img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/thing_search.jpg">
 <img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/thing_selected.jpg">
 <img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/warehouse.jpg">
+<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/document_detail.png">
+<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/document.png">
+
+
 
