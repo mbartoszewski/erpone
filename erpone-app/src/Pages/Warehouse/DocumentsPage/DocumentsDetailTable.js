@@ -7,14 +7,13 @@ import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import TableToolbar from './DocumentsTableToolbar'
 import { useParams } from "react-router-dom";
 import {
   useGlobalFilter,
-  useRowSelect,
   useSortBy,
   useTable,
 } from 'react-table'
+import { TableFooter } from '@material-ui/core';
 const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref) =>
 {
 	const defaultRef = React.useRef()
@@ -38,6 +37,7 @@ const DocumentsDetailsTable = ({data, columns}) =>
 		getTableProps,
 		getTableBodyProps,
 		headerGroups,
+		footerGroups,
 		rows,
 		prepareRow,
 	} = useTable({ data, columns }, useSortBy)
@@ -85,7 +85,18 @@ const DocumentsDetailsTable = ({data, columns}) =>
 								)
 							})
 						}
-					</TableBody>
+				</TableBody>
+				<TableFooter>
+					{footerGroups.map(group => (
+						<TableRow {...group.getFooterGroupProps()}>
+							{group.headers.map(column => (
+								<TableCell {...column.getFooterProps()}>
+									{column.render('Footer')}
+								</TableCell>
+							))}
+						</TableRow>
+					))}
+				</TableFooter>
 				</MaUTable>			
 			</TableContainer>
 		);

@@ -27,7 +27,6 @@ function PurchaseCard()
       { Header: 'Contractor', accessor: 'document.contractor.name' },
       { Header: 'Quantity', accessor: 'quantity' },
       { Header: 'Units', accessor: 'thing.unit.code' },
-      { Header: "Target data", accessor: "thing.unit.code" },
       { Header: 'Status', accessor: 'document.statusTypeEnum' }], []);
   switch (state)
   {

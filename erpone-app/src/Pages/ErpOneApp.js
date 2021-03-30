@@ -12,7 +12,6 @@ const { state: stateCurrency, error: errorCurrency, data: dataCurrency } = useAp
     
     return (
         <globalStateContext.Provider value={{ dataUnits, dataWarehouses, dataCurrency }}>
-            {console.log(dataUnits.content)}
             <div style={{display: "flex"}}>
                 <Sidebar history={props.history}/>
                 <div style={{width: '100vh', flexGrow: 1}}>

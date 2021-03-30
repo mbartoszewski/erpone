@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import {IconButton, Typography } from '@material-ui/core';
+import {Box, Grid, IconButton, Typography } from '@material-ui/core';
 import { useParams, Link } from "react-router-dom";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -13,32 +13,39 @@ import ThingsDetailsItems from './ThingsDetailsItems';
 const useStyles = makeStyles((theme) => ({
 	root: {},
 	detailsHeader: {
-		width: '100%',
 		top: '0',
 		zIndex: '1000',
 		backgroundColor: '#ddf6dd',
 		position: 'sticky',
-		borderBottom: '1px solid'
+		borderBottom: '1px solid',
+		display: 'flex',
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		paddingLeft: theme.spacing(1),
+		paddingRight: theme.spacing(1),
 	},
 	headerTitle: {
-		position: 'relative',
-		flex: '0 0 100%',
-		marginLeft: theme.spacing(1),
-		marginRight: theme.spacing(1),
-		fontSize: '1.5em',
+		flex: '3 3 70%',
+		fontSize: '1.3em',
 		fontWeight: 'bold'
 	},
 	headerDescription: {
-		position: 'relative',
-		flex: '0 0 100%',
-		marginLeft: theme.spacing(1),
-		marginRight: theme.spacing(1),
+		flex: '1 0 70%',
 		fontSize: '1em'
 	},
-	headerEditThing: {
-		position: 'relative',
-		flex: '0 0 100%'
+	headerQuantity: {
+		flex: '1 1 25%',
+		marginLeft: 'auto',
+		textAlign: 'right',
+		fontSize: '1.3em',
+		fontWeight: 'bold'
 	},
+	headerSalesQuantity: {
+			flex: '1 1 25%',
+			marginLeft: 'auto',
+			textAlign: 'right',
+			fontSize: '1em',
+		},
 	detailsDiv: {
 		margin: theme.spacing(3),
  },
@@ -57,13 +64,18 @@ function ThingsDetails()
 	const { id } = useParams();
 	return (
 		<div className={classes.root}>
-			<div className={classes.detailsHeader}>
+			<Box className={classes.detailsHeader}>
 				<Typography className={classes.headerTitle}>Tutaj jest header z kodem surowca o danym id: {id}</Typography>
+				<Typography className={classes.headerQuantity}>Stan: 58522 szt.</Typography>
 				<Typography className={classes.headerDescription}>Tutaj jest header z opisem surowca o danym id: {id}</Typography>
-			</div>
+				<Typography className={classes.headerSalesQuantity}>Stan handlowy: 38522 szt.</Typography>
+
+			</Box>
 			<div className={classes.detailsDiv}>
-			{ThingsDetailsItems.map(each => (
-				<React.Fragment key={each.id}>
+				<Grid container xs={12} spacing={2}>
+					{ThingsDetailsItems.map(each => (
+						<React.Fragment key={each.id}>
+							<Grid item xs={12} xm={6} xl={6}>
 					<Card className={classes.card} variant="outlined">
 						<CardHeader
 							title={each.nameHeader}
@@ -84,8 +96,10 @@ function ThingsDetails()
 							</Link>
 						</CardActions>
 					</Card>
+							</Grid>
 				</React.Fragment>
 			))}
+				</Grid>
 			</div>
 		</div>
 		);

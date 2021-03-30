@@ -5,17 +5,17 @@ import { Button, Grid, MenuItem, Paper, TextField, Typography } from '@material-
 import DocumentsDetailsTable from './DocumentsDetailTable'
 import { apiStates, useApi } from '../../../Components/Fetch'
 import { globalStateContext } from '../../ErpOneApp';
+import zIndex from '@material-ui/core/styles/zIndex';
 const useStyles = makeStyles (theme => ({
 	root: {
 		flexGrow: '1',
-		//backgroundColor: 'blue'
 		'& .MuiTextField-root': {
       margin: theme.spacing(1),
 			minWidth: '20ch',
     },
 	},
 	paper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     color: theme.palette.text.secondary,
 	},
 		errorMsg: {
@@ -27,21 +27,25 @@ const useStyles = makeStyles (theme => ({
 		position: 'sticky',
 		top: '0',
 		padding: '0.3em',
-    backgroundColor: '#ddf6dd'
-	},
-	ownerCompanyCard: {
-		//backgroundColor: 'green'
-
-	},
-	supplierCompanyCard: {
-		//backgroundColor: 'yellow'
-
+		border: '1px solid grey',
+		backgroundColor: 'white'
 	},
 	docNumber: {
 		textAlign: 'center',
 		//backgroundColor: 'red'
 	},
 }))
+
+const paymentTerms = [{ name: "7 days", length: 7 },
+	{ name: "14 days", length: 14 },
+	{ name: "21 days", length: 21 },
+	{ name: "28 days", length: 28 },
+	{ name: "45 days", length: 45 },
+{name: "60 days", length: 60},]
+
+const paymentForms = [{ code: "pre", name: 'Prepayment' },
+	{ code: "transfer", name: 'Bank transfer' },
+	{ code: "cash", name: 'Cash on delivery' },]
 
 const WarehouseDocumentsDetails = () =>
 {
@@ -56,12 +60,30 @@ const WarehouseDocumentsDetails = () =>
 	const [paymentForm, setPaymentForm] = useState();
   	const { state, error, data } = useApi(`http://localhost:5000/api/documents/${id}/details`);
   	const fetchedData = React.useMemo(() => data, data);
-  	const columns = React.useMemo(() => [
-      	{ Header: 'Code', accessor: 'thing.code' },
-      	{ Header: 'Name', accessor: 'thing.name' },
-      	{ Header: 'Quantity', accessor: 'quantity' },
+	const columns = React.useMemo(() => [
+		{ Header: 'Code', accessor: 'thing.code' },
+		{ Header: 'Name', accessor: 'thing.name' },
 		{ Header: "Unit", accessor: "thing.unit.code" },
-		{ Header: 'Price', accessor: 'price.price' }], []);
+		{
+			Header: 'Quantity', accessor: 'quantity', Footer: info =>
+			{
+				const totalQuantity = React.useMemo(
+				() => info.rows.reduce((sum, row) => row.values.quantity + sum, 0),[info.rows]
+				)
+				return <>Total quantity: {totalQuantity}</>
+		} },
+		{ Header: 'Net price', accessor: 'price.price'},
+		{ Header: 'Net', accessor: 'net',  accessor: row =>
+		{
+			return <>{(row.quantity) * (row.price.price)}</>
+		}, Footer: info =>
+			{
+				console.log(info.rows)
+			const totalNetValue = React.useMemo(
+				() => info.rows.reduce((sum, row) => row.values.Net.props.children + sum, 0),[info.rows]
+				)
+				return <>Total net value: {totalNetValue}</>
+		}}], []);
 	
 	const handleCurrencyChange = (event) =>
 	{
@@ -88,22 +110,22 @@ const WarehouseDocumentsDetails = () =>
 		<div className={classes.root}>
 			<div className={classes.documentHeader}>
 				<Grid container xs={12} spacing={1}>
-					<Grid item xs={4} sm={6} xl={6}>
+					<Grid item xs={4} sm={6} xl={8}>
 						<Typography className={classes.docNumber}>
 							{fetchedData[0].docNumber}
 						</Typography>
 					</Grid>
-					<Grid item xs={8} sm={6} xl={6}>
-						  <Button>
+					<Grid item xs={8} sm={6} xl={4}>
+						  <Button variant='outlined'>
 							  Zapisz
 						  </Button>
-						   <Button>
+						   <Button variant='outlined'>
 							  Edytuj
 						  </Button>
-						   <Button>
+						   <Button variant='outlined'>
 							  Usuń
 						  </Button>
-						  <Button>
+						  <Button variant='outlined'>
 							 PDF
 						  </Button>
 					</Grid>
@@ -189,13 +211,13 @@ const WarehouseDocumentsDetails = () =>
 								variant="outlined"
 								select
 								label="Payment form"
-								value={currency}
-								onChange={handleCurrencyChange}
+								value={paymentForms.name}
+								onChange={handlePaymentFormChange}
 								size="small"
 							>
-								{currencies.map((option) => (
-										<MenuItem key={option.name} value={option.name}>
-											{option.code}
+								{paymentForms.map((option) => (
+										<MenuItem key={option.code} value={option.name}>
+											{option.name}
 										</MenuItem>
 									))}	   
 							</TextField>
@@ -205,13 +227,13 @@ const WarehouseDocumentsDetails = () =>
 								variant="outlined"
 								select
 								label="Payment term"
-								value={currency}
-								onChange={handleCurrencyChange}
+								value={paymentTerms.name}
+								onChange={handlePaymentTermChange}
 								size="small"
 								>
-								{currencies.map((option) => (
-										<MenuItem key={option.name} value={option.name}>
-											{option.code}
+								{paymentTerms.map((option) => (
+										<MenuItem key={option.lenght} value={option.name}>
+											{option.name}
 										</MenuItem>
 									))}	   
 							</TextField>

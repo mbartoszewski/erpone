@@ -26,7 +26,6 @@ function StocksCard()
       { Header: 'Document', accessor: 'document.docNumber' },
       { Header: 'Quantity', accessor: 'quantity' },
       { Header: 'Units', accessor: 'thing.unit.code' },
-      { Header: "Target data", accessor: "thing.unit.code" },
       { Header: 'Status', accessor: 'document.statusTypeEnum' }], []);
   switch (state)
   {

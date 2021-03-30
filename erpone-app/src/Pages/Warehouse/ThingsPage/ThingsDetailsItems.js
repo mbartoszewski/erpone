@@ -13,30 +13,22 @@ const ThingsDetailsItems = [
   
   {
     id: "1",
-    nameHeader: "Stany",
+    nameHeader: "Zużycie",
     avatar: DomainIcon,
     route: "stocks",
     component: StocksCard,
-    subTitle: "Karta ta pokazuje stan oraz stan handlowy (uwzględniający rezerwację danej rzeczy) oraz przybliżony czas na jaki starczy surowca na podstawie zużycia. W szczegółach możesz zobaczyć wszystkie rezerwacje, rozchody, przychody."
-  },
-    {
-    id: "2",
-    nameHeader: "Zakup",
-    avatar: AddShoppingCartIcon,
-    route: "purchase",
-    component: PurchaseCard,
-    subTitle: "Możesz tutaj zobaczyć ostatnie dostawy. Po wejściu w kartę zobaczysz wszystkie dostawy + zamówienia jakie były zrobione na dany towar. Dodatkowo analiza, która pokaże czy towar wjeżdza zgodnie z datą realizacji z zamówienia."
+    subTitle: "Zużycie(na ile dni starczy stanu, zużycie w przeciągu ostatnich 3 miesięcy, zużycie w analogicznym okresie roku poprzedniego, najbliższe dostawy"
   },
   {
-    id: "3",
-    nameHeader: "Sprzedaż",
+    id: "2",
+    nameHeader: "Dokumenty",
     avatar: TimelineIcon,
     route: "sale",
     component: SalesCard,
-    subTitle: "Karta ta przedstawia średnie zużycie surowca/artykułu na podstawie dokumentów magazynowych/sprzedażowych w okresie 3,6,9,12 miesięcy. Po przejściu w szczegóły zobaczyć analizę zużycia wraz z wagami przypisanymi do danego okresu w roku np. większa sprzedaż wycieraczek do domu w okresie jesiennym. Wtedy też system podpowie ci aby zwiększyć stany magazynowe by podołać zapotrzebowaniu."
+    subTitle: "Ostatnie dokumenty, czyli po prostu lista ostatnich dokumentów, w których znajduje się dany surowiec."
   },
           {
-    id: "4",
+    id: "3",
     nameHeader: "Cena",
     avatar: MonetizationOnIcon,
     route: "prices",
@@ -44,7 +36,7 @@ const ThingsDetailsItems = [
     subTitle: "Wykres pokazujący ceny z ostatnich 6 miesięcy. Wchodząc w szczegóły tej karty możesz zobaczyć historię cen danego towaru/artykułu. Wykresy z wybranego przez siebie okresu i wiele więcej."
   },
             {
-    id: "5",
+    id: "4",
     nameHeader: "Szczegóły",
     avatar: DescriptionIcon,
     route: "details",

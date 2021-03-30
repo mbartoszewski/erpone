@@ -11,6 +11,8 @@ public interface DocumentsDetailsProjection {
 	Document getDocument();
 
 	interface Document {
+		Long getId();
+
 		StatusTypeEnum getStatusTypeEnum();
 
 		DocumentTypeEnum getDocumentTypeEnum();
