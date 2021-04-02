@@ -46,19 +46,19 @@ public class DocumentsServiceImpl implements DocumentsService {
 	@Override
 	public ResponseEntity<?> create(Documents entity, Authentication authentication) {
 		switch (entity.getDocumentTypeEnum()) {
-			case zm:
-				return makeOrder(entity, authentication);
-			case pw:
-			case pz:
-				return makeIncomeOperation(entity, authentication);
-			case rw:
-			case wz:
-			case wzz:
-				return makeOutgoingOperation(entity, authentication);
-			case zp:
-				return makeProductionOrder(entity, authentication);
-			default:
-				return null;
+		case zm:
+			return makeOrder(entity, authentication);
+		case pw:
+		case pz:
+			return makeIncomeOperation(entity, authentication);
+		case rw:
+		case wz:
+		case wzz:
+			return makeOutgoingOperation(entity, authentication);
+		case zp:
+			return makeProductionOrder(entity, authentication);
+		default:
+			return null;
 		}
 	}
 
@@ -177,7 +177,6 @@ public class DocumentsServiceImpl implements DocumentsService {
 	}
 
 	private ResponseEntity<?> makeProductionOrder(Documents entity, Authentication authentication) {
-		List<DocumentDetails> detailsWithoutStock = new ArrayList<>(0);
 
 		return new ResponseEntity<>("status", HttpStatus.OK);
 	}
