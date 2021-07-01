@@ -1,10 +1,16 @@
 package com.bartoszewski.erpone.Entity.Documents;
 
+import java.time.LocalDateTime;
+
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
 
-public interface DocumentsDetailsProjection {
+public interface DocumentsDetailsWithBalanceProjection {
+	Long getId();
+
 	Double getQuantity();
+
+	Double getBalance();
 
 	DocumentDetailsThing getThing();
 
@@ -17,22 +23,12 @@ public interface DocumentsDetailsProjection {
 
 		DocumentTypeEnum getDocumentTypeEnum();
 
-		String getDocNumber();
-
-		Contractor getContractor();
-
-		interface Contractor {
-			String getName();
-		}
+		LocalDateTime getCreatedAt();
 	}
 
 	interface DocumentDetailsThing {
-		String getCode();
+		Long getId();
 
-		Unit getUnit();
-
-		interface Unit {
-			String getCode();
-		}
+		// String getCode();
 	}
 }

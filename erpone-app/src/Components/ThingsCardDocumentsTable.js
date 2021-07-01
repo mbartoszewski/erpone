@@ -16,7 +16,7 @@ import {
 } from 'react-table'
 const useStyles = makeStyles((theme) => ({
 }))
-const TableComponent = ({ title, columns, data }) =>
+const ThingsCardDocumentsTable = ({ title, columns, data }) =>
 {
 	const classes = useStyles();
 
@@ -66,4 +66,4 @@ const TableComponent = ({ title, columns, data }) =>
 		</div>
 	);
 }
-export default TableComponent
+export default ThingsCardDocumentsTable

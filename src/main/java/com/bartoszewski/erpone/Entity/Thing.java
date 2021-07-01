@@ -27,7 +27,7 @@ public class Thing {
     @Column(name = "Id")
     private Long id;
     @NotNull
-    @Column(name = "Code", unique = true)
+    @Column(name = "Code", unique = true, updatable = false)
     private String code;
     @NotNull
     @Column(name = "Name", updatable = true)
@@ -53,6 +53,11 @@ public class Thing {
     @JoinColumn(name = "Warehouse_Id")
     @NotNull
     private Warehouse warehouse;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Category_Id")
+    @NotNull
+    private ThingCategory thingCategory;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Unit_Id")
     @NotNull
@@ -198,4 +203,13 @@ public class Thing {
         prices.remove(price);
         price.setThing(null);
     }
+
+    public ThingCategory getThingCategory() {
+        return thingCategory;
+    }
+
+    public void setThingCategory(ThingCategory thingCategory) {
+        this.thingCategory = thingCategory;
+    }
+
 }

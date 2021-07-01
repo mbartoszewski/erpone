@@ -16,6 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
 @EnableWebSecurity
@@ -27,9 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.httpBasic().and().cors().and().authorizeRequests(authorize -> authorize.antMatchers("/**").permitAll())
-				.csrf().disable()
-
-				.formLogin();
+				.csrf().disable().formLogin();
 	}
 
 	@Override
@@ -43,21 +45,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		final CorsConfiguration configuration = new CorsConfiguration();
-		List<String> url = new ArrayList<>(Arrays.asList("*"));
-		List<String> method = new ArrayList<>(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-		List<String> header = new ArrayList<>(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-		configuration.setAllowedOrigins(url); // www - obligatory
-		// configuration.setAllowedOrigins(ImmutableList.of("*")); //set access from all
-		// domains
-		configuration.setAllowedMethods(method);
-		configuration.setAllowCredentials(true);
-		configuration.setAllowedHeaders(header);
-
-		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-
-		return source;
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**").allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH");
+			}
+		};
 	}
+
 }

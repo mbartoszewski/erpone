@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import ThingsTable from './ThingsTable'
+import PurchaseOrderTable from './PurchaseOrderTable'
 import { apiStates, useApi } from '../../../Components/Fetch'
 
 const useStyles = makeStyles(theme => ({
@@ -11,16 +11,18 @@ const useStyles = makeStyles(theme => ({
 }
 }))
 
-const Warehouse = () =>
+const PurchaseOrders = () =>
 {
   const classes = useStyles()
-  const { state, error, data } = useApi('http://localhost:5000/api/things/');
+  const { state, error, data } = useApi('http://localhost:5000/api/documents?type=zm');
   const fetchedData = React.useMemo(() => data, data);
   const columns = React.useMemo(() => [
-      { Header: 'Code', accessor: 'code' },
-      { Header: 'Name', accessor: 'name' },
-      { Header: 'Quantity', accessor: 'quantity' },
-      { Header: "unit", accessor: "unit.code" }], []);
+    { Header: "Status", accessor: "statusTypeEnum" },
+      { Header: 'Number', accessor: 'docNumber' },
+      { Header: 'Created At', accessor: 'createdAt' },
+      { Header: 'Target Date', accessor: 'targetDateTime' },
+    { Header: "Description", accessor: "description" },
+  { Header: "Contractor", accessor: "contractor.name" }], []);
   
   switch (state)
   {
@@ -30,7 +32,7 @@ const Warehouse = () =>
     case apiStates.SUCCESS:
       return (
         <div>
-          <ThingsTable
+          <PurchaseOrderTable
             data={fetchedData}
             columns={columns}
             manual
@@ -41,4 +43,4 @@ const Warehouse = () =>
       return <p className={classes.errorMsg}>Loading....</p>;
   }
 }
-export default Warehouse;
+export default PurchaseOrders;

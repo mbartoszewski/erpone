@@ -26,7 +26,7 @@ public class ThingServiceImpl implements ThingService {
 
 	@Override
 	public ResponseEntity<Thing> create(Thing entity, Authentication authentication) {
-		System.out.println(entity.getWarehouse());
+		// entity.setCode(entity.getCode().toUpperCase());
 		return new ResponseEntity<>(thingsRepository.save(entity), HttpStatus.OK);
 	}
 

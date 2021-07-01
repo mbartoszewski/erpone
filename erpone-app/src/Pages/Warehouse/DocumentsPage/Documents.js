@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
 const WarehouseDocuments = () =>
 {
   const classes = useStyles()
-  const { state, error, data } = useApi('http://localhost:5000/api/documents/all');
+  const { state, error, data } = useApi('http://localhost:5000/api/documents');
   const fetchedData = React.useMemo(() => data, data);
   const columns = React.useMemo(() => [
     { Header: 'Status', accessor: 'statusTypeEnum' },
@@ -28,6 +28,7 @@ const WarehouseDocuments = () =>
   switch (state)
   {
     case apiStates.ERROR:
+    case apiStates.EMPTY:
       return <p className={classes.errorMsg}>Error: {error} || 'General error'</p>;
     case apiStates.SUCCESS:
       return (

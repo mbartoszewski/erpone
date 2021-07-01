@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsProjection;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsWithBalanceProjection;
+import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 import com.bartoszewski.erpone.Repository.DocumentDetailsRepository;
 import com.bartoszewski.erpone.Repository.ThingRepository;
@@ -33,6 +35,7 @@ public class DocumentDetailsServiceImpl implements DocumentDetailsService {
 
 	@Override
 	public ResponseEntity<DocumentDetails> create(DocumentDetails entity, Authentication authentication) {
+		entity.setBalance(entity.getQuantity());
 		return new ResponseEntity<>(documentDetailsRepository.save(entity), HttpStatus.OK);
 	}
 
@@ -96,5 +99,18 @@ public class DocumentDetailsServiceImpl implements DocumentDetailsService {
 
 		return new ResponseEntity<>(
 				documentDetailsRepository.findbydDocumentsDetailsProjections(pageable, thing, typeEnum), HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<DocumentsDetailsWithBalanceProjection>> findDocumentsDetailsWithBalanceProjection(
+			Pageable pageable, Long thing, List<String> documentTypeEnum, List<String> documentStatusEnum) {
+		List<DocumentTypeEnum> typeEnum = documentTypeEnum != null
+				? documentTypeEnum.stream().map((t) -> DocumentTypeEnum.valueOf(t)).collect(Collectors.toList())
+				: null;
+		List<DocumentStatusEnum> statusEnum = documentStatusEnum != null
+				? documentStatusEnum.stream().map((t) -> DocumentStatusEnum.valueOf(t)).collect(Collectors.toList())
+				: null;
+		return new ResponseEntity<>(documentDetailsRepository.findDocumentsDetailsWithBalanceProjection(pageable, thing,
+				typeEnum, statusEnum), HttpStatus.OK);
 	}
 }

@@ -11,10 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
+import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@JsonIgnoreProperties(value = { "prices", "contractors" }, allowSetters = true)
+@JsonIgnoreProperties(value = { "prices", "contractors", "documents" }, allowSetters = true)
 public class Currency {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +32,11 @@ public class Currency {
     private List<Price> prices;
     @OneToMany(mappedBy = "defaultCurrency", fetch = FetchType.LAZY)
     private List<Contractor> contractors;
+    @OneToMany(mappedBy = "documentCurrency", fetch = FetchType.LAZY)
+    private List<Documents> documents;
 
     public String getCode() {
+
         return code;
     }
 
@@ -74,6 +78,16 @@ public class Currency {
     public void removeContractor(Contractor contractor) {
         this.contractors.remove(contractor);
         contractor.setDefaultCurrency(null);
+    }
+
+    public void addDocument(Documents document) {
+        this.documents.add(document);
+        document.setDocumentCurrency(this);
+    }
+
+    public void removeDocument(Documents document) {
+        this.documents.remove(document);
+        document.setDocumentCurrency(null);
     }
 
     public List<Contractor> getContractors() {
@@ -126,6 +140,14 @@ public class Currency {
     @Override
     public String toString() {
         return "Currency [code=" + code + ", name=" + name + "]";
+    }
+
+    public List<Documents> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<Documents> documents) {
+        this.documents = documents;
     }
 
 }

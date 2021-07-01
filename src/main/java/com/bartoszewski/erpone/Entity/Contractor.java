@@ -35,7 +35,7 @@ public class Contractor {
     @Column(name = "Regon", unique = true)
     private String regon;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "Currency_Id")
     @NotNull
     private Currency defaultCurrency;

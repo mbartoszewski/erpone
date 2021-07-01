@@ -1,6 +1,7 @@
 package com.bartoszewski.erpone.Controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsProjection;
@@ -31,43 +32,17 @@ public class DocumentsController extends BaseController<Documents, Long> {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<Page<Documents>> findAllByType(Pageable pageable,
+	public ResponseEntity<Page<DocumentsProjection>> getAllDocuments(Pageable pageable,
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam("thing") Long thing, @RequestParam(value = "type", required = false) String type,
-			@RequestParam(value = "status", required = false) String status) {
-		return documentsService.findAllByType(pageable, thing, type, status, startDate, endDate);
-	}
-
-	@GetMapping("/orders/purchase")
-	public ResponseEntity<Page<Documents>> findPurchaseOrderByDetails(Pageable pageable,
-			@RequestParam(value = "startTargetDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-			@RequestParam(value = "endTargetDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam(value = "thing", required = false) Long thing,
-			@RequestParam(value = "type", required = false) String type,
+			@RequestParam(value = "type", required = false) List<String> type,
 			@RequestParam(value = "status", required = false) String status,
 			@RequestParam(value = "contractor", required = false) String contractor) {
-		return documentsService.findPurchaseOrderByDetails(pageable, thing, type, status, startDate, endDate,
-				contractor);
-	}
-
-	@GetMapping("/orders/production")
-	public ResponseEntity<Page<Documents>> findProductionOrderByDetails(Pageable pageable,
-			@RequestParam(value = "startTargetDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-			@RequestParam(value = "endTargetDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam(value = "status", required = false) String status,
-			@RequestParam(value = "recipe", required = false) Long recipe) {
-		return documentsService.findProductionOrderByDetails(pageable, status, startDate, endDate, recipe);
-	}
-
-	@GetMapping("/all")
-	public ResponseEntity<Page<DocumentsProjection>> getAllDocuments(Pageable pageable) {
-		return documentsService.getDocuments(pageable);
+		return documentsService.getDocuments(pageable, type, status, startDate, endDate, contractor);
 	}
 
 	@GetMapping("/{id}/details")
-	public ResponseEntity<Page<DocumentsWithDetailsProjection>> getDocumentDetailsById(Pageable pageable,
-			@PathVariable(value = "id") Long id) {
-		return documentsService.getDocumentDetailsById(pageable, id);
+	public ResponseEntity<DocumentsWithDetailsProjection> getDocumentDetailsById(@PathVariable(value = "id") Long id) {
+		return documentsService.getDocumentDetailsById(id);
 	}
 }

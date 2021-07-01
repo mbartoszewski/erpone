@@ -9,6 +9,7 @@ import CardActions from '@material-ui/core/CardActions';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import ThingsDetailsItems from './ThingsDetailsItems';
+import { apiStates, useApi } from '../../../Components/Fetch'
 
 const useStyles = makeStyles((theme) => ({
 	root: {},
@@ -62,12 +63,13 @@ function ThingsDetails()
 {
   	const classes = useStyles();
 	const { id } = useParams();
+	const { state: thingDetailsState, error: thingDetailsError, data: thingDetails } = useApi(`http://localhost:5000/api/things/${id}`);
 	return (
 		<div className={classes.root}>
 			<Box className={classes.detailsHeader}>
-				<Typography className={classes.headerTitle}>Tutaj jest header z kodem surowca o danym id: {id}</Typography>
-				<Typography className={classes.headerQuantity}>Stan: 58522 szt.</Typography>
-				<Typography className={classes.headerDescription}>Tutaj jest header z opisem surowca o danym id: {id}</Typography>
+				<Typography className={classes.headerTitle}>{thingDetails != null? thingDetails.code: ""}</Typography>
+				<Typography className={classes.headerQuantity}>Stan: {thingDetails != null? thingDetails.quantity: ""} {thingDetails != null? thingDetails.unit.code: ""}</Typography>
+				<Typography className={classes.headerDescription}>{thingDetails != null? thingDetails.name: ""}</Typography>
 				<Typography className={classes.headerSalesQuantity}>Stan handlowy: 38522 szt.</Typography>
 
 			</Box>

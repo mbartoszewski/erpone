@@ -36,7 +36,7 @@ const SidebarItems = [
     id: "5",
     nameHeader: "Warehouse",
     icon: DomainIcon,
-    subMenu: [{ id: "1", name: "Warehouse", route: "/warehouse/dashboard", icon: InboxIcon }, { id: "2", name: "Things", route: "/warehouse/things", icon: InboxIcon }, { id: "3", name: "Documents", route: "/warehouse/documents", icon: DescriptionIcon}]
+    subMenu: [{ id: "1", name: "Dashboard", route: "/warehouse/dashboard", icon: InboxIcon }, { id: "2", name: "Things", route: "/warehouse/things", icon: InboxIcon }, { id: "3", name: "Documents", route: "/warehouse/documents", icon: DescriptionIcon}]
   }
 ];
 

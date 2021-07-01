@@ -4,8 +4,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsProjection;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsWithBalanceProjection;
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
+import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,4 +33,9 @@ public interface DocumentDetailsRepository extends BaseRepository<DocumentDetail
 	@Query("SELECT dd FROM DocumentDetails dd WHERE dd.thing.id = :thing AND dd.document.documentTypeEnum IN :documentTypeEnum ORDER BY dd.document.createdAt DESC")
 	public Page<DocumentsDetailsProjection> findbydDocumentsDetailsProjections(Pageable pageable,
 			@Param("thing") Long thing, @Param("documentTypeEnum") List<DocumentTypeEnum> documentTypeEnum);
+
+	@Query("SELECT dd  FROM DocumentDetails dd inner join Documents as d on d.id = dd.document.id WHERE dd.document.documentTypeEnum IN :documentTypeEnum AND dd.document.documentStatusEnum IN :documentStatusEnum AND dd.thing.id = :thing AND dd.balance > 0 order by d.createdAt ASC")
+	public Page<DocumentsDetailsWithBalanceProjection> findDocumentsDetailsWithBalanceProjection(Pageable pageable,
+			@Param("thing") Long thing, @Param("documentTypeEnum") List<DocumentTypeEnum> documentTypeEnum,
+			@Param("documentStatusEnum") List<DocumentStatusEnum> documentStatusEnum);
 }

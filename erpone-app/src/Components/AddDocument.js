@@ -9,12 +9,12 @@ import PropTypes from 'prop-types'
 import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
 import { InputLabel, Select, MenuItem } from '@material-ui/core'
-import { globalStateContext } from '../../ErpOneApp'
+import { globalStateContext } from '../Pages/ErpOneApp'
 import Slide from '@material-ui/core/Slide';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import CloseIcon from '@material-ui/icons/Close';
-import { apiStates, useApi} from '../../../Components/Fetch';
+import { apiStates, useApi} from './Fetch';
 import { List, Divider, Tooltip, Zoom } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -39,11 +39,11 @@ const Transition = React.forwardRef(function Transition(props, ref)
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const AddThingDialog = props =>
+const AddDocument = props =>
 {
   const classes = useStyles();
   const [thing, setThing] = useState(initialThing)
-  const { addThingHandler } = props
+  const { addDocumentHandler } = props
   const [open, setOpen] = React.useState(false)
   const [switchState, setSwitchState] = React.useState({addMultiple: false,})
   const globalContext = useContext(globalStateContext);
@@ -98,10 +98,6 @@ const AddThingDialog = props =>
   }
   return (
     <div>
-      <IconButton aria-label="Add thing" onClick={handleClickOpen}>
-        <AddIcon/>
-      </IconButton>
-      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
         <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
@@ -123,7 +119,6 @@ const AddThingDialog = props =>
             </Button>
           </Toolbar>
         </AppBar>
-        <DialogContent>
           <Typography variant="h6">Basic info:</Typography>
           <Divider/>
             <Grid container xs={12} spacing={2}>
@@ -202,14 +197,12 @@ const AddThingDialog = props =>
                 />
                 </Grid>
           </Grid>   
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
 
-AddThingDialog.propTypes = {
-  addThingHandler: PropTypes.func.isRequired,
+AddDocument.propTypes = {
+  addDocumentHandler: PropTypes.func.isRequired,
 }
 
-export default AddThingDialog;
+export default AddDocument;

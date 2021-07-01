@@ -1,12 +1,14 @@
 import React from 'react'
 
-import AddThingDialog from './AddThingDialog'
+import AddDocument from '../../../Components/AddDocument'
 import clsx from 'clsx'
-import GlobalFilter from './GlobalFilter'
+import GlobalFilter from '../../Warehouse/ThingsPage/GlobalFilter'
 import { lighten, makeStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
+import {Box, Grid, IconButton, Typography } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add'
+import { Link } from "react-router-dom";
 
 
 const useToolbarStyles = makeStyles(theme => ({
@@ -36,11 +38,11 @@ const useToolbarStyles = makeStyles(theme => ({
         },
 }))
 
-const TableToolbar = props => {
+const PurchaseTableToolbar = props => {
   const classes = useToolbarStyles()
   const {
     numSelected,
-    addThingHandler,
+    addDocumentHandler,
     preGlobalFilteredRows,
     setGlobalFilter,
     globalFilter,
@@ -52,7 +54,9 @@ const TableToolbar = props => {
       })}
     >
       <div className = {classes.addThingButton}>
-        <AddThingDialog addThingHandler={addThingHandler} />
+        <IconButton aria-label="Add document" component={Link} to={`/documents/add`}>
+          <AddIcon/>
+        </IconButton>
       </div>
       {numSelected > 0 ? (<Typography className = {classes.title}>{numSelected} selected</Typography>) : 
       (
@@ -67,12 +71,12 @@ const TableToolbar = props => {
   )
 }
 
-TableToolbar.propTypes = {
+PurchaseTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
-  addThingHandler: PropTypes.func.isRequired,
+  addDocumentHandler: PropTypes.func.isRequired,
   setGlobalFilter: PropTypes.func.isRequired,
   preGlobalFilteredRows: PropTypes.array.isRequired,
   globalFilter: PropTypes.string.isRequired,
 }
 
-export default TableToolbar
+export default PurchaseTableToolbar

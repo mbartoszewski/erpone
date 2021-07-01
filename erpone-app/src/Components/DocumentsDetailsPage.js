@@ -2,10 +2,10 @@ import React, {useState, useContext} from 'react'
 import { useParams, Link } from "react-router-dom";
 import { makeStyles } from '@material-ui/core/styles'
 import { Button, Grid, MenuItem, Paper, TextField, Typography } from '@material-ui/core'
-import DocumentsDetailsTable from './DocumentsDetailTable'
-import { apiStates, useApi } from '../../../Components/Fetch'
-import { globalStateContext } from '../../ErpOneApp';
-import zIndex from '@material-ui/core/styles/zIndex';
+import DocumentsDetailsTable from './DocumentsDetailsTable'
+import { apiStates, useApi } from './Fetch'
+import { globalStateContext } from '../Pages/ErpOneApp';
+
 const useStyles = makeStyles (theme => ({
 	root: {
 		flexGrow: '1',
@@ -28,7 +28,9 @@ const useStyles = makeStyles (theme => ({
 		top: '0',
 		padding: '0.3em',
 		border: '1px solid grey',
-		backgroundColor: 'white'
+		backgroundColor: 'white',
+		display: "flex",
+		justifyContent: "flex-end"
 	},
 	docNumber: {
 		textAlign: 'center',
@@ -36,30 +38,23 @@ const useStyles = makeStyles (theme => ({
 	},
 }))
 
-const paymentTerms = [{ name: "7 days", length: 7 },
-	{ name: "14 days", length: 14 },
-	{ name: "21 days", length: 21 },
-	{ name: "28 days", length: 28 },
-	{ name: "45 days", length: 45 },
-{name: "60 days", length: 60},]
-
-const paymentForms = [{ code: "pre", name: 'Prepayment' },
-	{ code: "transfer", name: 'Bank transfer' },
-	{ code: "cash", name: 'Cash on delivery' },]
-
-const WarehouseDocumentsDetails = () =>
+const DocumentsDetailsPage = () =>
 {
 	const classes = useStyles();
 	const { id } = useParams();
 	const globalContext = useContext(globalStateContext);
-	const currencies = globalContext.dataCurrency;
+	const currencies = globalContext.dataCurrencies;
 	const warehouses = globalContext.dataWarehouses;
+	const paymentForms = globalContext.dataPaymentForms;
+	const paymentTerms = globalContext.dataPaymentTerms;
+	const docStatus = globalContext.dataDocumentStatus;
 	const [currency, setCurrency] = useState();
 	const [warehouse, setWarehouse] = useState();
 	const [paymentTerm, setPaymentTerm] = useState();
 	const [paymentForm, setPaymentForm] = useState();
-  	const { state, error, data } = useApi(`http://localhost:5000/api/documents/${id}/details`);
-  	const fetchedData = React.useMemo(() => data, data);
+	const [documentStatus, setDocumentStatus] = useState();
+  	const { state: documentDetailState, error: documentDetailError, data: documentDetailData } = useApi(`http://localhost:5000/api/documents/${id}/details`);
+  	const fetchedData = React.useMemo(() => documentDetailData, documentDetailData);
 	const columns = React.useMemo(() => [
 		{ Header: 'Code', accessor: 'thing.code' },
 		{ Header: 'Name', accessor: 'thing.name' },
@@ -78,13 +73,13 @@ const WarehouseDocumentsDetails = () =>
 			return <>{(row.quantity) * (row.price.price)}</>
 		}, Footer: info =>
 			{
-				console.log(info.rows)
 			const totalNetValue = React.useMemo(
 				() => info.rows.reduce((sum, row) => row.values.Net.props.children + sum, 0),[info.rows]
 				)
 				return <>Total net value: {totalNetValue}</>
-		}}], []);
-	
+			}
+		}], []);
+
 	const handleCurrencyChange = (event) =>
 	{
 		setCurrency(event.target.value);
@@ -101,34 +96,39 @@ const WarehouseDocumentsDetails = () =>
 	{
 		setPaymentTerm(event.target.value);
 	}
-	switch (state)
+	const handleDocumentStatusChange = (event) =>
+	{
+		setDocumentStatus(event.target.value);
+	}
+	switch (documentDetailState)
   {
-    case apiStates.ERROR:
-      return <p className={classes.errorMsg}>Error: {error} || 'General error'</p>;
+	case apiStates.ERROR:
+	case apiStates.EMPTY:
+      return <p className={classes.errorMsg}>Error: {documentDetailError} || 'General error'</p>;
     case apiStates.SUCCESS:
       return (
 		<div className={classes.root}>
 			<div className={classes.documentHeader}>
-				<Grid container xs={12} spacing={1}>
+				<Grid container xs={12} spacing={1}>	  
 					<Grid item xs={4} sm={6} xl={8}>
-						<Typography className={classes.docNumber}>
-							{fetchedData[0].docNumber}
-						</Typography>
+					<Typography className={classes.docNumber}>
+							  {fetchedData.docNumber}
+					</Typography>
 					</Grid>
 					<Grid item xs={8} sm={6} xl={4}>
-						  <Button variant='outlined'>
-							  Zapisz
-						  </Button>
-						   <Button variant='outlined'>
-							  Edytuj
-						  </Button>
-						   <Button variant='outlined'>
-							  Usuń
-						  </Button>
-						  <Button variant='outlined'>
-							 PDF
-						  </Button>
-					</Grid>
+						<Button variant='outlined'>
+							Zapisz
+						</Button>
+						<Button variant='outlined'>
+							Edytuj
+						</Button>
+						<Button variant='outlined'>
+							Usuń
+						</Button>
+						<Button variant='outlined'>
+							PDF
+						</Button>
+					</Grid>				 
 					<Grid item xs={12} sm={4} xl={6}>
 					  <Paper className={classes.paper}>
 						  <Grid container xs={12} spacing={1}>
@@ -136,25 +136,29 @@ const WarehouseDocumentsDetails = () =>
 								   <form>
 										<TextField
 											id='textfield-contractor-name'
+											Disa
 											variant='outlined'
 											label="Contractor name"
 											size='small'
-											InputProps={{ readOnly: false, }}
-											fullWidth={true}>
+											InputProps={{ readOnly: true, }}
+											fullWidth={true}
+											defaultValue={fetchedData.contractor.name}>
 										</TextField>
 						  			</form>
 								</Grid>
 							  	<Grid item xs={12} sm={12} xl ={6}>
 								   <Typography>
-										Miasto, ul. Główna 178 {<br></br>}
-										99-999 Daleko, {<br></br>}
-										Polska {<br></br>}
+										{fetchedData.contractor.address.street != null ? fetchedData.contractor.address.street + " ": ""}
+										{fetchedData.contractor.address.number !=null? fetchedData.contractor.address.number + ", ": ""}{<br></br>}
+										{fetchedData.contractor.address.postalCode != null ? fetchedData.contractor.address.postalCode + " " : ""}
+										{fetchedData.contractor.address.city !=null? fetchedData.contractor.address.city + ", ": ""}{<br></br>}
+										{fetchedData.contractor.address.country !=null? fetchedData.contractor.address.country: ""}{<br></br>}
 						  			</Typography>
 							 	</Grid>
 							   	<Grid item xs={12} sm={12} xl ={6}>
 								  	<Typography>
-										NIP: 98749486465465465 {<br></br>}
-										Regon: 6465466132168684 {<br></br>}
+										NIP: {fetchedData.contractor.nip != null ? fetchedData.contractor.nip: ""} {<br></br>}
+										Regon: {fetchedData.contractor.regon != null ? fetchedData.contractor.regon: ""} {<br></br>}
 							 		</Typography>
 								</Grid>
 						  </Grid>  
@@ -163,55 +167,28 @@ const WarehouseDocumentsDetails = () =>
 				<Grid item xs={12} sm={8} xl={6}>
 					<Grid container xs={12} spacing={1}>
 						<Grid item xs={12} sm={6} xl={6}>
-							<Typography >
-								Created at: {fetchedData[0].createdAt}
-							</Typography>
+							<TextField
+								type="datetime-local"
+									  label="Created date:"
+									  InputProps={{ readOnly: true, }}
+								defaultValue = {fetchedData.createdAt != null ? fetchedData.createdAt : ""}>
+							</TextField>
 						</Grid>
 						<Grid item xs={12} sm={6} xl={6}>
-							<Typography >
-								Date to: {fetchedData[0].createdAt}
-							</Typography>
-						</Grid>
-						<Grid item xs={6} sm={6} xl={6}>
-							<TextField 
-								id='select-to-warehouse'
-								variant="outlined"
-								select
-								disabled
-								label="To warehouse"
-								value={warehouse}
-								onChange={handleWarehouseChange}
-								size="small">
-									{warehouses.map((option) => (
-										<MenuItem key={option.name} value={option.name}>
-											{option.code}
-										</MenuItem>
-									))}	  
-							</TextField>
-						</Grid>
-						<Grid item xs={6} sm={6} xl={6}>
 							<TextField
-								id='select-from-warehouse'
-								variant="outlined"
-								select
-								disabled
-								label="From warehouse"
-								value={warehouse}
-								onChange={handleWarehouseChange}
-								size="small">
-									{warehouses.map((option) => (
-										<MenuItem key={option.name} value={option.name}>
-											{option.code}
-										</MenuItem>
-									))}	  
+								type="datetime-local"
+									  label="Requested date:"
+									  InputProps={{ readOnly: true, }}
+								defaultValue = {fetchedData.targetDateTime != null ? fetchedData.targetDateTime : ""}>
 							</TextField>
 						</Grid>
-						<Grid item xs={6} sm={6} xl={3}>
+						<Grid item xs={6} sm={6} xl={4}>
 							<TextField id='select-payment-form'
 								variant="outlined"
 								select
 								label="Payment form"
-								value={paymentForms.name}
+								InputProps={{ readOnly: true, }}
+								value={paymentForm}
 								onChange={handlePaymentFormChange}
 								size="small"
 							>
@@ -222,12 +199,13 @@ const WarehouseDocumentsDetails = () =>
 									))}	   
 							</TextField>
 						</Grid>
-						<Grid item xs={6} sm={6} xl={3}>
+						<Grid item xs={6} sm={6} xl={4}>
 							<TextField id='select-payment-term'
 								variant="outlined"
 								select
 								label="Payment term"
-								value={paymentTerms.name}
+								InputProps={{ readOnly: true, }}
+								value={paymentTerm}
 								onChange={handlePaymentTermChange}
 								size="small"
 								>
@@ -238,26 +216,73 @@ const WarehouseDocumentsDetails = () =>
 									))}	   
 							</TextField>
 						</Grid>
-						<Grid item xs={6} sm={6} xl={3}>
+						<Grid item xs={6} sm={6} xl={4}>
 								<TextField
 									id='select-currency'
 									variant="outlined"
 									select
 									label="Currency"
+									InputProps={{ readOnly: true, }}
 									value={currency}
 									onChange={handleCurrencyChange}
 									size="small">
 									{currencies.map((option) => (
-										<MenuItem key={option.name} value={option.name}>
+										<MenuItem key={option.code} value={option.code}>
 											{option.code}
 										</MenuItem>
 									))}	  
 								</TextField>
 						</Grid>
-						<Grid item xs={6} sm={6} xl={3}>
-							<Typography >
-								Status: {fetchedData[0].statusTypeEnum}
-							</Typography>
+						<Grid item xs={6} sm={6} xl={4}>
+							<TextField 
+								id='select-to-warehouse'
+								variant="outlined"
+								select
+								label="To warehouse"
+								InputProps={{ readOnly: true, }}
+								value={warehouse}
+								onChange={handleWarehouseChange}
+								size="small">
+									{warehouses.map((option) => (
+										<MenuItem key={option.name} value={option.name}>
+											{option.code}
+										</MenuItem>
+									))}	  
+							</TextField>
+						</Grid>
+						<Grid item xs={6} sm={6} xl={4}>
+							<TextField
+								id='select-from-warehouse'
+								variant="outlined"
+								select
+								label="From warehouse"
+								InputProps={{ readOnly: true, }}
+								value={warehouse}
+								onChange={handleWarehouseChange}
+								size="small">
+									{warehouses.map((option) => (
+										<MenuItem key={option.name} value={option.name}>
+											{option.code}
+										</MenuItem>
+									))}	  
+							</TextField>
+						</Grid>
+						<Grid item xs={6} sm={6} xl={4}>
+							<TextField
+								id='select-document-status'
+								variant="outlined"
+								select
+								label="Status"
+								disabled
+								value={warehouse}
+								onChange={handleWarehouseChange}
+								size="small">
+									{warehouses.map((option) => (
+										<MenuItem key={option.name} value={option.name}>
+											{option.code}
+										</MenuItem>
+									))}	  
+							</TextField>
 						</Grid>
 					</Grid>
 				  </Grid>	
@@ -265,7 +290,7 @@ const WarehouseDocumentsDetails = () =>
 			</div>
 			<div>
 				<DocumentsDetailsTable
-					data={fetchedData[0].documentDetails}
+					data={fetchedData.documentDetails}
 					columns={columns}
 					manual
         		/>
@@ -276,4 +301,4 @@ const WarehouseDocumentsDetails = () =>
       return <p className={classes.errorMsg}>Loading....</p>;
   }
 }
-export default WarehouseDocumentsDetails;
+export default DocumentsDetailsPage;

@@ -1,7 +1,6 @@
 package com.bartoszewski.erpone.Entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
@@ -26,14 +25,16 @@ public class Price {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
 	private Long id;
-	@Column(name = "Date")
+	@Column(name = "Date", columnDefinition = "TIMESTAMP")
 	@CreationTimestamp
 	@NotNull
 	private LocalDateTime date;
 	@NotNull
 	@Column(name = "Price")
 	private Double price;
-
+	@NotNull
+	@Column(name = "Type")
+	private String type;
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "Thing_Id")
@@ -44,8 +45,8 @@ public class Price {
 	@NotNull
 	private Currency currency;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "price")
-	private List<DocumentDetails> documentsDetails;
+	@OneToOne(fetch = FetchType.LAZY)
+	private DocumentDetails documentsDetails;
 
 	public LocalDateTime getDate() {
 		return date;
@@ -63,6 +64,14 @@ public class Price {
 		this.price = price;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public Currency getCurrency() {
 		return currency;
 	}
@@ -77,24 +86,6 @@ public class Price {
 
 	public void setThing(Thing thing) {
 		this.thing = thing;
-	}
-
-	public List<DocumentDetails> getDocumentsDetails() {
-		return documentsDetails;
-	}
-
-	public void setDocumentsDetails(List<DocumentDetails> documentsDetails) {
-		this.documentsDetails = documentsDetails;
-	}
-
-	public void addDocumentsDetails(DocumentDetails documentsDetails) {
-		this.documentsDetails.add(documentsDetails);
-		documentsDetails.setPrice(this);
-	}
-
-	public void removeDocumentsDetails(DocumentDetails documentsDetails) {
-		this.documentsDetails.remove(documentsDetails);
-		documentsDetails.setPrice(null);
 	}
 
 	public Long getId() {
@@ -145,6 +136,14 @@ public class Price {
 	@Override
 	public String toString() {
 		return "Price [currency=" + currency + ", date=" + date + ", price=" + price + "]";
+	}
+
+	public DocumentDetails getDocumentsDetails() {
+		return documentsDetails;
+	}
+
+	public void setDocumentsDetails(DocumentDetails documentsDetails) {
+		this.documentsDetails = documentsDetails;
 	}
 
 }

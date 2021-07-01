@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
-import com.bartoszewski.erpone.Enum.StatusTypeEnum;
+import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
 
 public interface DocumentsWithDetailsProjection {
 
@@ -16,7 +16,7 @@ public interface DocumentsWithDetailsProjection {
 
 	DocumentTypeEnum getDocumentTypeEnum();
 
-	StatusTypeEnum getStatusTypeEnum();
+	DocumentStatusEnum getStatusTypeEnum();
 
 	String getDescription();
 
@@ -27,6 +27,8 @@ public interface DocumentsWithDetailsProjection {
 	LocalDateTime getCreatedAt();
 
 	List<RelatedDocuments> getRelatedDocuments();
+
+	Currency getDocumentCurrency();
 
 	interface RelatedDocuments {
 		Long getId();
@@ -56,6 +58,12 @@ public interface DocumentsWithDetailsProjection {
 
 			String getPostalCode();
 		}
+	}
+
+	interface Currency {
+		Long getId();
+
+		String getCode();
 	}
 
 	interface DocumentDetails {

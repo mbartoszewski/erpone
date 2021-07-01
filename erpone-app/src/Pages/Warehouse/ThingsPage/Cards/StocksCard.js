@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { apiStates, useApi } from '../../../../Components/Fetch'
-import TableComponentForDetailView from '../../../../Components/TableComponenetForDetailView'
+import TableComponentForDetailView from '../../../../Components/ThingsCardDocumentsTable'
 import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -29,8 +29,8 @@ function StocksCard()
       { Header: 'Status', accessor: 'document.statusTypeEnum' }], []);
   switch (state)
   {
-    case apiStates.ERROR,
-      apiStates.EMPTY:
+    case apiStates.ERROR:
+    case apiStates.EMPTY:
       return <p className={classes.errorMsg}>Error: {error} || 'General error'</p>;
     case apiStates.SUCCESS:
       return (

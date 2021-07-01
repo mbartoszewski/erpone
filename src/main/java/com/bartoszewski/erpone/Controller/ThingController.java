@@ -1,10 +1,10 @@
 package com.bartoszewski.erpone.Controller;
 
 import com.bartoszewski.erpone.Entity.Thing;
+import com.bartoszewski.erpone.Entity.Documents.PriceWithDocumentTypeProjection;
 
 import java.time.LocalDate;
 
-import com.bartoszewski.erpone.Entity.Price;
 import com.bartoszewski.erpone.Service.BaseService;
 import com.bartoszewski.erpone.Service.PriceService;
 import com.bartoszewski.erpone.Service.ThingService;
@@ -35,11 +35,11 @@ public class ThingController extends BaseController<Thing, Long> {
 	}
 
 	@GetMapping("/{thingId}/price")
-	public ResponseEntity<Page<Price>> findAllOperationsByThingAndType(Pageable pageable,
+	public ResponseEntity<Page<PriceWithDocumentTypeProjection>> findAllOperationsByThingAndType(Pageable pageable,
 			@PathVariable(value = "thingId") Long thing,
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-		return priceService.getPriceByThingId(pageable, thing, startDate, endDate);
+		return priceService.getPriceWithDocumentType(pageable, thing, startDate, endDate);
 	}
 
 	@PostMapping("/search")

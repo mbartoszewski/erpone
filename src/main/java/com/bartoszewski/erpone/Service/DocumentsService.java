@@ -1,6 +1,7 @@
 package com.bartoszewski.erpone.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsProjection;
@@ -14,13 +15,8 @@ public interface DocumentsService extends BaseService<Documents, Long> {
 	ResponseEntity<Page<Documents>> findAllByType(Pageable pageable, Long thing, String type, String status,
 			LocalDate startDate, LocalDate endDate);
 
-	ResponseEntity<Page<Documents>> findPurchaseOrderByDetails(Pageable pageable, Long thing, String type,
-			String status, LocalDate startTargetDate, LocalDate endTargetDate, String contractor);
+	ResponseEntity<Page<DocumentsProjection>> getDocuments(Pageable pageable, List<String> type, String status,
+			LocalDate startDate, LocalDate endDate, String contractor);
 
-	ResponseEntity<Page<Documents>> findProductionOrderByDetails(Pageable pageable, String status,
-			LocalDate startTargetDate, LocalDate endTargetDate, Long recipe);
-
-	ResponseEntity<Page<DocumentsProjection>> getDocuments(Pageable pageable);
-
-	ResponseEntity<Page<DocumentsWithDetailsProjection>> getDocumentDetailsById(Pageable pageable, Long id);
+	ResponseEntity<DocumentsWithDetailsProjection> getDocumentDetailsById(Long id);
 }

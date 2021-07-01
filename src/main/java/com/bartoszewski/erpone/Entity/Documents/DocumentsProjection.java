@@ -3,7 +3,7 @@ package com.bartoszewski.erpone.Entity.Documents;
 import java.time.LocalDateTime;
 
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
-import com.bartoszewski.erpone.Enum.StatusTypeEnum;
+import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
 
 public interface DocumentsProjection {
 
@@ -13,7 +13,7 @@ public interface DocumentsProjection {
 
 	DocumentTypeEnum getDocumentTypeEnum();
 
-	StatusTypeEnum getStatusTypeEnum();
+	DocumentStatusEnum getDocumentStatusEnum();
 
 	String getDescription();
 

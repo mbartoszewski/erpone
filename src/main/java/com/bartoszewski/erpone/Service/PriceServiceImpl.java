@@ -3,6 +3,7 @@ package com.bartoszewski.erpone.Service;
 import java.time.LocalDate;
 
 import com.bartoszewski.erpone.Entity.Price;
+import com.bartoszewski.erpone.Entity.Documents.PriceWithDocumentTypeProjection;
 import com.bartoszewski.erpone.Repository.PriceRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,13 @@ public class PriceServiceImpl implements PriceService {
 
 		return new ResponseEntity<Page<Price>>(pricesRepository.getPriceByThingId(pageable, thing, startDate, endDate),
 				HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<PriceWithDocumentTypeProjection>> getPriceWithDocumentType(Pageable pageable, Long thing,
+			LocalDate startDate, LocalDate endDate) {
+		return new ResponseEntity<Page<PriceWithDocumentTypeProjection>>(
+				pricesRepository.getPriceWithDocumentType(pageable, thing, startDate, endDate), HttpStatus.OK);
 	}
 
 }

@@ -6,8 +6,7 @@ import TimelineIcon from '@material-ui/icons/Timeline';
 import PriceCard from './Cards/PriceCard';
 import DetailsCard from './Cards/DetailsCard';
 import StocksCard from './Cards/StocksCard';
-import PurchaseCard from './Cards/PurchaseCard';
-import SalesCard from './Cards/SalesCard';
+import LastDocumentsCard from './Cards/LastDocumentsCard';
 
 const ThingsDetailsItems = [
   
@@ -24,7 +23,7 @@ const ThingsDetailsItems = [
     nameHeader: "Dokumenty",
     avatar: TimelineIcon,
     route: "sale",
-    component: SalesCard,
+    component: LastDocumentsCard,
     subTitle: "Ostatnie dokumenty, czyli po prostu lista ostatnich dokumentów, w których znajduje się dany surowiec."
   },
           {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { apiStates, useApi } from '../../../../Components/Fetch'
-import TableComponentForDetailView from '../../../../Components/TableComponenetForDetailView'
+import ThingsCardDocumentsTable from '../../../../Components/ThingsCardDocumentsTable'
 import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -16,27 +16,27 @@ const useStyles = makeStyles((theme) => ({
   },
 
 }))
-function PurchaseCard()
+function LastDocumentsCard()
 {
   const classes = useStyles();
   const { id } = useParams();
-  const { state, error, data } = useApi(`http://localhost:5000/api/documents/details/last?thing=${id}&size=7&type=pz&type=pw`);
+  const { state, error, data } = useApi(`http://localhost:5000/api/documents/details/last?thing=${id}&size=7&type=wz&type=wzz&type=rw`);
   const fetchedData = React.useMemo(() => data, data);
   const columns = React.useMemo(() => [
     { Header: 'Document', accessor: 'document.docNumber' },
-      { Header: 'Contractor', accessor: 'document.contractor.name' },
+        { Header: 'Contractor', accessor: 'document.contractor.name' },
       { Header: 'Quantity', accessor: 'quantity' },
       { Header: 'Units', accessor: 'thing.unit.code' },
       { Header: 'Status', accessor: 'document.statusTypeEnum' }], []);
   switch (state)
   {
-    case apiStates.ERROR,
-      apiStates.EMPTY:
+  case apiStates.ERROR:
+	case apiStates.EMPTY:
       return <p className={classes.errorMsg}>Error: {error} || 'General error'</p>;
     case apiStates.SUCCESS:
       return (
         <div>
-          <TableComponentForDetailView
+          <ThingsCardDocumentsTable
             data={fetchedData}
             columns={columns}
             manual
@@ -47,4 +47,4 @@ function PurchaseCard()
       return <p className={classes.errorMsg}>Loading....</p>;
   }
 };
-export default PurchaseCard;
+export default LastDocumentsCard;

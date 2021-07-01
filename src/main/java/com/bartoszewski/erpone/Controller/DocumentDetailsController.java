@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsProjection;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsWithBalanceProjection;
 import com.bartoszewski.erpone.Service.BaseService;
 import com.bartoszewski.erpone.Service.DocumentDetailsService;
 
@@ -55,8 +56,16 @@ public class DocumentDetailsController extends BaseController<DocumentDetails, L
 	}
 
 	@GetMapping("/last")
-	public ResponseEntity<Page<DocumentsDetailsProjection>> test(Pageable pageable, @RequestParam("thing") Long thing,
-			@RequestParam(value = "type", required = false) List<String> type) {
+	public ResponseEntity<Page<DocumentsDetailsProjection>> findbydDocumentsDetailsProjections(Pageable pageable,
+			@RequestParam("thing") Long thing, @RequestParam(value = "type", required = false) List<String> type) {
 		return documentDetailsService.findByProjection(pageable, thing, type);
+	}
+
+	@GetMapping("/balances")
+	public ResponseEntity<Page<DocumentsDetailsWithBalanceProjection>> findDocumentsDetailsWithBalanceProjection(
+			Pageable pageable, @RequestParam("thing") Long thing,
+			@RequestParam(value = "type", required = true) List<String> type,
+			@RequestParam(value = "status", required = true) List<String> status) {
+		return documentDetailsService.findDocumentsDetailsWithBalanceProjection(pageable, thing, type, status);
 	}
 }
