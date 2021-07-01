@@ -16,7 +16,7 @@ public interface DocumentsWithDetailsProjection {
 
 	DocumentTypeEnum getDocumentTypeEnum();
 
-	DocumentStatusEnum getStatusTypeEnum();
+	DocumentStatusEnum getDocumentStatusEnum();
 
 	String getDescription();
 
@@ -71,11 +71,7 @@ public interface DocumentsWithDetailsProjection {
 
 		Thing getThing();
 
-		Price getPrice();
-
-		interface Price {
-			Double getPrice();
-		}
+		Double getDetailPrice();
 
 		interface Thing {
 			Long getId();

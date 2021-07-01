@@ -201,7 +201,6 @@ public class DocumentsServiceImpl implements DocumentsService {
 
 	@Override
 	public ResponseEntity<DocumentsWithDetailsProjection> getDocumentDetailsById(Long id) {
-		// TODO Auto-generated method stub
 		return new ResponseEntity<>(documentsRepository.getDocumentDetailsById(id), HttpStatus.OK);
 	}
 }

@@ -6,8 +6,6 @@ import java.util.List;
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsProjection;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsWithBalanceProjection;
-import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
-import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

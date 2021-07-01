@@ -1,7 +1,6 @@
 package com.bartoszewski.erpone.Entity.Documents;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 import com.bartoszewski.erpone.Enum.DocumentStatusEnum;

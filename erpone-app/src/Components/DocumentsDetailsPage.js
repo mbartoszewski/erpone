@@ -67,10 +67,10 @@ const DocumentsDetailsPage = () =>
 				)
 				return <>Total quantity: {totalQuantity}</>
 		} },
-		{ Header: 'Net price', accessor: 'price.price'},
+		{ Header: 'Net price', accessor: 'detailPrice'},
 		{ Header: 'Net', accessor: 'net',  accessor: row =>
 		{
-			return <>{(row.quantity) * (row.price.price)}</>
+			return <>{(row.quantity) * (row.detailPrice)}</>
 		}, Footer: info =>
 			{
 			const totalNetValue = React.useMemo(
@@ -142,7 +142,7 @@ const DocumentsDetailsPage = () =>
 											size='small'
 											InputProps={{ readOnly: true, }}
 											fullWidth={true}
-											defaultValue={fetchedData.contractor.name}>
+											defaultValue={fetchedData.contractor.name != null ? fetchedData.contractor.name: ""}>
 										</TextField>
 						  			</form>
 								</Grid>

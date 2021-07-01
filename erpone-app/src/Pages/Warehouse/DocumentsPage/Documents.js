@@ -17,7 +17,7 @@ const WarehouseDocuments = () =>
   const { state, error, data } = useApi('http://localhost:5000/api/documents');
   const fetchedData = React.useMemo(() => data, data);
   const columns = React.useMemo(() => [
-    { Header: 'Status', accessor: 'statusTypeEnum' },
+    { Header: 'Status', accessor: 'documentStatusEnum' },
     { Header: 'Document', accessor: 'docNumber' },
     { Header: 'Type', accessor: 'documentTypeEnum' },
     { Header: "Contractor", accessor: "contractor.name" },
