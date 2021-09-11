@@ -30,22 +30,22 @@ function PriceCard()
 
 	const salesPrice = (data) =>
 	{
-		if (data.documentsDetails != null)
+		if (data != null)
 			{
 				if (data.documentsDetails.document.documentTypeEnum === "rw" || data.documentsDetails.document.documentTypeEnum === "wz" || data.documentsDetails.document.documentTypeEnum === "wzz")
 				{
-					return data.price
+					return data.detailPrice
 				}
 			}
 	}
 
 	const purchasePrice = (data) =>
 	{
-		if (data.documentsDetails != null)
+		if (data != null)
 			{
 				if (data.documentsDetails.document.documentTypeEnum === "zm" || data.documentsDetails.document.documentTypeEnum === "pw" || data.documentsDetails.document.documentTypeEnum === "pz")
 				{
-					return data.price
+					return data.detailPrice
 				}
 			}
 	}

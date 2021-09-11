@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsPriceProjection;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsProjection;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsWithBalanceProjection;
 import com.bartoszewski.erpone.Service.BaseService;
@@ -31,24 +32,8 @@ public class DocumentDetailsController extends BaseController<DocumentDetails, L
 		this.documentDetailsService = documentDetailsService;
 	}
 
-	@GetMapping("/purchase")
-	public ResponseEntity<Page<DocumentDetails>> findAllIncomeByThing(Pageable pageable,
-			@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam("thing") Long thing) {
-		return documentDetailsService.findAllIncomeByThing(pageable, thing, startDate, endDate);
-	}
-
-	@GetMapping("/sales")
-	public ResponseEntity<Page<DocumentDetails>> findAllOutgoingsByThing(Pageable pageable,
-			@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam("thing") Long thing) {
-		return documentDetailsService.findAllOutgoingsByThing(pageable, thing, startDate, endDate);
-	}
-
 	@GetMapping("")
-	public ResponseEntity<Page<DocumentDetails>> findAllOperationsByThingAndType(Pageable pageable,
+	public ResponseEntity<Page<DocumentsDetailsPriceProjection>> findAllOperationsByThingAndType(Pageable pageable,
 			@RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
 			@RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
 			@RequestParam("thing") Long thing, @RequestParam(value = "type", required = false) String type) {
@@ -56,9 +41,9 @@ public class DocumentDetailsController extends BaseController<DocumentDetails, L
 	}
 
 	@GetMapping("/last")
-	public ResponseEntity<Page<DocumentsDetailsProjection>> findbydDocumentsDetailsProjections(Pageable pageable,
+	public ResponseEntity<Page<DocumentsDetailsProjection>> findLastByDocumentsDetailsProjections(Pageable pageable,
 			@RequestParam("thing") Long thing, @RequestParam(value = "type", required = false) List<String> type) {
-		return documentDetailsService.findByProjection(pageable, thing, type);
+		return documentDetailsService.findLastByProjection(pageable, thing, type);
 	}
 
 	@GetMapping("/balances")

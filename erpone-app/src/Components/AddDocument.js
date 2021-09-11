@@ -121,7 +121,7 @@ const AddDocument = props =>
         </AppBar>
           <Typography variant="h6">Basic info:</Typography>
           <Divider/>
-            <Grid container xs={12} spacing={2}>
+            <Grid container spacing={2}>
                 <Grid item xs={12} xm={10} xl={10}>
                   <TextField
                     autoFocus
@@ -159,7 +159,7 @@ const AddDocument = props =>
               </Grid>
           <Typography variant="h6">Details:</Typography>
           <Divider />
-          <Grid container xs={12} spacing={2}>
+          <Grid container spacing={2}>
             <Grid item xs={12} xm={4} xl={3}>
               <TextField
                   margin="dense"

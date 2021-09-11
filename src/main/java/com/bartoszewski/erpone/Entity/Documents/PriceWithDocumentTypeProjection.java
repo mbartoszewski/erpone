@@ -10,8 +10,6 @@ public interface PriceWithDocumentTypeProjection {
 
 	LocalDateTime getDate();
 
-	Double getPrice();
-
 	Currency getCurrency();
 
 	DocumentDetails getDocumentsDetails();
@@ -24,6 +22,8 @@ public interface PriceWithDocumentTypeProjection {
 
 	interface DocumentDetails {
 		Long getId();
+
+		Double getDetailPrice();
 
 		Documents getDocument();
 

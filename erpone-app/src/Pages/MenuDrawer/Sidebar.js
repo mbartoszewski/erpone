@@ -11,9 +11,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 
 const drawerWidth = 240;
 
@@ -25,6 +22,13 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
+  },
+  toolbarIcon: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '0 8px',
+    ...theme.mixins.toolbar,
   },
   SidebarParent: {
 		background: '#ffffff',
@@ -63,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-function Sidebar({defaultActive})
+const Sidebar = ({isOpen}) =>
 {
 	const classes = useStyles();
 	const [expand, setExpand] = useState([{ id: "1", isExpand: false },
@@ -71,13 +75,7 @@ function Sidebar({defaultActive})
     { id: "3", isExpand: false },
     { id: "4", isExpand: false },
     { id: "5", isExpand: false }]);
-	const [open, setOpen] = useState(false);
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
+
   const handleListItemClick = (id) =>
   {
     setExpand(expand.map(expand => expand.id === id ? { ...expand, isExpand: !expand.isExpand } : expand));
@@ -85,24 +83,8 @@ function Sidebar({defaultActive})
   return (
     <>
 		  <div className={classes.SidebarParent}>
-        <Drawer variant="permanent" classes={{ paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose), }} open={open} >
-        <div>
-			<IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-          >
-            <MenuIcon />
-			</IconButton>
-			<IconButton
-            color="inherit"
-            aria-label="close drawer"
-            onClick={handleDrawerClose}
-            className={clsx(classes.closeButton, !open && classes.closeButtonHidden)}
-          >
-            <ChevronLeftIcon/>
-        </IconButton>
+        <Drawer variant="permanent" classes={{ paper: clsx(classes.drawerPaper, !isOpen && classes.drawerPaperClose), }} >
+           <div className={classes.toolbarIcon}>
         </div>
         <Divider />
 		<List component="nav" className={classes.drawerRoot}>

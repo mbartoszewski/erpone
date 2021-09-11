@@ -14,8 +14,9 @@ import Stocks from './Pages/Warehouse/Stocks';
 import WarehouseDocumentsDetails from './Components/DocumentsDetailsPage';
 import PurchaseJs from './Pages/Purchase/PurchaseOrderPage/PurchaseOrderTable';
 import AddDocument from './Components/DocumentsDetailsPage';
-import WarehouseDashboard from './Pages/Warehouse/DashboardPage/DashboardPage';
-import PurchaseDashboard from './Pages/Purchase/DashboardPage/DashboardPage'
+import WarehouseDashboard from './Pages/Warehouse/DashboardPage/WarehouseDashboardPage';
+import PurchaseDashboard from './Pages/Purchase/DashboardPage/PurchaseDashboardPage'
+import SalesDashboardPage from './Pages/Sales/SalesDashboardPage';
 
 
 function Routes() {
@@ -40,6 +41,7 @@ function Routes() {
             <Route exact path="/warehouse/documents/:id/details" component={WarehouseDocumentsDetails} />
             <Route exact path="/warehouse/dashboard" component={WarehouseDashboard} />
             <Route exact path="/documents/add" component={AddDocument} />
+            <Route exact path="/sales/dashboard" component={SalesDashboardPage}/>
           </Switch>
         </ErpOneApp>
       )} />

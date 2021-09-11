@@ -118,9 +118,10 @@ public class DocumentsServiceImpl implements DocumentsService {
 			if (documentDetail.getThing().getQuantity() >= documentDetail.getQuantity()) {
 				documentDetail.getThing()
 						.setQuantity(documentDetail.getThing().getQuantity() - documentDetail.getQuantity());
-				documentDetail.getPrice().setCurrency(entity.getDocumentCurrency());
-				documentDetail.getPrice().setThing(thing);
-				documentDetail.getPrice().setDocumentsDetails(documentDetail);
+				documentDetail.setBalance(documentDetail.getQuantity());
+				// documentDetail.getPrice().setCurrency(entity.getDocumentCurrency());
+				// documentDetail.getPrice().setThing(thing);
+				// documentDetail.getPrice().setDocumentsDetails(documentDetail);
 			} else {
 				documentsDetails.remove();
 				detailsWithoutStock.add(documentDetail);

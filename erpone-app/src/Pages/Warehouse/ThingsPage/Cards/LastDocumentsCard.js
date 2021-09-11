@@ -20,14 +20,14 @@ function LastDocumentsCard()
 {
   const classes = useStyles();
   const { id } = useParams();
-  const { state, error, data } = useApi(`http://localhost:5000/api/documents/details/last?thing=${id}&size=7&type=wz&type=wzz&type=rw`);
+  const { state, error, data } = useApi(`http://localhost:5000/api/documents/details/last?thing=${id}&size=7&type=wz&type=wzz&type=rw&type=pw&type=pz`);
   const fetchedData = React.useMemo(() => data, data);
   const columns = React.useMemo(() => [
     { Header: 'Document', accessor: 'document.docNumber' },
         { Header: 'Contractor', accessor: 'document.contractor.name' },
       { Header: 'Quantity', accessor: 'quantity' },
       { Header: 'Units', accessor: 'thing.unit.code' },
-      { Header: 'Status', accessor: 'document.statusTypeEnum' }], []);
+      { Header: 'Status', accessor: 'document.documentStatusEnum' }], []);
   switch (state)
   {
   case apiStates.ERROR:

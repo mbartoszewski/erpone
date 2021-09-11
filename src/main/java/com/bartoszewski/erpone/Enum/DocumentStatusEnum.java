@@ -1,5 +1,5 @@
 package com.bartoszewski.erpone.Enum;
 
 public enum DocumentStatusEnum {
-    pending, closed, canceled, finished, draft, open, none, confirmed, unconfirmed
+    pending, closed, canceled, finished, draft, open, none, confirmed, unconfirmed, partialFinished
 }

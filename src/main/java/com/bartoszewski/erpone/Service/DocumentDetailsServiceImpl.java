@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsPriceProjection;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsProjection;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsDetailsWithBalanceProjection;
 import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
@@ -68,29 +69,15 @@ public class DocumentDetailsServiceImpl implements DocumentDetailsService {
 	}
 
 	@Override
-	public ResponseEntity<Page<DocumentDetails>> findAllIncomeByThing(Pageable pageable, Long thing,
-			LocalDate startDate, LocalDate endDate) {
-		return new ResponseEntity<>(documentDetailsRepository.findAllIncomeByThing(pageable, thing, startDate, endDate),
-				HttpStatus.OK);
-	}
-
-	@Override
-	public ResponseEntity<Page<DocumentDetails>> findAllOutgoingsByThing(Pageable pageable, Long thing,
-			LocalDate startDate, LocalDate endDate) {
-		return new ResponseEntity<>(
-				documentDetailsRepository.findAllOutgoingsByThing(pageable, thing, startDate, endDate), HttpStatus.OK);
-	}
-
-	@Override
-	public ResponseEntity<Page<DocumentDetails>> findAllOperationsByThingAndType(Pageable pageable, Long thing,
-			String type, LocalDate startDate, LocalDate endDate) {
+	public ResponseEntity<Page<DocumentsDetailsPriceProjection>> findAllOperationsByThingAndType(Pageable pageable,
+			Long thing, String type, LocalDate startDate, LocalDate endDate) {
 		DocumentTypeEnum typeEnum = type != null ? DocumentTypeEnum.valueOf(type) : null;
 		return new ResponseEntity<>(documentDetailsRepository.findAllOperationsByThingAndType(pageable, thing, typeEnum,
 				startDate, endDate), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<Page<DocumentsDetailsProjection>> findByProjection(Pageable pageable, Long thing,
+	public ResponseEntity<Page<DocumentsDetailsProjection>> findLastByProjection(Pageable pageable, Long thing,
 			List<String> type) {
 
 		List<DocumentTypeEnum> typeEnum = type != null
@@ -98,7 +85,8 @@ public class DocumentDetailsServiceImpl implements DocumentDetailsService {
 				: null;
 
 		return new ResponseEntity<>(
-				documentDetailsRepository.findbydDocumentsDetailsProjections(pageable, thing, typeEnum), HttpStatus.OK);
+				documentDetailsRepository.findLastByDocumentsDetailsProjections(pageable, thing, typeEnum),
+				HttpStatus.OK);
 	}
 
 	@Override

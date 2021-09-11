@@ -109,7 +109,7 @@ const DocumentsDetailsPage = () =>
       return (
 		<div className={classes.root}>
 			<div className={classes.documentHeader}>
-				<Grid container xs={12} spacing={1}>	  
+				<Grid container spacing={2}>	  
 					<Grid item xs={4} sm={6} xl={8}>
 					<Typography className={classes.docNumber}>
 							  {fetchedData.docNumber}
@@ -131,7 +131,7 @@ const DocumentsDetailsPage = () =>
 					</Grid>				 
 					<Grid item xs={12} sm={4} xl={6}>
 					  <Paper className={classes.paper}>
-						  <Grid container xs={12} spacing={1}>
+						  <Grid container spacing={2}>
 							   <Grid item xs={12} sm={12} xl ={12}>
 								   <form>
 										<TextField
@@ -165,7 +165,7 @@ const DocumentsDetailsPage = () =>
 					</Paper>
 				  </Grid>
 				<Grid item xs={12} sm={8} xl={6}>
-					<Grid container xs={12} spacing={1}>
+					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6} xl={6}>
 							<TextField
 								type="datetime-local"

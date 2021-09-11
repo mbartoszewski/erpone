@@ -126,7 +126,7 @@ const AddThingDialog = props =>
         <DialogContent>
           <Typography variant="h6">Basic info:</Typography>
           <Divider/>
-            <Grid container xs={12} spacing={2}>
+            <Grid container spacing={2}>
                 <Grid item xs={12} xm={10} xl={10}>
                   <TextField
                     autoFocus
@@ -152,19 +152,19 @@ const AddThingDialog = props =>
                 <Grid item xs={8} xm={5} xl={5}>
                   <InputLabel id="unit">Unit</InputLabel>
                   <Select fullWidth margin="dense" select='true' labelId="unit" id="selectUnit" onChange={handleChange('unit.id')}>
-                    {globalContext.dataUnits.map((unit) => { return <MenuItem key={unit.id} value = {unit.id}>{unit.name}</MenuItem>})}
+                    {globalContext.dataUnits != null? globalContext.dataUnits.map((unit) => { return <MenuItem key={unit.id} value = {unit.id}>{unit.name}</MenuItem>}) : ""}
                   </Select>
                 </Grid>
                 <Grid item xs={8} xm={5} xl={5}>
                   <InputLabel id="warehouse">Warehouse</InputLabel>
                   <Select fullWidth margin="dense" select='true' labelId ="warehouse" id="selectWarehouse" onChange={handleChange("warehouse.id")}>
-                    {globalContext.dataWarehouses.map((warehouses) => { return <MenuItem key={warehouses.id} value = {warehouses.id}>{warehouses.name}</MenuItem>})}
+                    {globalContext.dataWarehouses != null? globalContext.dataWarehouses.map((warehouses) => { return <MenuItem key={warehouses.id} value = {warehouses.id}>{warehouses.name}</MenuItem>}) : ""}
                   </Select>
                 </Grid>
               </Grid>
           <Typography variant="h6">Details:</Typography>
           <Divider />
-          <Grid container xs={12} spacing={2}>
+          <Grid container spacing={2}>
             <Grid item xs={12} xm={4} xl={3}>
               <TextField
                   margin="dense"

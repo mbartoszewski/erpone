@@ -1,6 +1,11 @@
 package com.bartoszewski.erpone.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import com.bartoszewski.erpone.Entity.Thing;
+import com.bartoszewski.erpone.Entity.Projections.SearchThingsByProperties;
+import com.bartoszewski.erpone.Entity.Projections.ThingsValueByProperties;
 import com.bartoszewski.erpone.Repository.ThingRepository;
 import com.bartoszewski.erpone.Repository.UnitRepository;
 
@@ -62,14 +67,31 @@ public class ThingServiceImpl implements ThingService {
 	}
 
 	@Override
-	public ResponseEntity<Page<Thing>> searchThingByPropertiesWithLike(Pageable pageable, String searchQuery) {
+	public ResponseEntity<Page<SearchThingsByProperties>> searchThingByPropertiesWithLike(Pageable pageable,
+			String searchQuery) {
 		return new ResponseEntity<>(thingsRepository.searchThingByPropertiesWithLike(pageable, searchQuery),
 				HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<Page<Thing>> searchThingByPropertiesWithMatchAgainst(Pageable pageable, String searchQuery) {
+	public ResponseEntity<Page<SearchThingsByProperties>> searchThingByPropertiesWithMatchAgainst(Pageable pageable,
+			String searchQuery) {
 		return new ResponseEntity<>(thingsRepository.searchThingByPropertiesWithMatchAgainst(pageable, searchQuery),
 				HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<com.bartoszewski.erpone.Entity.Projections.AllThingsWarehouse>> getAllThingsWarehouse(
+			Pageable pageable) {
+		return new ResponseEntity<>(thingsRepository.getAllThingsWarehouse(pageable), HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<ThingsValueByProperties>> getThingsValueByProperties(Pageable pageable,
+			List<Long> categoriesId, List<Long> thingsId, List<Long> contractorsId, LocalDate dateFrom,
+			LocalDate dateTo) {
+
+		return new ResponseEntity<>(thingsRepository.getThingsValueByProperties(pageable, categoriesId, thingsId,
+				contractorsId, dateFrom, dateTo), HttpStatus.OK);
 	}
 }

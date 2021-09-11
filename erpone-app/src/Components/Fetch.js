@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react'
+import { useState, useEffect, useRef} from 'react'
 
 export const apiStates = {
   LOADING: 'Loading',
@@ -14,10 +14,10 @@ export const useApi = (url, options) =>
     error: '',
     data: null,
   });
-
   const setPartData = (partialData) => setData({ ...data, ...partialData });
-  const fetchData = async() =>{
-  await fetch(url, options)
+  const fetchData = async () =>
+  {
+      await fetch(url, options)
     .then((response) => response.json())
     .then((data) =>
     {
@@ -51,11 +51,11 @@ export const useApi = (url, options) =>
       });
     });
   }
+  
   useEffect(() =>
   {
     setPartData({ state: apiStates.LOADING, });
     fetchData();
-  }, []);
+  }, []); //check if this is the best solution. 
   return data;
-  
 }

@@ -1,9 +1,15 @@
 package com.bartoszewski.erpone.Controller;
 
+import com.bartoszewski.erpone.Entity.Contractor;
 import com.bartoszewski.erpone.Entity.Thing;
+import com.bartoszewski.erpone.Entity.ThingCategory;
 import com.bartoszewski.erpone.Entity.Documents.PriceWithDocumentTypeProjection;
+import com.bartoszewski.erpone.Entity.Projections.AllThingsWarehouse;
+import com.bartoszewski.erpone.Entity.Projections.SearchThingsByProperties;
+import com.bartoszewski.erpone.Entity.Projections.ThingsValueByProperties;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.bartoszewski.erpone.Service.BaseService;
 import com.bartoszewski.erpone.Service.PriceService;
@@ -34,6 +40,11 @@ public class ThingController extends BaseController<Thing, Long> {
 		this.priceService = priceService;
 	}
 
+	@GetMapping("/all")
+	public ResponseEntity<Page<AllThingsWarehouse>> getAllThingsWarehouse(Pageable pageable) {
+		return thingsService.getAllThingsWarehouse(pageable);
+	}
+
 	@GetMapping("/{thingId}/price")
 	public ResponseEntity<Page<PriceWithDocumentTypeProjection>> findAllOperationsByThingAndType(Pageable pageable,
 			@PathVariable(value = "thingId") Long thing,
@@ -42,15 +53,26 @@ public class ThingController extends BaseController<Thing, Long> {
 		return priceService.getPriceWithDocumentType(pageable, thing, startDate, endDate);
 	}
 
-	@PostMapping("/search")
-	public ResponseEntity<Page<Thing>> searchThingByPropertiesWithLike(Pageable pageable,
+	@GetMapping("/search")
+	public ResponseEntity<Page<SearchThingsByProperties>> searchThingByPropertiesWithLike(Pageable pageable,
 			@RequestParam(value = "query", required = true) String searchQuery) {
 		return thingsService.searchThingByPropertiesWithLike(pageable, searchQuery);
 	}
 
-	@PostMapping("/match")
-	public ResponseEntity<Page<Thing>> searchThingByPropertiesWithMatchAgainst(Pageable pageable,
+	@GetMapping("/match")
+	public ResponseEntity<Page<SearchThingsByProperties>> searchThingByPropertiesWithMatchAgainst(Pageable pageable,
 			@RequestParam(value = "query", required = true) String searchQuery) {
 		return thingsService.searchThingByPropertiesWithMatchAgainst(pageable, searchQuery);
+	}
+
+	@GetMapping("/value")
+	public ResponseEntity<Page<ThingsValueByProperties>> getThingsValueByProperties(Pageable pageable,
+			@RequestParam(value = "categoriesId", required = false) List<Long> categoriesId,
+			@RequestParam(value = "thingsId", required = false) List<Long> thingsId,
+			@RequestParam(value = "contractorsId", required = false) List<Long> contractorsId,
+			@RequestParam(value = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+			@RequestParam(value = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo) {
+		return thingsService.getThingsValueByProperties(pageable, categoriesId, thingsId, contractorsId, dateFrom,
+				dateTo);
 	}
 }
