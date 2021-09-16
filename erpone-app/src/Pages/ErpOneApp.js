@@ -127,7 +127,7 @@ const handleDrawerClose = () => {
     
     return (
         <globalStateContext.Provider value={{ dataUnits, dataWarehouses, dataCurrencies, dataPaymentForms, dataPaymentTerms }}>
-            <div className={classes.root}>
+            <div className={classes.root} >
                 <CssBaseline />
                 <AppBar position="absolute" className={classes.appBar}>
                     <Toolbar className={classes.toolbar}>
@@ -146,10 +146,7 @@ const handleDrawerClose = () => {
                             className={clsx(classes.closeButton, !isOpen && classes.closeButtonHidden)}
                               >
                             <ChevronLeftIcon/>
-                          </IconButton>
-                          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                              Dashboard
-                          </Typography>
+              </IconButton>
                     </Toolbar>
                 </AppBar>
                 <Sidebar

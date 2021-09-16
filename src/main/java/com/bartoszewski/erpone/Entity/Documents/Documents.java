@@ -56,6 +56,8 @@ public class Documents {
 
     @Column(name = "Description")
     private String description;
+    @Column(name = "Value")
+    private Double docValue;
 
     @NotNull
     @Column(name = "Status")
@@ -232,6 +234,14 @@ public class Documents {
 
     public void setDocumentCurrency(Currency documentCurrency) {
         this.documentCurrency = documentCurrency;
+    }
+
+    public Double getDocValue() {
+        return docValue;
+    }
+
+    public void setDocValue(Double docValue) {
+        this.docValue = docValue;
     }
 
 }

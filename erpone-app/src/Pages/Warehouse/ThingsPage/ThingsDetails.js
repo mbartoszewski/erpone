@@ -10,6 +10,7 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import ThingsDetailsItems from './ThingsDetailsItems';
 import { apiStates, useApi } from '../../../Components/Fetch'
+import DashboardTile from '../../../Components/DashboardTile';
 
 const useStyles = makeStyles((theme) => ({
 	root: {},
@@ -78,26 +79,11 @@ function ThingsDetails()
 					{ThingsDetailsItems.map(each => (
 						<React.Fragment key={each.id}>
 							<Grid item xs={12} xm={6} xl={6}>
-					<Card className={classes.card} variant="outlined">
-						<CardHeader
-							title={each.nameHeader}
-							subheader={each.subTitle}
-							avatar={
-									React.createElement(each.avatar)
-								}
-							action={<IconButton>
-									<StarBorderIcon />
-									</IconButton>}>
-						</CardHeader>
-						<CardContent>
-							{React.createElement(each.component)}
-						</CardContent>
-						<CardActions className={classes.navigateNext}>
-							<Link to={`/warehouse/things/${id}/` + each.route}>
-								<NavigateNextIcon/>
-							</Link>
-						</CardActions>
-					</Card>
+								<DashboardTile
+								title={each.nameHeader}
+									subheader={each.subTitle}
+									component={React.createElement(each.component)}
+								/>
 							</Grid>
 				</React.Fragment>
 			))}

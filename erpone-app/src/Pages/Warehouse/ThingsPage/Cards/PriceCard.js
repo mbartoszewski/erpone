@@ -62,7 +62,7 @@ function PriceCard()
 			return (
 				<div className={classes.root} >
 				<ResponsiveContainer>  
-					<LineChart width={850} height={350} data={data} margin={{top: 7, right: 2, left: 2, bottom: 5}}>
+					<LineChart width="100%" height={250} data={data} margin={{top: 7, right: 2, left: 2, bottom: 5}}>
 							<XAxis dataKey={dateTimeFormated}/>
 							<YAxis/>
 							<CartesianGrid strokeDasharray="3 3"/>

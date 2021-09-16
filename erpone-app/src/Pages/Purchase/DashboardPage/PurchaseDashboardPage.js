@@ -11,7 +11,8 @@ import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import MuiFormControl from '@material-ui/core/FormControl';
 import Chip from '@material-ui/core/Chip';
-import { LineChart, Sector, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
+import { LineChart, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
+import DashboardTile from '../../../Components/DashboardTile';
 
 const useStyles = makeStyles((theme) => ({
   root: {flexGrow: 1,},
@@ -132,56 +133,10 @@ const names = [
   'Virginia Andrews',
   'Kelly Snyder',
 ];
-const renderActiveShape = (props) => {
-  const RADIAN = Math.PI / 180;
-  const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value, name } = props;
-  const sin = Math.sin(-RADIAN * midAngle);
-  const cos = Math.cos(-RADIAN * midAngle);
-  const sx = cx + (outerRadius + 10) * cos;
-  const sy = cy + (outerRadius + 10) * sin;
-  const mx = cx + (outerRadius + 30) * cos;
-  const my = cy + (outerRadius + 30) * sin;
-  const ex = mx + (cos >= 0 ? 1 : -1) * 22;
-  const ey = my;
-  const textAnchor = cos >= 0 ? 'start' : 'end';
-
-  return (
-    <g>
-      <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
-        {payload.name}
-      </text>
-      <Sector
-        cx={cx}
-        cy={cy}
-        innerRadius={innerRadius}
-        outerRadius={outerRadius}
-        startAngle={startAngle}
-        endAngle={endAngle}
-        fill={fill}
-      />
-      <Sector
-        cx={cx}
-        cy={cy}
-        startAngle={startAngle}
-        endAngle={endAngle}
-        innerRadius={outerRadius + 6}
-        outerRadius={outerRadius + 10}
-        fill={fill}
-      />
-      <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
-      <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${name}: ${value}`}</text>
-      <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
-        {`(Rate ${(percent * 100).toFixed(2)}%)`}
-      </text>
-    </g>
-  );
-};
 
 const PurchaseDashboard = () =>
 {
   const classes = useStyles();
-  const [activeindex, setActiveIndex] = useState(0)
   const [supplierName, setSupplierName] = useState([]);
   const [category, setCategory] = useState([]);
   const [rawMaterial, setRawMaterial] = useState([]);
@@ -195,9 +150,6 @@ const PurchaseDashboard = () =>
   };
    const handleRawMaterialChange = (event) =>{
     setRawMaterial(event.target.value);
-  };
-  const onPieEnter = (_, index) => {
-   setActiveIndex(index);
   };
 
   return (
@@ -311,60 +263,101 @@ const PurchaseDashboard = () =>
             </Grid>
       </Grid>
       <Grid container direction="row" spacing={2}>
-        <Grid item xs={12} md={6} xl={6}>
-          <div>
-          <ResponsiveContainer width="100%" height={450}>
-            <ComposedChart
-              data={fetchedData}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="pv" name="Paid invoices" stackId="a" fill="#8884d8" />
-              <Bar dataKey="de" name="Delayed" stackId="a" fill="#FF4C4C"></Bar>
-              <Bar dataKey="uv" name="To pay" stackId="a" fill="#82ca9d">
-                <LabelList content={data.pv + data.uv} position="top"/>
-              </Bar>
-              <Line dataKey="amt" name="Budget" type="monotone" stroke="#ff7300"/>
-              </ComposedChart>
-          </ResponsiveContainer>
-          </div>
+        <Grid item xs={6} md={3} xl={3}>
+          <DashboardTile
+            title={"Purchase value YTD:"}
+            subHeader={"refreshed at 11:55"}
+            content={"1.87 mln €"}
+            subContent={"+11.9% vs. LY"}
+          />
+        </Grid>
+        <Grid item xs={6} md={3} xl={3}>
+          <DashboardTile
+            title={"Purchase value YTD LY:"}
+            subHeader={"refreshed at 11:55"}
+            content={"1.67 mln €"}
+          />
+        </Grid>
+        <Grid item xs={6} md={2} xl={2}>
+          <DashboardTile
+            title={"Purchase value till end of year:"}
+            subHeader={"refreshed at 11:55"}
+            content={"870 tys. €"}
+          />
+        </Grid>
+        <Grid item xs={6} md={2} xl={2}>
+          <DashboardTile
+            title={"Overdue suppliers payments"}
+            subHeader={"refreshed at 11:57"}
+            content={"200 tys. €"}
+          />
+        </Grid>
+        <Grid item xs={6} md={2} xl={2}>
+          <DashboardTile
+            title={"Overdue customers payments"}
+            subHeader={"refreshed at 11:57"}
+            content={"470 tys. €"}
+          />
         </Grid>
         <Grid item xs={12} md={6} xl={6}>
-          <div >
-          <ResponsiveContainer width="100%" height={450}>
-            <LineChart
-              data={fetchedData}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-                <Line dataKey="pv" name="Liabilities" type="monotone" stroke="#ff7300" />
-                <Line dataKey="amt" name="Receivables" type="monotone" stroke="#FF4C4C"/>
+          <DashboardTile
+            title={"Cashflow:"}
+            subHeader = {"refreshed at 15:21"}
+            component={<ResponsiveContainer width="100%" height={450}>
+              <ComposedChart
+                data={fetchedData}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="pv" name="Paid invoices" stackId="a" fill="#d3d9dd" />
+                <Bar dataKey="de" name="Delayed" stackId="a" fill="#ff6961"></Bar>
+                <Bar dataKey="uv" name="To pay" stackId="a" fill="#3f6fb5">
+                  <LabelList content={data.pv + data.uv} position="top" />
+                </Bar>
+                <Line dataKey="amt" strokeWidth={4} name="Budget" type="monotone" stroke="#ff7300" />
+              </ComposedChart>
+            </ResponsiveContainer>}
+          />
+        </Grid>
+        <Grid item xs={12} md={6} xl={6}>
+          <DashboardTile
+            title={"Cash balance:"}
+            subHeader = {"refreshed at 15:21"}
+            component={<ResponsiveContainer width="100%" height={450}>
+              <LineChart
+                data={fetchedData}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line dataKey="pv" strokeWidth={4} name="Liabilities" type="monotone" stroke="#ff6961" />
+                <Line dataKey="amt" strokeWidth={4} name="Receivables" type="monotone" stroke="#77dd77" />
               </LineChart>
-              </ResponsiveContainer>
-          </div>
+            </ResponsiveContainer>}
+          />
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
-          <div style={{backgroundColor:"grey", height:"500px"}}>
-            <p>Widok tygodnia z harmonogramem dostaw/zakupów</p>
-          </div>
+          <DashboardTile
+            title={"Deliveries:"}
+            subHeader={"refreshed at 15:47"}
+            content={ "widok harmonogramu z najbliższymi dostawami."}/>
         </Grid>
 		</Grid>
     </div>
@@ -372,25 +365,3 @@ const PurchaseDashboard = () =>
 }
 
 export default PurchaseDashboard;
-
-
-/*
- <Grid item xs={12} md={4} xl={4}>
-        <div style={{height:"450px"}}>
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart	minwidth={400} minheight={400}>
-            <Pie activeIndex={activeindex}
-            activeShape={renderActiveShape}
-            data={data02}
-            cx="50%"
-            cy="50%"
-            innerRadius={100}
-            outerRadius={140}
-            fill="#8884d8"
-            dataKey="value"
-            onMouseEnter={onPieEnter}/>
-          </PieChart>
-        </ResponsiveContainer>   
-        </div>
-			</Grid>
-      */
