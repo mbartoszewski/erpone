@@ -14,12 +14,6 @@ Główne funkcjonalności, które chciałbym zaimplementować:\
 <img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/warehouse_dashboard_v2.png">
 <img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/colapsed_menu_drawer.jpg">
 <img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/thing_add_fullscreen_dialog.jpg">
-<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/thing_details_view.jpg">
-<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/thing_search.jpg">
-<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/thing_selected.jpg">
-<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/warehouse.jpg">
-<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/document_detail.png">
-<img src="https://github.com/mbartoszewski/erpone/blob/master/screenshots/document.png">
 
 
 
