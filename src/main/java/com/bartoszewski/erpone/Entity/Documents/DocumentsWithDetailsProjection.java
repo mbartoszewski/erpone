@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
+import com.bartoszewski.erpone.Entity.PaymentForm;
 import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
 
 public interface DocumentsWithDetailsProjection {
@@ -29,6 +30,22 @@ public interface DocumentsWithDetailsProjection {
 	List<RelatedDocuments> getRelatedDocuments();
 
 	Currency getDocumentCurrency();
+
+	PaymentForm getPaymentForm();
+
+	interface PaymentForm {
+		Long getId();
+
+		String getForm();
+	}
+
+	PaymentTerm getPaymentTerm();
+
+	interface PaymentTerm {
+		Long getId();
+
+		int getTerm();
+	}
 
 	interface RelatedDocuments {
 		Long getId();

@@ -13,42 +13,36 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class AddressServiceImpl implements AddressService
-{
+public class AddressServiceImpl implements AddressService {
 	AddressRepository addressesRepository;
 
 	@Autowired
-	public AddressServiceImpl(AddressRepository addressesRepository)
-	{
+	public AddressServiceImpl(AddressRepository addressesRepository) {
 		this.addressesRepository = addressesRepository;
 	}
 
 	@Override
-	public ResponseEntity<Address> create(Address entity, Authentication authentication)
-	{
-		return new ResponseEntity<>(addressesRepository.save(entity), HttpStatus.CREATED);
+	public ResponseEntity<Address> create(Address entity, Authentication authentication) {
+		return new ResponseEntity<>(addressesRepository.save(entity), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<Page<Address>> readAll(Pageable pageable)
-	{
+	public ResponseEntity<Page<Address>> readAll(Pageable pageable) {
 		return new ResponseEntity<>(addressesRepository.findAll(pageable), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<Address> readById(Long id)
-	{
+	public ResponseEntity<Address> readById(Long id) {
 
 		return new ResponseEntity<>(
-		    addressesRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)),
-		    HttpStatus.CREATED);
+				addressesRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)),
+				HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<Address> updateById(Long id, Address entity)
-	{
+	public ResponseEntity<Address> updateById(Long id, Address entity) {
 		Address address = addressesRepository.findById(id)
-		    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		address.setCity(entity.getCity());
 		address.setCountry(entity.getCountry());
 		address.setNumber(entity.getNumber());
@@ -58,10 +52,8 @@ public class AddressServiceImpl implements AddressService
 	}
 
 	@Override
-	public ResponseEntity<?> deleteById(Long id)
-	{
-		if (addressesRepository.getOne(id) != null)
-		{
+	public ResponseEntity<?> deleteById(Long id) {
+		if (addressesRepository.getOne(id) != null) {
 			addressesRepository.deleteById(id);
 			return new ResponseEntity<>("Deleted", HttpStatus.OK);
 		}

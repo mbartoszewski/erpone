@@ -1,21 +1,21 @@
 import React, { useState, useContext } from 'react'
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import AddIcon from '@material-ui/icons/Add'
-import Button from '@material-ui/core/Button'
-import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent'
-import {Box, Grid, IconButton, Typography } from '@material-ui/core';
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import {Box, Grid, IconButton, Typography } from '@mui/material';
 import PropTypes from 'prop-types'
-import Switch from '@material-ui/core/Switch'
-import TextField from '@material-ui/core/TextField'
-import { InputLabel, Select, MenuItem } from '@material-ui/core'
+import Switch from '@mui/material/Switch'
+import TextField from '@mui/material/TextField'
+import { InputLabel, Select, MenuItem } from '@mui/material'
 import { globalStateContext } from '../../ErpOneApp'
-import Slide from '@material-ui/core/Slide';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
+import Slide from '@mui/material/Slide';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
 import CloseIcon from '@material-ui/icons/Close';
 import { apiStates, useApi} from '../../../Components/Fetch';
-import { List, Divider, Tooltip, Zoom } from '@material-ui/core';
+import { List, Divider, Tooltip, Zoom } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -68,7 +68,6 @@ const AddThingDialog = props =>
   {
     e.preventDefault();
     //setThing(initialThing)
-    console.log(thing);
     //useApi('http://localhost:5000/api/things/');
     await fetch("http://localhost:5000/api/things/", {
       method: "POST",
@@ -152,13 +151,13 @@ const AddThingDialog = props =>
                 <Grid item xs={8} xm={5} xl={5}>
                   <InputLabel id="unit">Unit</InputLabel>
                   <Select fullWidth margin="dense" select='true' labelId="unit" id="selectUnit" onChange={handleChange('unit.id')}>
-                    {globalContext.dataUnits != null? globalContext.dataUnits.map((unit) => { return <MenuItem key={unit.id} value = {unit.id}>{unit.name}</MenuItem>}) : ""}
+                    {globalContext.dataUnits !== null? globalContext.dataUnits.map((unit) => { return <MenuItem key={unit.id} value = {unit.id}>{unit.name}</MenuItem>}) : ""}
                   </Select>
                 </Grid>
                 <Grid item xs={8} xm={5} xl={5}>
                   <InputLabel id="warehouse">Warehouse</InputLabel>
                   <Select fullWidth margin="dense" select='true' labelId ="warehouse" id="selectWarehouse" onChange={handleChange("warehouse.id")}>
-                    {globalContext.dataWarehouses != null? globalContext.dataWarehouses.map((warehouses) => { return <MenuItem key={warehouses.id} value = {warehouses.id}>{warehouses.name}</MenuItem>}) : ""}
+                    {globalContext.dataWarehouses !== null? globalContext.dataWarehouses.map((warehouses) => { return <MenuItem key={warehouses.id} value = {warehouses.id}>{warehouses.name}</MenuItem>}) : ""}
                   </Select>
                 </Grid>
               </Grid>

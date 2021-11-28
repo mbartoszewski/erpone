@@ -1,36 +1,22 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import Checkbox from '@material-ui/core/Checkbox'
-import MaUTable from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
+import MaUTable from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
 import { useParams } from "react-router-dom";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {
   useGlobalFilter,
   useSortBy,
   useTable,
 } from 'react-table'
-import { TableFooter } from '@material-ui/core';
-const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref) =>
-{
-	const defaultRef = React.useRef()
-	const resolvedRef = ref || defaultRef
+import { TableFooter } from '@mui/material';
 
-	React.useEffect(() =>
-	{
-		resolvedRef.current.indeterminate = indeterminate
-	}, [resolvedRef, indeterminate])
 
-	return (
-		<>
-			<Checkbox ref={resolvedRef} {...rest}/>
-		</>
-	)
-})
-const DocumentsDetailsTable = ({data, columns}) =>
+const DocumentsDetailsTable = ({data, columns, isEdit}) =>
 {
 	const { id } = useParams();
 	const {
@@ -40,7 +26,7 @@ const DocumentsDetailsTable = ({data, columns}) =>
 		footerGroups,
 		rows,
 		prepareRow,
-	} = useTable({ data, columns }, useSortBy)
+	} = useTable({ data, columns, isEdit}, useSortBy)
 		
 	return (
 		<TableContainer >
@@ -71,13 +57,8 @@ const DocumentsDetailsTable = ({data, columns}) =>
 										{
 											row.cells.map(cell => 
 											{
-												return cell.getCellProps().key.includes("selection") ?  (
-													<TableCell {...cell.getCellProps()} >
+												return (<TableCell {...cell.getCellProps()} >
 														{cell.render('Cell')}
-													</TableCell>) :
-															 (
-														<TableCell {...cell.getCellProps()} component={Link} to={`/warehouse/things/${row.original.thing.id}`}>
-															{cell.render('Cell')}
 													</TableCell>)
 											})
 										}

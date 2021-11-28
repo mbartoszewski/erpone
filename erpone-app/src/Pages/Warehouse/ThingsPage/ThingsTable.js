@@ -1,19 +1,23 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import Checkbox from '@material-ui/core/Checkbox'
-import MaUTable from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
-import TableToolbar from './ThingsTableToolbar'
+import Checkbox from '@mui/material/Checkbox'
+import MaUTable from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import AddIcon from '@mui/icons-material/Add';
+import TableToolbar from '../../../Components/TableToolbar'
+import DropDownMenu from '../../../Components/DropDownMenu';
+import ReactDOM from 'react-dom';
 import {
   useGlobalFilter,
   useRowSelect,
   useSortBy,
   useTable,
 } from 'react-table'
+
 const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref) =>
 {
 	const defaultRef = React.useRef()
@@ -30,6 +34,8 @@ const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref)
 		</>
 	)
 })
+const options = ['Thing'];
+
 const ThingsTable = ({data, columns}) =>
 	{
 	const {
@@ -68,14 +74,20 @@ const ThingsTable = ({data, columns}) =>
 		})
 		
 	return (
-		<TableContainer>
-				<TableToolbar
+		<div>
+			{ReactDOM.createPortal(<TableToolbar
+				dropDownMenu={
+					<DropDownMenu
+					buttonTitle={"Add"}
+					menuOptions={options}
+					icon={<AddIcon/>}>
+						</DropDownMenu>}
 				numSelected={Object.keys(selectedRowIds).length}
 				preGlobalFilteredRows={preGlobalFilteredRows}
 				setGlobalFilter={setGlobalFilter}
-				globalFilter={globalFilter}
-				/>
-				<MaUTable {...getTableProps()} size = "small">
+				globalFilter={globalFilter}/>, document.getElementById("option-toolbar"))}
+			<TableContainer>
+				<MaUTable {...getTableProps()} size="small">
 					<TableHead>
 						{headerGroups.map(headerGroup => (
 							<TableRow {...headerGroup.getHeaderGroupProps()}>
@@ -119,6 +131,8 @@ const ThingsTable = ({data, columns}) =>
 					</TableBody>
 				</MaUTable>			
 			</TableContainer>
+		</div>
+		
 		);
 };
 export default ThingsTable;

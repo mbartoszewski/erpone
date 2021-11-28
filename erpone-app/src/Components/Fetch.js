@@ -18,36 +18,40 @@ export const useApi = (url, options) =>
   const fetchData = async () =>
   {
       await fetch(url, options)
-    .then((response) => response.json())
+        .then((response) =>
+        {
+          if (!response.ok)
+          {
+          setPartData({
+            state: apiStates.ERROR,
+            error: "Error",
+            data: null
+          });
+          } else return response.json()
+        })
     .then((data) =>
     {
-    if (data != null && Object.keys(data)[0] === "content") {
+    if (data !== null && Object.keys(data)[0] === "content") {
        {console.log("połączenie: " + url + " data content:  " + data.content)}
       setPartData({
         state: apiStates.SUCCESS,
         data: data.content
       });
-    } else if (data != null && Object.keys(data)[0] != "content")
+    } else if (data !== null && Object.keys(data)[0] !== "content")
     {
        {console.log("połączenie: " + url + " data:  " + data)}
       setPartData({
         state: apiStates.SUCCESS,
         data: data
       });
-    } else
-    {
-       setPartData({
-        state: apiStates.EMPTY,
-        error: 'Empty response'
-      });
-      }
+    }
      
     })
     .catch(() =>
     {
       setPartData({
         state: apiStates.ERROR,
-        error: 'fetch failed'
+        error: "E"
       });
     });
   }

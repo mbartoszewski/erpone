@@ -1,11 +1,10 @@
 package com.bartoszewski.erpone.Controller;
 
-import com.bartoszewski.erpone.Entity.Contractor;
 import com.bartoszewski.erpone.Entity.Thing;
-import com.bartoszewski.erpone.Entity.ThingCategory;
 import com.bartoszewski.erpone.Entity.Documents.PriceWithDocumentTypeProjection;
 import com.bartoszewski.erpone.Entity.Projections.AllThingsWarehouse;
 import com.bartoszewski.erpone.Entity.Projections.SearchThingsByProperties;
+import com.bartoszewski.erpone.Entity.Projections.ThingsListToLoad;
 import com.bartoszewski.erpone.Entity.Projections.ThingsValueByProperties;
 
 import java.time.LocalDate;
@@ -22,7 +21,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,6 +41,11 @@ public class ThingController extends BaseController<Thing, Long> {
 	@GetMapping("/all")
 	public ResponseEntity<Page<AllThingsWarehouse>> getAllThingsWarehouse(Pageable pageable) {
 		return thingsService.getAllThingsWarehouse(pageable);
+	}
+
+	@GetMapping("/list")
+	public ResponseEntity<Page<ThingsListToLoad>> getThingsListToLoad(Pageable pageable) {
+		return thingsService.getThingsListToLoad(pageable);
 	}
 
 	@GetMapping("/{thingId}/price")
@@ -67,12 +70,13 @@ public class ThingController extends BaseController<Thing, Long> {
 
 	@GetMapping("/value")
 	public ResponseEntity<Page<ThingsValueByProperties>> getThingsValueByProperties(Pageable pageable,
-			@RequestParam(value = "categoriesId", required = false) List<Long> categoriesId,
+			@RequestParam(value = "groupId", required = false) List<Long> groupId,
+			@RequestParam(value = "familyId", required = false) List<Long> familyId,
 			@RequestParam(value = "thingsId", required = false) List<Long> thingsId,
 			@RequestParam(value = "contractorsId", required = false) List<Long> contractorsId,
 			@RequestParam(value = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
 			@RequestParam(value = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo) {
-		return thingsService.getThingsValueByProperties(pageable, categoriesId, thingsId, contractorsId, dateFrom,
+		return thingsService.getThingsValueByProperties(pageable, groupId, familyId, thingsId, contractorsId, dateFrom,
 				dateTo);
 	}
 }

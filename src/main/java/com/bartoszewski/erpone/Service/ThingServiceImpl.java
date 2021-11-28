@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.bartoszewski.erpone.Entity.Thing;
 import com.bartoszewski.erpone.Entity.Projections.SearchThingsByProperties;
+import com.bartoszewski.erpone.Entity.Projections.ThingsListToLoad;
 import com.bartoszewski.erpone.Entity.Projections.ThingsValueByProperties;
 import com.bartoszewski.erpone.Repository.ThingRepository;
 import com.bartoszewski.erpone.Repository.UnitRepository;
@@ -88,10 +89,15 @@ public class ThingServiceImpl implements ThingService {
 
 	@Override
 	public ResponseEntity<Page<ThingsValueByProperties>> getThingsValueByProperties(Pageable pageable,
-			List<Long> categoriesId, List<Long> thingsId, List<Long> contractorsId, LocalDate dateFrom,
+			List<Long> groupId, List<Long> familyId, List<Long> thingsId, List<Long> contractorsId, LocalDate dateFrom,
 			LocalDate dateTo) {
 
-		return new ResponseEntity<>(thingsRepository.getThingsValueByProperties(pageable, categoriesId, thingsId,
+		return new ResponseEntity<>(thingsRepository.getThingsValueByProperties(pageable, groupId, familyId, thingsId,
 				contractorsId, dateFrom, dateTo), HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<ThingsListToLoad>> getThingsListToLoad(Pageable pageable) {
+		return new ResponseEntity<>(thingsRepository.getThingsListToLoad(pageable), HttpStatus.OK);
 	}
 }

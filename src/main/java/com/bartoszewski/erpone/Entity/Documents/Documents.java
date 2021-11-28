@@ -42,6 +42,8 @@ public class Documents {
 
     @Column(name = "Document_number")
     private String docNumber;
+    @Column(name = "Document_foreign_number")
+    private String docForeignNumber;
 
     @NotNull
     @CreationTimestamp
@@ -49,6 +51,8 @@ public class Documents {
     private LocalDateTime createdAt;
     @Column(name = "Target_Date_Time", columnDefinition = "TIMESTAMP")
     private LocalDateTime targetDateTime;
+    @Column(name = "Issue_Date_Time", columnDefinition = "TIMESTAMP")
+    private LocalDateTime issueDateTime;
     @NotNull
     @UpdateTimestamp
     @Column(name = "Updated_At", columnDefinition = "TIMESTAMP")
@@ -186,6 +190,22 @@ public class Documents {
 
     public List<Documents> getRelatedDocuments() {
         return relatedDocuments;
+    }
+
+    public String getDocForeignNumber() {
+        return docForeignNumber;
+    }
+
+    public void setDocForeignNumber(String docForeignNumber) {
+        this.docForeignNumber = docForeignNumber;
+    }
+
+    public LocalDateTime getIssueDateTime() {
+        return issueDateTime;
+    }
+
+    public void setIssueDateTime(LocalDateTime issueDateTime) {
+        this.issueDateTime = issueDateTime;
     }
 
     public void setRelatedDocuments(List<Documents> relatedDocuments) {

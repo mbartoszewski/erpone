@@ -1,5 +1,4 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
@@ -7,30 +6,23 @@ import { useParams } from "react-router-dom";
 import moment from 'moment'
 import { apiStates, useApi } from '../../../../Components/Fetch'
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "100%",
-		height: 350,
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center',
-		'& > *': {
-      margin: theme.spacing(1),
-    },
-  },
-}))
+const errorMsg =
+{
+  position: 'absolute',
+  top: '50%',
+  left: '50%'
+}
   
 
 function PriceCard()
 {
-	const classes = useStyles();
 	const { id } = useParams();
 	const currentDate = moment.utc().subtract(6, 'month').format('YYYY-MM-DD');
 	const { state, error, data } = useApi(`http://localhost:5000/api/things/${id}/price?startDate=${currentDate}`);
 
 	const salesPrice = (data) =>
 	{
-		if (data != null)
+		if (data !== null)
 			{
 				if (data.documentsDetails.document.documentTypeEnum === "rw" || data.documentsDetails.document.documentTypeEnum === "wz" || data.documentsDetails.document.documentTypeEnum === "wzz")
 				{
@@ -41,7 +33,7 @@ function PriceCard()
 
 	const purchasePrice = (data) =>
 	{
-		if (data != null)
+		if (data !== null)
 			{
 				if (data.documentsDetails.document.documentTypeEnum === "zm" || data.documentsDetails.document.documentTypeEnum === "pw" || data.documentsDetails.document.documentTypeEnum === "pz")
 				{
@@ -57,10 +49,9 @@ function PriceCard()
 	{
 		case apiStates.ERROR:
 		case apiStates.EMPTY:
-			return <p className={classes.root}>Error: {error} || 'General error'</p>;
+			return <p sx={errorMsg}>Error: {error} || 'General error'</p>;
 		case apiStates.SUCCESS:
 			return (
-				<div className={classes.root} >
 				<ResponsiveContainer>  
 					<LineChart width="100%" height={250} data={data} margin={{top: 7, right: 2, left: 2, bottom: 5}}>
 							<XAxis dataKey={dateTimeFormated}/>
@@ -72,10 +63,9 @@ function PriceCard()
 							<Line connectNulls type="monotype" dataKey={purchasePrice} name = "Purchase price" stroke="#82ca9d" activeDot={{ r: 8 }}/>
 					</LineChart>
 				</ResponsiveContainer>	
-			</div>	
 		);
 		default:
-		return <p className={classes.errorMsg}>Loading....</p>;
+		return <p sx={errorMsg}>Loading....</p>;
 	}	
 };
 export default PriceCard;

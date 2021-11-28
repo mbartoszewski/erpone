@@ -1,8 +1,10 @@
 package com.bartoszewski.erpone.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.bartoszewski.erpone.Entity.Documents.DocumentValueProjection;
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsProjection;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsWithDetailsProjection;
@@ -17,41 +19,48 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DocumentsRepository extends BaseRepository<Documents, Long> {
-	@Query("SELECT DISTINCT d FROM Documents d LEFT JOIN DocumentDetails dd ON dd.document.id = d.id WHERE dd.thing.id = :thing AND ((:startDate IS NULL OR d.createdAt >= CONCAT(:startDate, 'T00:00:00')) AND (:endDate IS NULL OR d.createdAt <= CONCAT(:endDate, 'T23:59:59'))) AND (:type IS NULL OR d.documentTypeEnum = :type) AND (:status IS NULL OR d.documentStatusEnum = :status)")
+	@Query("SELECT DISTINCT d FROM Documents d LEFT JOIN DocumentDetails dd ON dd.document.id = d.id WHERE dd.thing.id = :thing AND ((:dateFrom IS NULL OR d.createdAt >= CONCAT(:dateFrom, 'T00:00:00')) AND (:dateTo IS NULL OR d.createdAt <= CONCAT(:dateTo, 'T23:59:59'))) AND (COALESCE(:type) IS NULL OR d.documentTypeEnum IN :type) AND (COALESCE(:status) IS NULL OR d.documentStatusEnum IN :status)")
 	public Page<Documents> findAllByType(Pageable pageable, @Param("thing") Long thing,
-			@Param("type") DocumentTypeEnum type, @Param("status") DocumentStatusEnum status,
-			@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+			@Param("type") List<DocumentTypeEnum> type, @Param("status") List<DocumentStatusEnum> status,
+			@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 
-	/*
-	 * @Query("SELECT DISTINCT d FROM Documents d LEFT JOIN DocumentDetails dd ON dd.document.id = d.id WHERE (:thing IS NULL OR dd.thing.id = :thing) AND ((:startTargetDate IS NULL OR d.targetDateTime >= CONCAT(:startTargetDate, 'T00:00:00')) AND (:endTargetDate IS NULL OR d.targetDateTime <= CONCAT(:endTargetDate, 'T23:59:59'))) AND (:type IS NULL OR d.documentTypeEnum = :type) AND (:status IS NULL OR d.statusTypeEnum = :status) AND (:contractor IS NULL OR d.contractor.name LIKE %:contractor%)"
-	 * ) public Page<Documents> findPurchaseOrderByDetails(Pageable
-	 * pageable, @Param("thing") Long thing,
-	 * 
-	 * @Param("type") DocumentTypeEnum type, @Param("status") StatusTypeEnum status,
-	 * 
-	 * @Param("startTargetDate") LocalDate startTargetDate, @Param("endTargetDate")
-	 * LocalDate endTargetDate,
-	 * 
-	 * @Param("contractor") String contractor);
-	 * 
-	 * @Query("SELECT d FROM Documents d LEFT JOIN ProductionOrderDocumentDetails podd ON podd.document.id = d.id WHERE (:status IS NULL OR d.statusTypeEnum = :status) AND ((:startTargetDate IS NULL OR d.targetDateTime >= CONCAT(:startTargetDate, 'T00:00:00')) AND (:endTargetDate IS NULL OR d.targetDateTime <= CONCAT(:endTargetDate, 'T23:59:59'))) AND (:recipe IS NULL OR podd.recipe.id = :recipe) AND d.documentTypeEnum = 'zp'"
-	 * ) public Page<Documents> findProductionOrderByDetails(Pageable
-	 * pageable, @Param("status") StatusTypeEnum status,
-	 * 
-	 * @Param("startTargetDate") LocalDate startTargetDate, @Param("endTargetDate")
-	 * LocalDate endTargetDate,
-	 * 
-	 * @Param("recipe") Long recipe);
-	 */
 	@Query("SELECT COUNT(d) FROM Documents d WHERE d.createdAt >= CONCAT(:year, '-01-01T00:00:00') AND d.createdAt <= CONCAT(:year, '-12-31T23:59:59') AND d.documentTypeEnum = :documentTypeEnum")
 	Long countByYear(int year, DocumentTypeEnum documentTypeEnum);
 
-	@Query("SELECT d FROM Documents d WHERE ((:startTargetDate IS NULL OR d.targetDateTime >= CONCAT(:startTargetDate, 'T00:00:00')) AND (:endTargetDate IS NULL OR d.targetDateTime <= CONCAT(:endTargetDate, 'T23:59:59'))) AND (:documentTypeEnum IS NULL OR d.documentTypeEnum IN :documentTypeEnum) AND (:status IS NULL OR d.documentStatusEnum = :status) AND (:contractor IS NULL OR d.contractor.name LIKE %:contractor%) ORDER BY d.createdAt DESC ")
-	Page<DocumentsProjection> getDocuments(Pageable pageable,
-			@Param("documentTypeEnum") List<DocumentTypeEnum> documentTypeEnum,
-			@Param("status") DocumentStatusEnum status, @Param("startTargetDate") LocalDate startTargetDate,
-			@Param("endTargetDate") LocalDate endTargetDate, @Param("contractor") String contractor);
+	@Query("SELECT d FROM Documents d WHERE ((:targetDateFrom IS NULL OR d.targetDateTime >= CONCAT(:targetDateFrom, 'T00:00:00')) AND (:targetDateTo IS NULL OR d.targetDateTime <= CONCAT(:targetDateTo, 'T23:59:59'))) AND (COALESCE(:type) IS NULL OR d.documentTypeEnum IN :type) AND (COALESCE(:status) IS NULL OR d.documentStatusEnum = :status) AND (:contractor IS NULL OR d.contractor.name LIKE %:contractor%) ORDER BY d.createdAt DESC ")
+	Page<DocumentsProjection> getDocuments(Pageable pageable, @Param("type") List<DocumentTypeEnum> documentTypeEnum,
+			@Param("status") List<DocumentStatusEnum> status, @Param("targetDateFrom") LocalDate targetDateFrom,
+			@Param("targetDateTo") LocalDate targetDateTo, @Param("contractor") String contractor);
 
 	@Query("SELECT d FROM Documents d WHERE d.id = :id")
 	DocumentsWithDetailsProjection getDocumentDetailsById(Long id);
+
+	@Query("SELECT d FROM Documents d WHERE ((:dateFrom IS NULL OR d.createdAt >= :dateFrom) AND (:dateTo IS NULL OR d.createdAt <= :dateTo)) AND ((:targetDateFrom IS NULL OR d.targetDateTime >= CONCAT(:targetDateFrom, 'T00:00:00')) AND (:targetDateTo IS NULL OR d.targetDateTime <= CONCAT(:targetDateTo, 'T23:59:59'))) AND (COALESCE(:type) IS NULL OR d.documentTypeEnum IN :type) AND (COALESCE(:status) IS NULL OR d.documentStatusEnum IN :status) AND (COALESCE(:contractor) IS NULL OR d.contractor.id IN :contractor)")
+	Page<DocumentValueProjection> getDocumentValue(Pageable pageable,
+			@Param("type") List<DocumentTypeEnum> documentTypeEnum, @Param("status") List<DocumentStatusEnum> status,
+			@Param("contractor") List<Long> contractor, @Param("targetDateFrom") LocalDate targetDateFrom,
+			@Param("targetDateTo") LocalDate targetDateTo, @Param("dateFrom") LocalDateTime dateFrom,
+			@Param("dateTo") LocalDateTime dateTo);
 }
+
+/*
+ * @Query("SELECT DISTINCT d FROM Documents d LEFT JOIN DocumentDetails dd ON dd.document.id = d.id WHERE (:thing IS NULL OR dd.thing.id = :thing) AND ((:targetDateFrom IS NULL OR d.targetDateTime >= CONCAT(:targetDateFrom, 'T00:00:00')) AND (:targetDateTo IS NULL OR d.targetDateTime <= CONCAT(:targetDateTo, 'T23:59:59'))) AND (:type IS NULL OR d.documentTypeEnum = :type) AND (:status IS NULL OR d.statusTypeEnum = :status) AND (:contractor IS NULL OR d.contractor.name LIKE %:contractor%)"
+ * ) public Page<Documents> findPurchaseOrderByDetails(Pageable
+ * pageable, @Param("thing") Long thing,
+ * 
+ * @Param("type") DocumentTypeEnum type, @Param("status") StatusTypeEnum status,
+ * 
+ * @Param("targetDateFrom") LocalDate targetDateFrom, @Param("targetDateTo")
+ * LocalDate targetDateTo,
+ * 
+ * @Param("contractor") String contractor);
+ * 
+ * @Query("SELECT d FROM Documents d LEFT JOIN ProductionOrderDocumentDetails podd ON podd.document.id = d.id WHERE (:status IS NULL OR d.statusTypeEnum = :status) AND ((:targetDateFrom IS NULL OR d.targetDateTime >= CONCAT(:targetDateFrom, 'T00:00:00')) AND (:targetDateTo IS NULL OR d.targetDateTime <= CONCAT(:targetDateTo, 'T23:59:59'))) AND (:recipe IS NULL OR podd.recipe.id = :recipe) AND d.documentTypeEnum = 'zp'"
+ * ) public Page<Documents> findProductionOrderByDetails(Pageable
+ * pageable, @Param("status") StatusTypeEnum status,
+ * 
+ * @Param("targetDateFrom") LocalDate targetDateFrom, @Param("targetDateTo")
+ * LocalDate targetDateTo,
+ * 
+ * @Param("recipe") Long recipe);
+ */

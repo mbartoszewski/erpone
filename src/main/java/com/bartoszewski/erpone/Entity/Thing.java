@@ -54,9 +54,13 @@ public class Thing {
     @NotNull
     private Warehouse warehouse;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Category_Id")
+    @JoinColumn(name = "Group_Id")
     @NotNull
-    private ThingCategory thingCategory;
+    private ThingGroup thingGroup;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Family_Id")
+    @NotNull
+    private ThingFamily thingFamily;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Unit_Id")
@@ -204,12 +208,20 @@ public class Thing {
         price.setThing(null);
     }
 
-    public ThingCategory getThingCategory() {
-        return thingCategory;
+    public ThingGroup getThingGroup() {
+        return thingGroup;
     }
 
-    public void setThingCategory(ThingCategory thingCategory) {
-        this.thingCategory = thingCategory;
+    public void setThingGroup(ThingGroup thingGroup) {
+        this.thingGroup = thingGroup;
+    }
+
+    public ThingFamily getThingFamily() {
+        return thingFamily;
+    }
+
+    public void setThingFamily(ThingFamily thingFamily) {
+        this.thingFamily = thingFamily;
     }
 
 }

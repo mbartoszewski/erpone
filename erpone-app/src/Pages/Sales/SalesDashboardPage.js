@@ -1,11 +1,9 @@
-import { Grid, Typography } from '@material-ui/core'
+import { Grid} from '@mui/material'
 import React from 'react'
-import { makeStyles } from '@material-ui/styles'
 import DashboardTile from '../../Components/DashboardTile';
-import { LineChart, BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
-import ReactDOM from 'react-dom'
-const useStyles = makeStyles((theme) => ({
-}));
+import { LineChart, BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
+import { ReturnYTD, UnitConverter, VariationCalculator, DocValue, DocValueByProperties } from '../../Components/Helpers'
+import { apiStates, useApi } from '../../Components/Fetch'
 
 const data = [
   {
@@ -87,33 +85,63 @@ const data = [
 
 const SalesDashboardPage = () =>
 {
-  const classes = useStyles();
- 
+  const { state: YTDSalesState, error: YTDSalesError, data: YTDSalesData } = useApi(`http://localhost:5000/api/documents/value?type=wz&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
+  const { state: YTDLYSalesState, error: YTDLYSalesError, data: YTDLYSalesData } = useApi(`http://localhost:5000/api/documents/value?type=wz&dateFrom=${ReturnYTD(-1, 0, 0, 1)}&dateTo=${ReturnYTD(-1, 0, 0, 0)}`);
+  const { state: futureSalesState, error: futureSalesError, data: futureSalesData } = useApi(`http://localhost:5000/api/documents/value?type=zm&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
+
+  const ytdSales = React.useMemo(() => YTDSalesData, YTDSalesState);
+  const ytdLySales = React.useMemo(() => YTDLYSalesData, YTDLYSalesState);
+  const futureSales = React.useMemo(() => futureSalesData, futureSalesState);
+
+  const ytdSalesValue = DocValue(ytdSales);
+  const ytdLySalesValue = DocValue(ytdLySales);
+  const futureSalesValue = DocValue(futureSales);
+  const YTDSalesValueByCustomer = DocValueByProperties(ytdSales, 'contractor');
 	return (
     <div>
 			<Grid container spacing={2}>
 				<Grid item xl={4} md={4} xs={12}>
-					<DashboardTile title="Sales Dashboard" subHeader="refreshed at 19:22" content="????"/>
+          <DashboardTile
+            title="Sales Dashboard"
+            subHeader="refreshed at 19:22"
+            content={"?>"} />
 				</Grid>
 				<Grid item xl={2} md={2} xs={6}>
-					<DashboardTile title="Sales value YTD:" subHeader="refreshed at 19:22" content="2.74 mln €" subContent="+7,87% vs. LY"/>
+          <DashboardTile
+            title="Sales value YTD:"
+            subHeader="refreshed at 19:22"
+            content={UnitConverter(ytdSalesValue)}
+            subContent={VariationCalculator(ytdSalesValue, ytdLySalesValue) + "% vs. LY"} />
 				</Grid>
 				<Grid item xl={2} md={2} xs={6}>
-					<DashboardTile title="Sales value YTD LY:" subHeader="refreshed at 19:23" content="2.52 mln €"/>
+          <DashboardTile
+            title="Sales value YTD LY:"
+            subHeader="refreshed at 19:23"
+            content={UnitConverter(ytdLySalesValue)} />
 				</Grid>
 				<Grid item xl={2} md={2} xs={6}>
-					<DashboardTile title="Budget realization in % YTD:" subHeader="refreshed at 17:54" content="85%"/>
+          <DashboardTile
+            title="Budget realization in % YTD:"
+            subHeader="refreshed at 17:54"
+            content="85%" />
 				</Grid>
 				<Grid item xl={2} md={2} xs={6}>
-					<DashboardTile title="Budget realization in % YTD LY:" subHeader="refreshed at 17:55" content="78%"/>
+          <DashboardTile
+            title="Budget realization in % YTD LY:"
+            subHeader="refreshed at 17:55"
+            content="78%" />
 				</Grid>
 				<Grid item xl={4} md={4} xs={12}>
-					<DashboardTile title="Sales summary YTD:" subHeader="refreshed at 16:55" content="Tabela z ilością sprzedanych towarów w każdym dniu, obok porównanie miesiąc do miesiąca"/>
+          <DashboardTile
+            title="Sales summary YTD:"
+            subHeader="refreshed at 16:55"
+            content="Table with sales quantity, value by item " />
 				</Grid>
 				<Grid item xl={4} md={4} xs={12}>
-					<DashboardTile title="Sales summary vs. budget monthly:"
+          <DashboardTile
+            title="Sales summary vs. budget monthly:"
 						subHeader="refreshed at 16:57"
-						component={<ResponsiveContainer width="100%" height={450}>
+						component={<ResponsiveContainer width="100%" height={350}>
 								<LineChart
 									data={data}
 									margin={{
@@ -137,9 +165,9 @@ const SalesDashboardPage = () =>
 					<DashboardTile
 						title={"Sales summary by customer:"}
 						subHeader={"refreshed at 12:22"}
-						component={<ResponsiveContainer width="100%" height={450}>
+						component={<ResponsiveContainer width="100%" height={350}>
 							<BarChart
-								data={data}
+								data={YTDSalesValueByCustomer}
 								layout="vertical"
 								margin={{
 									top: 5,
@@ -148,7 +176,7 @@ const SalesDashboardPage = () =>
 									bottom: 5,
 								}}
 								>
-								<Bar dataKey="amt" barSize={20} fill="#3f6fb5" />
+                <Bar dataKey="amt" barSize={20} fill="#3f6fb5" />
 								<CartesianGrid strokeDasharray="3 3" />
 								<YAxis dataKey="name" type="category" />
 								<XAxis type="number"/>

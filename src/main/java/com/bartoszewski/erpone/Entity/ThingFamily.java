@@ -15,14 +15,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @JsonIgnoreProperties(value = { "things" })
-public class ThingCategory {
+public class ThingFamily {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
 	private Long id;
 	String name;
 
-	@OneToMany(mappedBy = "thingCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "thingGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	List<Thing> things;
 
 	public Long getId() {
@@ -51,11 +51,11 @@ public class ThingCategory {
 
 	public void addThing(Thing thing) {
 		this.things.add(thing);
-		thing.setThingCategory(this);
+		thing.setThingFamily(this);
 	}
 
 	public void removeThing(Thing thing) {
 		this.things.remove(thing);
-		thing.setThingCategory(null);
+		thing.setThingFamily(null);
 	}
 }

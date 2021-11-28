@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core'
+import { Grid} from '@mui/material'
 import React from 'react'
 import { AreaChart, Bar, BarChart, Area, XAxis, YAxis, LabelList, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import DashboardTile from '../../../Components/DashboardTile';
@@ -68,7 +68,7 @@ const WarehouseDashboardPage = () =>
 						title={"Warehouse value YTD LY:"}
 						subHeader={"refreshed at 14:56"}/>
 				</Grid>
-				<Grid container xs={12} md={12} xl={6} spacing ={2}>
+				<Grid container item xs={12} md={12} xl={6} spacing ={2}>
 					<Grid item xl={6} md={3} xs={6}>
 						<DashboardTile
 							title={"Complaint rate this month:"}
@@ -125,7 +125,7 @@ const WarehouseDashboardPage = () =>
 					</Grid>
 			</Grid>
 	</div>
-)
+	)
 }
 
 export default WarehouseDashboardPage;

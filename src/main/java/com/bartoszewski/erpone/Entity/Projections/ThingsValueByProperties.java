@@ -15,7 +15,7 @@ public interface ThingsValueByProperties {
 
 	Thing getThing();
 
-	interface Category {
+	interface Group {
 		Long getId();
 
 		String getName();
@@ -26,7 +26,7 @@ public interface ThingsValueByProperties {
 
 		String getCode();
 
-		Category getThingCategory();
+		Group getThingGroup();
 	}
 
 	interface Contractor {

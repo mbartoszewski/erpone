@@ -19,9 +19,17 @@ public interface SearchThingsByProperties {
 		String getCode();
 	}
 
-	Category getThingCategory();
+	Group getThingGroup();
 
-	interface Category {
+	interface Group {
+		Long getId();
+
+		String getName();
+	}
+
+	Family getThingFamily();
+
+	interface Family {
 		Long getId();
 
 		String getName();

@@ -1,23 +1,15 @@
 import React from "react";
-import { makeStyles } from "@material-ui/styles";
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import CardHeader from '@material-ui/core/CardHeader';
-const useStyles = makeStyles((theme) => ({
-	Card: {
-		backgroundColor: "#f4f4f4"
-	}
-}));
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import CardHeader from '@mui/material/CardHeader';
 
 const DashboardTile = (props) =>
 {
-	const classes = useStyles();
 	
 	return (
-		<Card className= {classes.Card}>
+		<Card sx= {{backgroundColor: "#f4f4f4"}}>
 			<CardHeader
 				titleTypographyProps={{variant:"h5"}}
 				subheaderTypographyProps={{variant:"body2"}}

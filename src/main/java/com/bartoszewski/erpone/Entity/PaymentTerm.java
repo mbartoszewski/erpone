@@ -23,7 +23,7 @@ public class PaymentTerm {
 	private Long id;
 	@NotNull
 	@Column(name = "Term")
-	private Long term;
+	private int term;
 	@OneToMany(mappedBy = "paymentTerm", fetch = FetchType.LAZY)
 	private List<Documents> documents;
 
@@ -35,11 +35,11 @@ public class PaymentTerm {
 		this.id = id;
 	}
 
-	public Long getTerm() {
+	public int getTerm() {
 		return term;
 	}
 
-	public void setTerm(Long term) {
+	public void setTerm(int term) {
 		this.term = term;
 	}
 

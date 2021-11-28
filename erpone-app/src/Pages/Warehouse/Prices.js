@@ -1,25 +1,20 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 
-const useStyles = makeStyles((theme) => ({
-	root: {
+const root = (theme) => ({
     display: 'flex',
     flexWrap: 'wrap',
     '& > *': {
       margin: theme.spacing(1),
       width: theme.spacing(16),
       height: theme.spacing(16),
-    },
-  },
-
-}))
+    }
+})
 
 function Prices()
 {
-	const classes = useStyles();
 const data = [
       {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
       {name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
@@ -30,7 +25,7 @@ const data = [
       {name: 'Page G', uv: 3490, pv: 4300, amt: 2100},
 ];
 	return (
-		<div className={classes.root}>
+		<div sx={root}>
 					<LineChart width={600} height={300} data={data}
            				 margin={{top: 5, right: 30, left: 20, bottom: 5}}>
 						<XAxis dataKey="name"/>

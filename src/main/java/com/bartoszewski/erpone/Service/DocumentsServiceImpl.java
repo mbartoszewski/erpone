@@ -1,6 +1,8 @@
 package com.bartoszewski.erpone.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.stream.Collectors;
 import com.bartoszewski.erpone.Entity.Contractor;
 import com.bartoszewski.erpone.Entity.Thing;
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
+import com.bartoszewski.erpone.Entity.Documents.DocumentValueProjection;
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsProjection;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsWithDetailsProjection;
@@ -61,7 +64,6 @@ public class DocumentsServiceImpl implements DocumentsService {
 			return makeIncomeOperation(entity, authentication);
 		case rw:
 		case wz:
-		case wzz:
 			return makeOutgoingOperation(entity, authentication);
 		case zp:
 			return makeProductionOrder(entity, authentication);
@@ -99,25 +101,31 @@ public class DocumentsServiceImpl implements DocumentsService {
 	}
 
 	@Override
-	public ResponseEntity<Page<Documents>> findAllByType(Pageable pageable, Long thing, String type, String status,
-			LocalDate startDate, LocalDate endDate) {
-		DocumentStatusEnum statusEnum = status != null ? DocumentStatusEnum.valueOf(status) : null;
-		DocumentTypeEnum typeEnum = type != null ? DocumentTypeEnum.valueOf(type) : null;
+	public ResponseEntity<Page<Documents>> findAllByType(Pageable pageable, Long thing, List<String> type,
+			List<String> status, LocalDate dateFrom, LocalDate dateTo) {
+		List<DocumentStatusEnum> statusEnum = status != null
+				? status.stream().map((s) -> DocumentStatusEnum.valueOf(s)).collect(Collectors.toList())
+				: null;
+
+		List<DocumentTypeEnum> typeEnum = type != null
+				? type.stream().map((t) -> DocumentTypeEnum.valueOf(t)).collect(Collectors.toList())
+				: null;
 		return new ResponseEntity<>(
-				documentsRepository.findAllByType(pageable, thing, typeEnum, statusEnum, startDate, endDate),
+				documentsRepository.findAllByType(pageable, thing, typeEnum, statusEnum, dateFrom, dateTo),
 				HttpStatus.OK);
 	}
 
 	private ResponseEntity<?> makeOutgoingOperation(Documents entity, Authentication authentication) {
 		List<DocumentDetails> detailsWithoutStock = new ArrayList<>(0);
+		double docValue = 0.0;
 		for (Iterator<DocumentDetails> documentsDetails = entity.getDocumentDetails().iterator(); documentsDetails
 				.hasNext();) {
 			DocumentDetails documentDetail = documentsDetails.next();
 			Thing thing = thingsRepository.getOne(documentDetail.getThing().getId());
 			documentDetail.setThing(thing);
+			docValue += (documentDetail.getQuantity() * documentDetail.getDetailPrice());
 			if (documentDetail.getThing().getQuantity() >= documentDetail.getQuantity()) {
-				documentDetail.getThing()
-						.setQuantity(documentDetail.getThing().getQuantity() - documentDetail.getQuantity());
+				thing.setQuantity(thing.getQuantity() - documentDetail.getQuantity());
 				documentDetail.setBalance(documentDetail.getQuantity());
 				// documentDetail.getPrice().setCurrency(entity.getDocumentCurrency());
 				// documentDetail.getPrice().setThing(thing);
@@ -127,6 +135,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 				detailsWithoutStock.add(documentDetail);
 			}
 		}
+		entity.setDocValue(docValue);
 		Long c = documentsRepository.countByYear(LocalDate.now().getYear(), entity.getDocumentTypeEnum()) + 1;
 		entity.setDocNumber(c);
 		entity.setPaymentForm(paymentFormRepository.getOne(entity.getPaymentForm().getId()));
@@ -137,42 +146,48 @@ public class DocumentsServiceImpl implements DocumentsService {
 	}
 
 	private ResponseEntity<?> makeIncomeOperation(Documents entity, Authentication authentication) {
+		double docValue = 0.0;
 		for (Iterator<DocumentDetails> documentsDetails = entity.getDocumentDetails().iterator(); documentsDetails
 				.hasNext();) {
 			DocumentDetails documentDetail = documentsDetails.next();
 			Thing thing = thingsRepository.getOne(documentDetail.getThing().getId());
 			thing.setQuantity(thing.getQuantity() + documentDetail.getQuantity());
+			docValue += (documentDetail.getQuantity() * documentDetail.getDetailPrice());
 			documentDetail.setBalance(documentDetail.getQuantity());
 			// documentDetail.getPrice().setCurrency(entity.getDocumentCurrency());
 			// documentDetail.getPrice().setThing(thing);
 			// documentDetail.getPrice().setDocumentsDetails(documentDetail);
 		}
+		entity.setDocValue(docValue);
 		Long c = documentsRepository.countByYear(LocalDate.now().getYear(), entity.getDocumentTypeEnum()) + 1;
 		entity.setDocNumber(c);
 		entity.setPaymentForm(paymentFormRepository.getOne(entity.getPaymentForm().getId()));
 		entity.setPaymentTerm(paymentTermRepository.getOne(entity.getPaymentTerm().getId()));
 		// entity.setUser(userRepository.findByEmail(authentication.getName()));
-		return new ResponseEntity<>(documentsRepository.save(entity), HttpStatus.CREATED);
+		return new ResponseEntity<>(documentsRepository.save(entity), HttpStatus.OK);
 	}
 
 	private ResponseEntity<?> makeOrder(Documents entity, Authentication authentication) {
 		List<DocumentDetails> disabledDetails = new ArrayList<>(0);
 		Contractor contractor = contractorRepository.getOne(entity.getContractor().getId());
 		if (entity.getTargetDateTime() != null && entity.getContractor() != null) {
+			double docValue = 0.0;
 			for (Iterator<DocumentDetails> documentsDetails = entity.getDocumentDetails().iterator(); documentsDetails
 					.hasNext();) {
 				DocumentDetails documentDetail = documentsDetails.next();
 				Thing thing = thingsRepository.getOne(documentDetail.getThing().getId());
-				if (documentDetail.getThing().getActive() != 1) {
+				docValue += (documentDetail.getQuantity() * documentDetail.getDetailPrice());
+				if (thing.getActive() != 1) {
 					documentsDetails.remove();
 					disabledDetails.add(documentDetail);
 				}
-				documentDetail.getPrice().setCurrency(entity.getDocumentCurrency());
-				documentDetail.getPrice().setThing(thing);
-				documentDetail.getPrice().setDocumentsDetails(documentDetail);
+
 			}
+			entity.setDocValue(docValue);
 			Long c = documentsRepository.countByYear(LocalDate.now().getYear(), entity.getDocumentTypeEnum()) + 1;
 			entity.setDocNumber(c);
+			entity.setPaymentForm(paymentFormRepository.getOne(entity.getPaymentForm().getId()));
+			entity.setPaymentTerm(paymentTermRepository.getOne(entity.getPaymentTerm().getId()));
 			entity.setContractor(contractor);
 			// entity.setUser(userRepository.findByEmail(authentication.getName()));
 			return disabledDetails.size() > 0 ? new ResponseEntity<>(disabledDetails, HttpStatus.BAD_REQUEST)
@@ -188,20 +203,44 @@ public class DocumentsServiceImpl implements DocumentsService {
 	}
 
 	@Override
-	public ResponseEntity<Page<DocumentsProjection>> getDocuments(Pageable pageable, List<String> type, String status,
-			LocalDate startDate, LocalDate endDate, String contractor) {
-		DocumentStatusEnum statusEnum = status != null ? DocumentStatusEnum.valueOf(status) : null;
+	public ResponseEntity<Page<DocumentsProjection>> getDocuments(Pageable pageable, List<String> type,
+			List<String> status, LocalDate dateFrom, LocalDate dateTo, String contractor) {
+
+		List<DocumentStatusEnum> statusEnum = status != null
+				? status.stream().map((s) -> DocumentStatusEnum.valueOf(s)).collect(Collectors.toList())
+				: null;
 
 		List<DocumentTypeEnum> typeEnum = type != null
 				? type.stream().map((t) -> DocumentTypeEnum.valueOf(t)).collect(Collectors.toList())
 				: null;
 		return new ResponseEntity<>(
-				documentsRepository.getDocuments(pageable, typeEnum, statusEnum, startDate, endDate, contractor),
+				documentsRepository.getDocuments(pageable, typeEnum, statusEnum, dateFrom, dateTo, contractor),
 				HttpStatus.OK);
 	}
 
 	@Override
 	public ResponseEntity<DocumentsWithDetailsProjection> getDocumentDetailsById(Long id) {
 		return new ResponseEntity<>(documentsRepository.getDocumentDetailsById(id), HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<DocumentValueProjection>> getDocumentValue(Pageable pageable, List<String> type,
+			List<String> status, List<Long> contractor, LocalDate targetDateFrom, LocalDate targetDateTo,
+			String dateFrom, String dateTo) {
+
+		ZonedDateTime dateFromztd = ZonedDateTime.parse(dateFrom);
+		LocalDateTime dateFromLDT = dateFromztd.toLocalDateTime();
+
+		ZonedDateTime dateToztd = ZonedDateTime.parse(dateTo);
+		LocalDateTime dateToLDT = dateToztd.toLocalDateTime();
+		List<DocumentStatusEnum> statusEnum = status != null
+				? status.stream().map((s) -> DocumentStatusEnum.valueOf(s)).collect(Collectors.toList())
+				: null;
+
+		List<DocumentTypeEnum> typeEnum = type != null
+				? type.stream().map((t) -> DocumentTypeEnum.valueOf(t)).collect(Collectors.toList())
+				: null;
+		return new ResponseEntity<>(documentsRepository.getDocumentValue(pageable, typeEnum, statusEnum, contractor,
+				targetDateFrom, targetDateTo, dateFromLDT, dateToLDT), HttpStatus.OK);
 	}
 }

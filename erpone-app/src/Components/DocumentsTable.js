@@ -1,14 +1,17 @@
 import React from 'react'
-import { Link } from "react-router-dom";
-import Checkbox from '@material-ui/core/Checkbox'
-import MaUTable from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
-import TableToolbar from './DocumentsTableToolbar'
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
+import Checkbox from '@mui/material/Checkbox'
+import MaUTable from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import TableToolbar from './TableToolbar'
+import ReactDOM from 'react-dom'
+import DropDownMenu from './DropDownMenu'
+import AddIcon from '@mui/icons-material/Add';
 import {
   useGlobalFilter,
   useRowSelect,
@@ -31,10 +34,13 @@ const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref)
 		</>
 	)
 })
-const WarehouseDocumentsTable = ({data, columns}) =>
+const options = ['ZM'];
+
+const DocumentsTable = ({data, columns, tToolbar, detailLink}) =>
 {
 	const { id } = useParams();
 	const {
+	
 		getTableProps,
 		getTableBodyProps,
 		headerGroups,
@@ -43,7 +49,7 @@ const WarehouseDocumentsTable = ({data, columns}) =>
 		preGlobalFilteredRows,
 		setGlobalFilter,
 		state:{globalFilter, selectedRowIds},
-	} = useTable({ data, columns }, useGlobalFilter,useSortBy, useRowSelect,
+	} = useTable({ data, columns, tToolbar, detailLink}, useGlobalFilter, useSortBy, useRowSelect, 
 		hooks =>
 		{
 			hooks.visibleColumns.push(columns => [
@@ -70,16 +76,15 @@ const WarehouseDocumentsTable = ({data, columns}) =>
 		})
 		
 	return (
-		<TableContainer >
-				<TableToolbar
+		<TableContainer>
+			{ReactDOM.createPortal(<TableToolbar
+				dropDownMenu={tToolbar}
 				numSelected={Object.keys(selectedRowIds).length}
 				preGlobalFilteredRows={preGlobalFilteredRows}
 				setGlobalFilter={setGlobalFilter}
-				globalFilter={globalFilter}
-				title="Documents"
-				/>
-				<MaUTable {...getTableProps()}size = "small" >
-					<TableHead>
+				globalFilter={globalFilter}/>, document.getElementById("option-toolbar"))}
+				<MaUTable {...getTableProps()} size = "small">
+				<TableHead>
 						{headerGroups.map(headerGroup => (
 							<TableRow {...headerGroup.getHeaderGroupProps()}>
 								{headerGroup.headers.map(column => (
@@ -110,7 +115,7 @@ const WarehouseDocumentsTable = ({data, columns}) =>
 														{cell.render('Cell')}
 													</TableCell>) :
 															 (
-													<TableCell {...cell.getCellProps()} component={Link} to={`/warehouse/documents/${row.original.id}/details`}>
+													<TableCell {...cell.getCellProps()} component={Link} to={`/${detailLink}/${row.original.id}`}>
 															{cell.render('Cell')}
 													</TableCell>)
 											})
@@ -124,4 +129,4 @@ const WarehouseDocumentsTable = ({data, columns}) =>
 			</TableContainer>
 		);
 };
-export default WarehouseDocumentsTable;
+export default DocumentsTable;

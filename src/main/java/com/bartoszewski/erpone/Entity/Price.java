@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +16,7 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
+import com.bartoszewski.erpone.Enum.PriceTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -47,6 +50,28 @@ public class Price {
 
 	@OneToOne(fetch = FetchType.LAZY)
 	private DocumentDetails documentsDetails;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	private Budget budget;
+
+	@Enumerated(EnumType.STRING)
+	private PriceTypeEnum priceTypeEnum;
+
+	public PriceTypeEnum getPriceTypeEnum() {
+		return priceTypeEnum;
+	}
+
+	public void setPriceTypeEnum(PriceTypeEnum priceTypeEnum) {
+		this.priceTypeEnum = priceTypeEnum;
+	}
+
+	public Budget getBudget() {
+		return budget;
+	}
+
+	public void setBudget(Budget budget) {
+		this.budget = budget;
+	}
 
 	public LocalDateTime getDate() {
 		return date;

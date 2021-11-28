@@ -1,37 +1,11 @@
-import { Divider, Grid } from '@material-ui/core'
+import { Divider, Grid } from '@mui/material'
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles'
-import TextField from '@material-ui/core/TextField';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem'
-import FormControl from '@material-ui/core/FormControl';
-import ListItemText from '@material-ui/core/ListItemText';
-import Select from '@material-ui/core/Select';
-import Checkbox from '@material-ui/core/Checkbox';
-import MuiFormControl from '@material-ui/core/FormControl';
-import Chip from '@material-ui/core/Chip';
 import { LineChart, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 import DashboardTile from '../../../Components/DashboardTile';
+import { apiStates, useApi } from '../../../Components/Fetch'
+import {ReturnYTD, UnitConverter, VariationCalculator, DocValue} from '../../../Components/Helpers'
 
-const useStyles = makeStyles((theme) => ({
-  root: {flexGrow: 1,},
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 150,
-    maxWidth: 480,
-    paddingRight: 2,
-  },
-   chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: 2,
-  },
-}));
-
-const data = [
+const dummy = [
   {
     date: '2021-01',
     uv: 0,
@@ -108,19 +82,7 @@ const data = [
     amt: 1100,
   },
 ];
-const data02 = [
-  { name: 'kartony', value: 100 },
-  { name: 'folie', value: 300 },
-  { name: 'części zamienne', value: 100 },
-  { name: 'B2', value: 80 },
-  { name: 'B3', value: 40 },
-  { name: 'B4', value: 30 },
-  { name: 'B5', value: 50 },
-  { name: 'C1', value: 100 },
-  { name: 'C2', value: 200 },
-  { name: 'D1', value: 150 },
-  { name: 'D2', value: 50 },
-];
+
 const names = [
   'Oliver Hansen',
   'Van Henry',
@@ -136,153 +98,41 @@ const names = [
 
 const PurchaseDashboard = () =>
 {
-  const classes = useStyles();
-  const [supplierName, setSupplierName] = useState([]);
-  const [category, setCategory] = useState([]);
-  const [rawMaterial, setRawMaterial] = useState([]);
-  const fetchedData = React.useMemo(() => data, data);
+  const { state: YTDPurchaseState, error: YTDPurchaseError, data: YTDPurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=pz&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
+  const { state: YTDLYPurchaseState, error: YTDLYPurchaseError, data: YTDLYPurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=pz&dateFrom=${ReturnYTD(-1, 0, 0, 1)}&dateTo=${ReturnYTD(-1, 0, 0, 0)}`);
+  const { state: futurePurchaseState, error: futurePurchaseError, data: futurePurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=zm&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
+
+  const ytdPurchase = React.useMemo(() => YTDPurchaseData, YTDPurchaseState);
+  const ytdLyPurchase = React.useMemo(() => YTDLYPurchaseData, YTDLYPurchaseState);
+  const futurePurchase = React.useMemo(() => futurePurchaseData, futurePurchaseState);
+
+  const ytdPurchaseValue = DocValue(ytdPurchase);
+  const ytdLyPurchaseValue = DocValue(ytdLyPurchase);
+  const futurePurchaseValue = DocValue(futurePurchase);
  
-  const handleSupplierChange = (event) =>{
-    setSupplierName(event.target.value);
-  };
-   const handleCategoryChange = (event) =>{
-    setCategory(event.target.value);
-  };
-   const handleRawMaterialChange = (event) =>{
-    setRawMaterial(event.target.value);
-  };
-
   return (
-    <div className={classes.root}>
-      <Grid container direction="row" spacing={2}>
-            <Grid item xs={12} md={12} xl={12}>
-              <p>
-                Wartość magazynu: 596 566.98zł
-              </p>
-              <Divider/>
-              </Grid>
-      </Grid>
-
-      <Grid container direction="row" spacing={2}>
-        <Grid item xs='auto' md='auto' xl='auto'>
-          <FormControl className={classes.formControl}>
-            <TextField
-              id="fromDate"
-              label="From:"
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }} />
-          </FormControl>
-          </Grid>
-        <Grid item xs='auto' md='auto' xl='auto'>
-          <MuiFormControl className={classes.formControl}>
-            <TextField
-              id="toDate"
-              label="To:"
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }} />
-          </MuiFormControl>
-          </Grid>
-        <Grid item xs='auto' md='auto' xl='auto'>
-          <FormControl size='small' className={classes.formControl}>
-            <InputLabel id="category-multiple-checkbox-label">Category:</InputLabel>
-            <Select
-              SelectDisplayProps={{ style: { height: 'auto' } }}
-              labelId="category-multiple-checkbox-label"
-              id="category-multiple-checkbox-select"
-              multiple
-              value={category}
-              onChange={handleCategoryChange}
-              input={<Input />}
-              renderValue={(selected) => (<div className={classes.chips}>
-                {selected.map((value) => (
-                  <Chip key={value} label={value} className={classes.chip} />
-                ))}
-              </div>)}>
-              {names.map((n) => (
-                <MenuItem key={n} value={n}>
-                  <Checkbox checked={category.indexOf(n) > -1} />
-                  <ListItemText primary={n}/>
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-          </Grid>
-          <Grid item xs='auto' md='auto' xl='auto'>
-              <MuiFormControl size='small' className={classes.formControl}>
-              <InputLabel id="supplier-multiple-checkbox-label">Supplier:</InputLabel>
-              <Select
-                SelectDisplayProps={{ style: { height: 'auto' } }}
-                labelId="supplier-multiple-checkbox-label"
-                id="supplier-multiple-checkbox-select"
-                multiple
-                value={supplierName}
-                onChange={handleSupplierChange}
-                input={<Input />}
-                renderValue={(selected) => (<div className={classes.chips}>
-                  {selected.map((value) => (
-                    <Chip key={value} label={value} className={classes.chip} />
-                  ))}
-                </div>)}>
-                {names.map((n) => (
-                  <MenuItem key={n} value={n}>
-                    <Checkbox checked={supplierName.indexOf(n) > -1} />
-                    <ListItemText primary={n}/>
-                    </MenuItem>
-                  ))}
-              </Select>
-            </MuiFormControl>
-            </Grid>
-            <Grid item xs='auto' md='auto' xl='auto'>
-              <FormControl size='small' className={classes.formControl}>
-              <InputLabel id="material-multiple-checkbox-label">Material:</InputLabel>
-              <Select
-                SelectDisplayProps={{ style: { height: 'auto' } }}
-                labelId="material-multiple-checkbox-label"
-                id="material-multiple-checkbox-select"
-                multiple
-                value={rawMaterial}
-                onChange={handleRawMaterialChange}
-                input={<Input />}
-                renderValue={(selected) => (<div className={classes.chips}>
-                  {selected.map((value) => (
-                    <Chip key={value} label={value} className={classes.chip} />
-                  ))}
-                </div>)}>
-                {names.map((n) => (
-                  <MenuItem key={n} value={n}>
-                    <Checkbox checked={rawMaterial.indexOf(n) > -1} />
-                    <ListItemText primary={n}/>
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-            </Grid>
-      </Grid>
+    <div >
       <Grid container direction="row" spacing={2}>
         <Grid item xs={6} md={3} xl={3}>
           <DashboardTile
             title={"Purchase value YTD:"}
             subHeader={"refreshed at 11:55"}
-            content={"1.87 mln €"}
-            subContent={"+11.9% vs. LY"}
+            content={UnitConverter(ytdPurchaseValue)}
+            subContent={VariationCalculator(ytdPurchaseValue, ytdLyPurchaseValue) + "% vs. LY"}
           />
         </Grid>
         <Grid item xs={6} md={3} xl={3}>
           <DashboardTile
             title={"Purchase value YTD LY:"}
             subHeader={"refreshed at 11:55"}
-            content={"1.67 mln €"}
+            content={UnitConverter(ytdLyPurchaseValue)}
           />
         </Grid>
         <Grid item xs={6} md={2} xl={2}>
           <DashboardTile
             title={"Purchase value till end of year:"}
             subHeader={"refreshed at 11:55"}
-            content={"870 tys. €"}
+            content={UnitConverter(futurePurchaseValue)}
           />
         </Grid>
         <Grid item xs={6} md={2} xl={2}>
@@ -305,7 +155,7 @@ const PurchaseDashboard = () =>
             subHeader = {"refreshed at 15:21"}
             component={<ResponsiveContainer width="100%" height={450}>
               <ComposedChart
-                data={fetchedData}
+                data={dummy}
                 margin={{
                   top: 20,
                   right: 30,
@@ -321,7 +171,7 @@ const PurchaseDashboard = () =>
                 <Bar dataKey="pv" name="Paid invoices" stackId="a" fill="#d3d9dd" />
                 <Bar dataKey="de" name="Delayed" stackId="a" fill="#ff6961"></Bar>
                 <Bar dataKey="uv" name="To pay" stackId="a" fill="#3f6fb5">
-                  <LabelList content={data.pv + data.uv} position="top" />
+                  <LabelList content={dummy.pv + dummy.uv} position="top" />
                 </Bar>
                 <Line dataKey="amt" strokeWidth={4} name="Budget" type="monotone" stroke="#ff7300" />
               </ComposedChart>
@@ -334,7 +184,7 @@ const PurchaseDashboard = () =>
             subHeader = {"refreshed at 15:21"}
             component={<ResponsiveContainer width="100%" height={450}>
               <LineChart
-                data={fetchedData}
+                data={dummy}
                 margin={{
                   top: 20,
                   right: 30,
@@ -357,7 +207,7 @@ const PurchaseDashboard = () =>
           <DashboardTile
             title={"Deliveries:"}
             subHeader={"refreshed at 15:47"}
-            content={ "widok harmonogramu z najbliższymi dostawami."}/>
+            content={ "Weekly deliveries scheduler."}/>
         </Grid>
 		</Grid>
     </div>

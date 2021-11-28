@@ -1,27 +1,26 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper'
+import { makeStyles } from '@mui/styles';
+import Paper from '@mui/material/Paper'
 
-const useStyles = makeStyles((theme) => ({
-	root: {
+
+const root = (theme) => ({
     display: 'flex',
     flexWrap: 'wrap',
     '& > *': {
       margin: theme.spacing(1),
       width: theme.spacing(16),
       height: theme.spacing(16),
-    },
-  },
-	chartPaper: {
+    }
+})
+ const chartPaper = (theme) => ({
 		width: theme.spacing(16)
-	}
-}))
+	})
+
 function Stocks()
 {
-	const classes = useStyles();
 	return (
-		<div className={classes.root}>
-			<Paper className={classes.chartPaper} elevation={3} variant='outlined'>
+		<div sx={root}>
+			<Paper sx={chartPaper} elevation={3} variant='outlined'>
 				<p>Działa</p>
 			</Paper>
 		</div>

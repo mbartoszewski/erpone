@@ -1,21 +1,21 @@
 import React, { useState, useContext } from 'react'
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import AddIcon from '@material-ui/icons/Add'
-import Button from '@material-ui/core/Button'
-import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent'
-import {Box, Grid, IconButton, Typography } from '@material-ui/core';
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import {Box, Grid, IconButton, Typography } from '@mui/material';
 import PropTypes from 'prop-types'
-import Switch from '@material-ui/core/Switch'
-import TextField from '@material-ui/core/TextField'
-import { InputLabel, Select, MenuItem } from '@material-ui/core'
+import Switch from '@mui/material/Switch'
+import TextField from '@mui/material/TextField'
+import { InputLabel, Select, MenuItem } from '@mui/material'
 import { globalStateContext } from '../Pages/ErpOneApp'
-import Slide from '@material-ui/core/Slide';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
+import Slide from '@mui/material/Slide';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
 import CloseIcon from '@material-ui/icons/Close';
 import { apiStates, useApi} from './Fetch';
-import { List, Divider, Tooltip, Zoom } from '@material-ui/core';
+import { List, Divider, Tooltip, Zoom } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
