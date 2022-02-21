@@ -31,6 +31,11 @@ function Routes() {
           <Route exact path="/app">
               <ErpOneApp {...props}>
               </ErpOneApp>
+          </Route>
+          <Route exact path="/documents/add">
+              <ErpOneApp {...props}>
+                <AddDocument/>
+              </ErpOneApp>
             </Route>
             <Route exact path="/purchase/documents">
               <ErpOneApp {...props}>
@@ -89,11 +94,6 @@ function Routes() {
             <Route exact path="/warehouse/dashboard">
               <ErpOneApp {...props}>
                 <WarehouseDashboard/>
-              </ErpOneApp>
-            </Route>
-            <Route exact path="/documents/add">
-              <ErpOneApp {...props}>
-                <AddDocument/>
               </ErpOneApp>
             </Route>
             <Route exact path="/sales/dashboard">

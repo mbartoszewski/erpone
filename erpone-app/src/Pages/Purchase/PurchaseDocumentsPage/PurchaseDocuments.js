@@ -14,7 +14,7 @@ const options = ['ZM', 'PW'];
 const PurchaseDocuments = () =>
 {
   const { state, error, data } = useApi('http://localhost:5000/api/documents?type=zm&type=pz&type=pw');
-  const fetchedData = React.useMemo(() => data, state);
+  const fetchedData = React.useMemo(() => data, [state]);
   const columns = React.useMemo(() => [
     { Header: 'Status', accessor: 'documentStatusEnum' },
     { Header: 'Document', accessor: 'docNumber' },

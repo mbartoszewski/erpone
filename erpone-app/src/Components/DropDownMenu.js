@@ -9,6 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
+import { useHistory, Link } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
 	dropDownMenuHidden: {
@@ -26,17 +27,14 @@ export default function DropDownMenu(props)
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  const handleClick = () => {
-    console.info(`You clicked ${props.menuOptions[selectedIndex]}`);
-  };
-
-  const handleMenuItemClick = (event, index) => {
-    setSelectedIndex(index);
+  /*const handleMenuItemClick = (event, index) =>
+  {
+    setSelectedIndex(index)
     setOpen(false);
   };
-
+*/
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -45,10 +43,8 @@ export default function DropDownMenu(props)
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
-
     setOpen(false);
   };
-
   return (
     <div>
 		<ButtonGroup variant="text" ref={anchorRef} aria-label="split button" className={clsx(classes.dropDownMenu, props.hidden && classes.dropDownMenuHidden)}>
@@ -59,7 +55,7 @@ export default function DropDownMenu(props)
 					aria-label="select merge strategy"
 					aria-haspopup="menu"
 					onClick={handleToggle}
-					startIcon={props.icon !==null ? props.icon : null}>{props.buttonTitle !==null ? props.buttonTitle : ""}
+					startIcon={props.icon !==undefined ? props.icon : null}>{props.buttonTitle !==undefined ? props.buttonTitle : ""}
 				  </Button>
         </ButtonGroup>
         <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
@@ -75,10 +71,15 @@ export default function DropDownMenu(props)
                   <MenuList id="split-button-menu">
                     {props.menuOptions.map((option, index) => (
                       <MenuItem
-                        key={option}
-                        onClick={(event) => handleMenuItemClick(event, index)}
+                        key={option.title}
+                        onClick={() =>
+                        {
+                          option.function !== undefined ? option.function() : setOpen(false);
+                          setOpen(false);
+                         }
+                        }
                       >
-                        {option}
+                        {option.pathname !== undefined ? <Link to={{ pathname: `${option.pathname}`, state: option.state}}>{option.title}</Link> : option.title}
                       </MenuItem>
                     ))}
                   </MenuList>

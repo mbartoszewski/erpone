@@ -24,18 +24,18 @@ public class DocumentDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
 	private Long id;
-	@NotNull
-	@Column(name = "Quantity")
+
+	@Column(name = "Quantity", nullable = false)
 	private Double quantity;
-	@NotNull
+
 	@Column(name = "Balance")
 	private Double balance;
-	@NotNull
+
 	@Column(name = "Price")
 	private Double detailPrice;
 
 	@ManyToOne
-	@NotNull
+
 	@JoinColumn(name = "Thing_Id")
 	private Thing thing;
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -1,14 +1,17 @@
 import React, {useState, useContext, useEffect} from 'react'
-import { Link, useParams} from "react-router-dom";
-import { Grid, MenuItem, TextField, Typography } from '@mui/material'
+import { Link, useParams, useLocation} from "react-router-dom";
+import { Grid, MenuItem, TextField, Typography, Button, ButtonGroup, Stack } from '@mui/material'
 import { styled, } from '@mui/material/styles';
 import DocumentsDetailsTable from './DocumentsDetailsTable'
-import { apiStates, useApi } from './Fetch'
+import { apiStates, useApi, useApii } from './Fetch'
 import { globalStateContext } from '../Pages/ErpOneApp';
 import ReactDOM from 'react-dom';
 import DocumentDetailPageToolbar from './DocumentDetailPageToolbar';
 import Autocomplete from '@mui/material/Autocomplete';
-
+import { docStates, pathTo } from './Helpers';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import { display, style } from '@mui/system';
 const root = (theme) => ({
 		flexGrow: '1',
 		'& .MuiTextField-root': {
@@ -20,16 +23,21 @@ const root = (theme) => ({
 const DocumentHeader = styled('div')(({ theme }) => ({
   position: 'sticky',
 		top: '0px',
-		padding: '0.3em',
+		padding: '0.5em',
+		marginBottom: '0.4em',
 		borderBottom: `4px solid ${theme.palette.divider}`,
-		backgroundColor: 'white',
-		display: "flex",
-		justifyContent: "flex-end"
+		background: "white",
+		zIndex: "1"
+}));
+const DocumentTable = styled('div')(({ theme }) => ({
+ 
 }));
 
 const DocumentsDetailsPage = (props) =>
 {
+	const location = useLocation()
 	const { id } = useParams();
+	const [docState, setDocState] = useState(location.state !== undefined && location.state.docState !== undefined? location.state.docState : docStates.VIEW)
 	const globalContext = useContext(globalStateContext);
 	const currencies = globalContext.dataCurrencies;
 	const warehouses = globalContext.dataWarehouses;
@@ -38,73 +46,205 @@ const DocumentsDetailsPage = (props) =>
 	const contractors = globalContext.dataContractors;
 	const things = globalContext.dataThings;
 	const [domReady, setDomReady] = React.useState(false)
-	const [doc, setDoc] = useState()
-	const [isEdit, setIsEdit] = useState(false);
-	
+	const [doc, setDoc] = useState({documentStatusEnum: "open",
+    documentTypeEnum: undefined,
+    relatedDocuments: null,
+    targetDateTime: undefined,
+    contractor: {address: {}},
+    documentCurrency: {},
+    paymentForm: {},
+    paymentTerm: {},
+		documentDetails: null
+	})
+	const [originalDoc, setOriginalDoc] = useState();
 	const { state: documentDetailState, error: documentDetailError, data: documentDetailData } = useApi(`http://localhost:5000/api/documents/${id}/details`);
+	const [{data}, doFetch] = useApii(null);
+
 	React.useMemo(() =>
 	{
 		if (documentDetailData != null)
 		{
-		setDoc(documentDetailData);
+			setDoc(documentDetailData);
+			setOriginalDoc(documentDetailData)
 		}
-	}, [documentDetailState]);
+	}, [documentDetailData]);
 	
-	React.useEffect(() => { console.log(doc) }, [doc])
-	
-	React.useEffect(() => {setDomReady(true)}, [])
-
+	React.useEffect(() => { setDomReady(true) }, [])
+	const handleCurrencyChange = (event, child) =>
+	{
+		setDoc((prevState) => ({
+				...prevState, documentCurrency: {id: child.props.id, code: event.target.value},	
+			}))		
+	}
+	const handlePaymentFormChange = (event, child) =>
+	{
+		setDoc((prevState) => ({
+				...prevState, paymentForm: { id: child.props.id, form: event.target.value},
+			}))	
+	}
+	const handlePaymentTermChange = (event, child) =>
+	{
+		setDoc((prevState) => ({
+				...prevState, paymentTerm: {id: child.props.id, term: event.target.value},	
+			}))	
+	}
+	const handleContractorChange = (event, values) =>
+	{
+		contractors.map((c) =>
+		{
+			if (values !== null && values.id === c.id) {
+			setDoc((prevState) => ({
+				...prevState, contractor: c,
+			}))
+		}
+		})
+	}
+	const handleThingChange = (rowIndex, columnId, value) =>
+	{
+		setDoc((prevState) => ({
+			...prevState, documentDetails: [...prevState.documentDetails.map((row, index) =>
+			{
+				if (index === rowIndex.index)
+				{
+					if (columnId.id !== 'thing.code')
+					{
+						return {
+						...prevState.documentDetails[rowIndex.index],
+						[columnId.id]: parseFloat(value),	
+					}
+					} else
+					{	
+						return {
+						...prevState.documentDetails[rowIndex.index],
+							thing: data.data,	
+						}
+						}
+					
+				}
+					return row;
+				
+			})],
+		}))
+	}
+	const handleDateTimeChange = (event) =>
+	{
+		setDoc((prevState) => ({
+			...prevState, targetDateTime: event.target.value
+		}))
+	}
 	const columns = React.useMemo(() => [
 		{
 			Header: 'Code', accessor: 'thing.code',
-			Cell: function Cell(cell)
+			Cell: function Cell({cell, row, column, handleThingChange, value: initialValue})
 			{
-              return isEdit ? <Autocomplete
+				const [value, setValue] = React.useState(initialValue)
+				const [thing, setThing] = React.useState({})
+				const onChange = (event, nValue) =>
+				{
+					setValue(nValue.code)
+					setThing(nValue)
+					doFetch({url: `http://localhost:5000/api/things/${nValue.id}/`})
+				}
+
+				const onBlur = () =>
+				{
+					handleThingChange(row, column, value, thing)
+				}
+
+				React.useEffect(() =>
+				{
+					setValue(initialValue)
+				}, [initialValue])
+
+              const code =  <Autocomplete
 					id="autocomplete-thing"
-					size="string"
-					autoSelect={true}
-					autoComplete={true}
-					disabled={isEdit === false ? true : false }
-					options={things !== undefined ? things : ""}  
-					value={cell.row.original.thing}
-					isOptionEqualToValue={(option, value) => option.id === value.id}
-					getOptionLabel={(option) => option ? option.code : ""}
-					onChange={handleThingChange}
-					renderInput={(params) => <TextField size="small" type="text" variant="standard" {...params} />} /> : <Link to={`/warehouse/things/${cell.row.original.thing.id}`}>{cell.value}</Link>;		
+				  	size="string"
+				  	sx={{minWidth:"150px"}}
+				  	type="text"
+				  	onChange={(event, nValue) => {onChange(event, nValue)}}
+					onBlur={onBlur}
+				  	fullWidth={true}
+					disabled={(docState === docStates.EDIT || docState === docStates.ADD) ? false : true }
+				  	options={things !== null ? things : [0]} 
+				 	value={{code: value}} 
+				  	getOptionLabel={(option) => option.code}
+					isOptionEqualToValue={(option, value) => option.code == value.code}
+					renderInput={(params) => <TextField size="string" type="text" variant="standard" {...params} />} />;	
+				
+				return code;
 			},
 		},
 		{ Header: 'Name', accessor: 'thing.name' },
 		{ Header: "Unit", accessor: "thing.unit.code" },
-		{
-			Header: 'Quantity', accessor: 'quantity',
-			Cell: function Cell(cell, row)
+		{Header: 'Quantity', accessor: 'quantity',
+			Cell: function Cell({row, column, handleThingChange, value: initialValue})
 			{
-              return isEdit ? <TextField
-								id="textfield-quantity"
-								size="small"
+				const [value, setValue] = React.useState(initialValue)
+				const onChange = e =>
+				{
+					setValue(e.target.value)
+				}
+
+				const onBlur = () =>
+				{
+					handleThingChange(row, column, value)
+				}
+
+				React.useEffect(() =>
+				{
+					setValue(initialValue)
+				}, [initialValue])
+
+				const detailQuantity = <TextField
+								id="textfield-detail-quantity"
+								size="string"
 								type="number"
-								variant="standard"
-								disabled={isEdit === false ? true : false }
-								defaultValue={cell.value}/> : <span>{cell.value}</span>;
+					variant="standard"
+					fullWidth={true}
+					disabled={(docState === docStates.EDIT || docState === docStates.ADD) ? false : true}
+					onChange={onChange}
+					onBlur={onBlur}
+					value={value}/>
+								
+				return detailQuantity
 				
             },
 		Footer: info =>
 			{
-				const totalQuantity = React.useMemo(
-				() => info.rows.reduce((sum, row) => row.values.quantity + sum, 0),[info.rows]
-				)
+			const totalQuantity = React.useMemo(() => info.rows.reduce((sum, row) => row.values['quantity'] + sum, 0), [info.rows])
 				return <>Total quantity: {totalQuantity}</>
-		} },
+		}, },
 		{ Header: 'Net price', accessor: 'detailPrice',
-			Cell: function Cell(cell, row)
+			Cell: function Cell({row, column, handleThingChange, value: initialValue})
 			{
-              return isEdit ? <TextField
+				const [value, setValue] = React.useState(initialValue)
+				const onChange = e =>
+				{
+					setValue(e.target.value)
+				}
+
+				const onBlur = () =>
+				{
+					handleThingChange(row, column, value)
+				}
+
+				React.useEffect(() =>
+				{
+					setValue(initialValue)
+				}, [initialValue])
+
+				const detailPrice = <TextField
 								id="textfield-detail-price"
-								size="small"
+								size="string"
 								type="number"
 								variant="standard"
-								disabled={isEdit === false ? true : false }
-								defaultValue={cell.value}/> : <span>{cell.value}</span>;
+								fullWidth={true}
+					disabled={(docState === docStates.EDIT || docState === docStates.ADD) ? false : true}
+					onChange={onChange}
+					onBlur={onBlur}
+								value={value}/>
+								
+				return detailPrice
 				
             },},
 		{ Header: 'Net value', accessor: 'net',  accessor: row =>
@@ -112,64 +252,19 @@ const DocumentsDetailsPage = (props) =>
 			return <>{(row.quantity) * (row.detailPrice)}</>
 		}, Footer: info =>
 			{
-			const totalNetValue = React.useMemo(
-				() => info.rows.reduce((sum, row) => row.values['Net value'].props.children + sum, 0),[info.rows]
-				)
+			const totalNetValue = React.useMemo(() => info.rows.reduce((sum, row) => row.values['Net value'].props.children + sum, 0),[info.rows])
 				return <>Total net value: {totalNetValue}</>
 			}
 		,Cell: function Cell(cell) {
               return <span>{cell.value}</span>;
-            }}], [isEdit]);
-	
-	const updateMyData = (rowIndex, columnId, value) => {
-    /*fetchedData(old =>
-      old.map((row, index) => {
-        if (index === rowIndex) {
-          return {
-            ...old[rowIndex],
-            [columnId]: value,
-          }
-        }
-        return row
-      })
-    )*/
-  }
-	
-	const handleCurrencyChange = (event, child) =>
-	{
-		setDoc((prevState) => ({
-				...prevState, currency: {id: child.id, code: event.target.value},	
-			}))		
-	}
-	const handlePaymentFormChange = (event, child) =>
-	{
-		setDoc((prevState) => ({
-				...prevState, paymentForm: { id: child.id, form: event.target.value},
-			}))	
-	}
-	const handlePaymentTermChange = (event, child) =>
-	{
-		setDoc((prevState) => ({
-				...prevState, paymentTerm: {id: child.id, term: event.target.value},	
-			}))	
-	}
-	const handleContractorChange = (event, values) =>
-	{
-		values !== null ? setDoc((prevState) => ({
-				...prevState, contractor: { ...prevState.contractor, id: values.id, name: values.name, ...prevState.address},
-			}))	: setDoc((prevState) => ({
-				...prevState, contractor: { ...prevState.contractor, id: values.id, name: values.name, ...prevState.address},
-			}))
-	}
-	const handleThingChange = (event, values) =>
-	{
-		
-	}
-	
-	
+            }}], [docState]);
+
+	let current_datetime = new Date()
+	let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getDate() + "T" + current_datetime.getHours() + ":" + current_datetime.getMinutes() + ":" + current_datetime.getSeconds() 
+
 	return (
-		<div sx={root}>
-			{domReady? ReactDOM.createPortal(<DocumentDetailPageToolbar docNumber={doc != null ? doc.docNumber : ""} isEditProp={isEdit} setIsEdit={setIsEdit}/>, document.getElementById("option-toolbar")): null}
+		<div >
+			{domReady ? ReactDOM.createPortal(<DocumentDetailPageToolbar docNumber={doc != null ? doc.docNumber : ""} docStateProp={docState} setDocState={setDocState} setDoc={setDoc} originalDoc={originalDoc} setOriginalDoc={setOriginalDoc} doc={doc}/>, document.getElementById("option-toolbar")): null}
 			<DocumentHeader>
 			<Grid container spacing={2}>	  	 
 			<Grid item xs={12} md={4} xl={6}>
@@ -179,27 +274,27 @@ const DocumentsDetailsPage = (props) =>
 									id="autocomplete-contractor"
 									autoSelect={true}
 									autoComplete={true}
-									disabled={isEdit === false ? true : false }
-									options={contractors != null ? contractors : ""}
-									value={doc !== undefined ? doc.contractor !== undefined ? doc.contractor : "" : ""}
+									disabled={(docState === docStates.EDIT || docState === docStates.ADD) ? false : true }
+									options={contractors !== null ? contractors : []}
+									value={doc !== undefined && doc.contractor !== undefined ? doc.contractor : ""}
 									isOptionEqualToValue={(option, value) => option.id === value.id}
 									getOptionLabel={(option) => option.name}
 									onChange={handleContractorChange}
-									renderInput={(params) => <TextField {...params} variant="outlined" label="Contractor"/>} />
+									renderInput={(params) => <TextField {...params} variant="outlined" label="Contractor" fullWidth={true}/>} />
 						</Grid>
 						<Grid item xs={12} md={12} xl ={6}>
 							<Typography sx={{spacing: 2}}>
-								{doc !== undefined ? doc.contractor !== undefined ? doc.contractor.address.street + " ": "" : ""}
-								{doc !== undefined ? doc.contractor !== undefined ? doc.contractor.address.number + ", ": "" : ""}{<br></br>}
-								{doc !== undefined ? doc.contractor !== undefined ? doc.contractor.address.postalCode + " " : "" : ""}
-								{doc !== undefined ? doc.contractor !== undefined ? doc.contractor.address.city + ", ": "" : ""}{<br></br>}
-								{doc !== undefined ? doc.contractor !== undefined ? doc.contractor.address.country: "" : ""}{<br></br>}
+								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address !== undefined && doc.contractor.address.street ? doc.contractor.address.street + " " : ""}
+								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address && doc.contractor.address.number ? doc.contractor.address.number + ", " : ""}{<br></br>}
+								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address && doc.contractor.address.postalCode? doc.contractor.address.postalCode + " " : "" }
+								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address && doc.contractor.address.city? doc.contractor.address.city + ", ": "" }{<br></br>}
+								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address && doc.contractor.address.country? doc.contractor.address.country: "" }{<br></br>}
 							</Typography>
 						</Grid>
 						<Grid item xs={12} md={12} xl ={6}>
 							<Typography sx={{spacing: 2}}>
-								NIP: {doc !== undefined ? doc.contractor !== undefined ? doc.contractor.nip: "" : ""} {<br></br>}
-								Regon: {doc !== undefined ? doc.contractor !== undefined ? doc.contractor.regon: "" : ""} {<br></br>}
+								NIP: {doc !== undefined && doc.contractor !== undefined ? doc.contractor.nip : ""} {<br></br>}
+								Regon: {doc !== undefined && doc.contractor !== undefined ? doc.contractor.regon : ""} {<br></br>}
 							</Typography>
 						</Grid>
 					</Grid>  
@@ -210,31 +305,36 @@ const DocumentsDetailsPage = (props) =>
 					<TextField
 						type="datetime-local"
 						label="Created date:"
-						InputProps={{readOnly: true}}
-						value={doc !== undefined ? doc.createdAt !== undefined ? doc.createdAt : "" : ""}>
+						InputProps={{ readOnly: true }}
+						InputLabelProps={{ shrink: true }}
+						value={doc !== undefined && doc.createdAt !== undefined ? doc.createdAt : formatted_date}>
 					</TextField>
 				</Grid>
 				<Grid item xs={12} md={6} xl={6}>
 					<TextField
 						type="datetime-local"
 						label="Requested date:"
-						InputProps={isEdit === false ? { readOnly: true } : { readOnly: false }}
-						value = {doc !== undefined ? doc.targetDateTime !==undefined ? doc.targetDateTime : "" : ""}>
+						onChange={handleDateTimeChange}
+						InputProps={(docState === docStates.EDIT || docState === docStates.ADD) ? { readOnly: false} : { readOnly: true}}
+						InputLabelProps={{ shrink: true }}
+						value = {doc !== undefined && doc.targetDateTime !==undefined ? doc.targetDateTime : formatted_date}>
 					</TextField>
 				</Grid>
 				<Grid item xs={6} md={6} xl={3}>
 					<TextField id='select-payment-form'
 						variant="outlined"
 						label="Payment form"
-						select={isEdit === false ? false: true}
-						InputProps={isEdit === false ? { readOnly: true} : { readOnly: false} }
-						value={doc !== undefined ? doc.paymentForm !== undefined ? doc.paymentForm.form : "" : ""}
+						fullWidth={true}
+						select={ (docState === docStates.EDIT || docState === docStates.ADD) ? true: false}
+						InputProps={(docState === docStates.EDIT || docState === docStates.ADD) ? { readOnly: false } : { readOnly: true }}
+						InputLabelProps={{ shrink: true }}
+						value={doc !== undefined && doc.paymentForm !== undefined ? doc.paymentForm.form : ""}
 						onChange={handlePaymentFormChange}
 						size="medium"
 					>
 						{
 							paymentForms != null ? paymentForms.map((option) => (
-								<MenuItem key={option.id} value={option.form}>
+								<MenuItem key={option.id} value={option.form} id={option.id}>
 									{option.form}
 								</MenuItem>
 							)): null}	   
@@ -244,15 +344,17 @@ const DocumentsDetailsPage = (props) =>
 					<TextField id='select-payment-term'
 						variant="outlined"
 						label="Payment term"
-						select={isEdit === false ? false: true}
-						InputProps={isEdit === false ? { readOnly: true} : { readOnly: false} }
+						fullWidth={true}
+						select={(docState === docStates.EDIT || docState === docStates.ADD) ? true : false}
+						InputProps={(docState === docStates.EDIT || docState === docStates.ADD) ? { readOnly: false } : { readOnly: true }}
+						InputLabelProps={{ shrink: true }}
 						value={doc !== undefined ? doc.paymentTerm !== undefined ? doc.paymentTerm.term : "" : ""}
 						onChange={handlePaymentTermChange}
 						size="medium"
 						>
 								{
 								paymentTerms != null ? paymentTerms.map((option) => (
-								<MenuItem key={option.id} value={option.term}>
+								<MenuItem key={option.id} value={option.term} id={option.id}>
 									{option.term}
 								</MenuItem>
 							)): null}	   
@@ -263,9 +365,11 @@ const DocumentsDetailsPage = (props) =>
 							id='select-currency'
 							variant="outlined"
 							label="Currency"
-							select={isEdit === false ? false: true}
-							InputProps={isEdit === false ? { readOnly: true} : { readOnly: false} }
-							value={doc !== undefined ? doc.currency !== undefined ? doc.currency.code : "" : ""}
+							fullWidth={true}
+							select={(docState === docStates.EDIT || docState === docStates.ADD) ? true: false}
+							InputProps={(docState === docStates.EDIT || docState === docStates.ADD) ? { readOnly: false } : { readOnly: true }}
+							InputLabelProps={{ shrink: true }}
+							value={doc !== undefined ? doc.documentCurrency !== undefined ? doc.documentCurrency.code : "" : ""}
 							onChange={handleCurrencyChange}
 							size="medium">
 								{
@@ -282,24 +386,42 @@ const DocumentsDetailsPage = (props) =>
 						id='select-document-status'
 						variant="outlined"
 						label="Status"
-						InputProps={isEdit === false ? { readOnly: true } : { readOnly: true }}
+						InputProps={(docState === docStates.EDIT || docState === docStates.ADD) ? { readOnly: true } : { readOnly: true }}
 						value={doc !== undefined ? doc.documentStatusEnum !== undefined ? doc.documentStatusEnum : "" : ""}
 						size="medium">
 					</TextField>
 				</Grid>
-			</Grid>
 			</Grid>	
+			</Grid>	
+			<Grid container spacing={2}>
+				<Grid item xs={3} md={3} xl={3} sx={(docState === docStates.EDIT || docState === docStates.ADD) ? null : {display:"none"} }>
+					<ButtonGroup variant="outlined" size="small">
+							<Button
+								size='small'
+								startIcon={<AddIcon/>}
+								color='inherit'>
+								Add item
+							</Button>
+							<Button
+								size='smal'
+								startIcon={<RemoveIcon/>}
+								color='inherit'>
+								Delete item
+							</Button>
+					</ButtonGroup>		
+				</Grid>
+			</Grid>
 		</Grid>	
-		</DocumentHeader>
-		<div>
-			<DocumentsDetailsTable
-				data={doc !== undefined ? doc.documentDetails : []}
-					columns={columns}
-					isEdit={isEdit}
-					manual
-					updateMyData={updateMyData}
-			/>
-		</div>
+			</DocumentHeader>
+			<DocumentTable>
+					<DocumentsDetailsTable
+						data={doc !== undefined && doc.documentDetails !== null ? doc.documentDetails : [0]}
+						columns={columns}
+						docState={docState}
+						manual
+						handleThingChange={handleThingChange}
+					/>
+			</DocumentTable>		
 	</div>
 );
 }

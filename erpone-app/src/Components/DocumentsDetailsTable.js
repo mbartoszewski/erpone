@@ -7,7 +7,6 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { useParams } from "react-router-dom";
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {
   useGlobalFilter,
   useSortBy,
@@ -16,7 +15,7 @@ import {
 import { TableFooter } from '@mui/material';
 
 
-const DocumentsDetailsTable = ({data, columns, isEdit}) =>
+const DocumentsDetailsTable = ({data, columns, docState, handleThingChange}) =>
 {
 	const { id } = useParams();
 	const {
@@ -26,16 +25,16 @@ const DocumentsDetailsTable = ({data, columns, isEdit}) =>
 		footerGroups,
 		rows,
 		prepareRow,
-	} = useTable({ data, columns, isEdit}, useSortBy)
+	} = useTable({ data, columns, docState, handleThingChange}, useSortBy)
 		
 	return (
-		<TableContainer >
-				<MaUTable {...getTableProps()}size = "small" >
-					<TableHead>
+		<TableContainer sx={{maxHeight: "600px", }}>
+				<MaUTable {...getTableProps()} size = "small" >
+					<TableHead sx={{position: "sticky", top: "0px", backgroundColor: "white", zIndex: "1"}}>
 						{headerGroups.map(headerGroup => (
 							<TableRow {...headerGroup.getHeaderGroupProps()}>
 								{headerGroup.headers.map(column => (
-									<TableCell {...column.getHeaderProps(column.getSortByToggleProps())}>
+									<TableCell {...column.getHeaderProps(column.getSortByToggleProps())} sx={{fontSize: "0.9em", fontWeight: "bold"}}>
 										{column.render('Header')}
 										 <span>
                     {column.isSorted
@@ -47,7 +46,7 @@ const DocumentsDetailsTable = ({data, columns, isEdit}) =>
 									</TableCell>))}
 							</TableRow>))}
 					</TableHead>
-					<TableBody {...getTableBodyProps()}>
+					<TableBody {...getTableBodyProps()} >
 						{
 							rows.map(row =>
 							{
@@ -67,18 +66,18 @@ const DocumentsDetailsTable = ({data, columns, isEdit}) =>
 							})
 						}
 				</TableBody>
-				<TableFooter>
+				<TableFooter sx={{backgroundColor: "white", zIndex: "1", position: "sticky", bottom: "0px", borderCollapse: "unset"}}>
 					{footerGroups.map(group => (
 						<TableRow {...group.getFooterGroupProps()}>
 							{group.headers.map(column => (
-								<TableCell {...column.getFooterProps()}>
+								<TableCell {...column.getFooterProps()} style={{fontSize: "0.9em", fontWeight: "bold"}}>
 									{column.render('Footer')}
 								</TableCell>
 							))}
 						</TableRow>
 					))}
 				</TableFooter>
-				</MaUTable>			
+			</MaUTable>
 			</TableContainer>
 		);
 };

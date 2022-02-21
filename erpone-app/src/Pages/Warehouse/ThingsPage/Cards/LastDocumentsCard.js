@@ -13,7 +13,7 @@ function LastDocumentsCard()
 {
   const { id } = useParams();
   const { state, error, data } = useApi(`http://localhost:5000/api/documents/details/last?thing=${id}&size=7&type=wz&type=rw&type=pw&type=pz`);
-  const fetchedData = React.useMemo(() => data, state);
+  const fetchedData = React.useMemo(() => data, [state]);
   const columns = React.useMemo(() => [
     { Header: 'Document', accessor: 'document.docNumber' },
         { Header: 'Contractor', accessor: 'document.contractor.name' },

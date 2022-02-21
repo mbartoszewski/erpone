@@ -26,11 +26,11 @@ public class Thing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @NotNull
-    @Column(name = "Code", unique = true, updatable = false)
+
+    @Column(name = "Code", unique = true, updatable = false, nullable = false)
     private String code;
-    @NotNull
-    @Column(name = "Name", updatable = true)
+
+    @Column(name = "Name", updatable = true, nullable = false)
     private String name;
     @Column(name = "Quantity", updatable = true)
     private Double quantity = 0.0;
@@ -51,20 +51,20 @@ public class Thing {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Warehouse_Id")
-    @NotNull
+
     private Warehouse warehouse;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Group_Id")
-    @NotNull
+
     private ThingGroup thingGroup;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Family_Id")
-    @NotNull
+
     private ThingFamily thingFamily;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Unit_Id")
-    @NotNull
+
     private Unit unit;
 
     public Thing() {

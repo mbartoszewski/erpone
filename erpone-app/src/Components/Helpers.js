@@ -1,4 +1,3 @@
-import React from "react";
 export const ReturnYTD = (yearOffset, monthOffset, dayOffset, firstDayOdYear) =>
 {
 	const date = new Date();
@@ -26,6 +25,13 @@ export const ReturnYTD = (yearOffset, monthOffset, dayOffset, firstDayOdYear) =>
 	
 	return date.toJSON();
 }
+
+export const docStates = {
+  	ADD: 'Adding',
+  	EDIT: 'Editing',
+	DRAFT: 'Draft',
+	VIEW: 'Viewing'
+};
 
 export const UnitConverter = (value) =>
 {
@@ -104,6 +110,17 @@ export const DocValueByProperties = (data, properties) =>
 	}
 	
 	return idValueMap;
+}
+
+export const pathTo = (ref, data, path = []) => {
+  const found = data && Object.entries(data).find(([k,v]) => {
+    if (v === ref) return path.push(k)
+    if (typeof v === 'object') {
+      const tmp = pathTo(ref, v, [...path, k])
+      if (tmp) return path = tmp
+    }
+  })
+  if (found) return path
 }
 
 export default ReturnYTD;

@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -21,11 +20,9 @@ public class Currency {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @NotNull
     @Column(name = "Code")
     private String code;
-    @NotNull
-    @Column(name = "Name")
+    @Column(name = "Name", nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "currency", fetch = FetchType.LAZY)

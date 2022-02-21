@@ -45,7 +45,6 @@ public class Documents {
     @Column(name = "Document_foreign_number")
     private String docForeignNumber;
 
-    @NotNull
     @CreationTimestamp
     @Column(name = "Created_At", columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
@@ -53,7 +52,7 @@ public class Documents {
     private LocalDateTime targetDateTime;
     @Column(name = "Issue_Date_Time", columnDefinition = "TIMESTAMP")
     private LocalDateTime issueDateTime;
-    @NotNull
+
     @UpdateTimestamp
     @Column(name = "Updated_At", columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
@@ -63,42 +62,40 @@ public class Documents {
     @Column(name = "Value")
     private Double docValue;
 
-    @NotNull
     @Column(name = "Status")
     @Enumerated(EnumType.STRING)
     private DocumentStatusEnum documentStatusEnum = DocumentStatusEnum.open;
 
-    @NotNull
-    @Column(name = "Type")
+    @Column(name = "Type", nullable = false)
     @Enumerated(EnumType.STRING)
     private DocumentTypeEnum documentTypeEnum;
 
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @NotNull
+
     private List<DocumentDetails> documentDetails = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Contractor_Id")
-    @NotNull
+
     private Contractor contractor;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "User_Id")
-    @NotNull
+
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "Currency_Id")
-    @NotNull
+
     Currency documentCurrency;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "Payment_Form_Id")
-    @NotNull
+
     PaymentForm paymentForm;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn(name = "Payment_Term_Id")
-    @NotNull
+
     PaymentTerm paymentTerm;
 
     public PaymentForm getPaymentForm() {
@@ -127,16 +124,8 @@ public class Documents {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {
@@ -242,7 +231,7 @@ public class Documents {
         return docNumber;
     }
 
-    public void setDocNumber(Long countByYear) {
+    public void settingDocNumber(Long countByYear) {
         String docQuery = this.getDocumentTypeEnum().toString().toUpperCase() + "/" + countByYear.toString() + "/"
                 + LocalDate.now().getYear();
         this.docNumber = docQuery;

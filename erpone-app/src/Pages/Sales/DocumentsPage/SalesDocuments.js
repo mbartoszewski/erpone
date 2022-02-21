@@ -14,7 +14,7 @@ const options = ['PZ', 'WZ'];
 const SalesDocuments = () =>
 {
   const { state, error, data } = useApi('http://localhost:5000/api/documents?type=fv&type=wz');
-  const fetchedData = React.useMemo(() => data, state);
+  const fetchedData = React.useMemo(() => data, [state]);
   const columns = React.useMemo(() => [
     { Header: 'Status', accessor: 'documentStatusEnum' },
     { Header: 'Document', accessor: 'docNumber' },

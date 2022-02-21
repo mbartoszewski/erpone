@@ -18,6 +18,7 @@ import com.bartoszewski.erpone.Entity.Documents.DocumentsWithDetailsProjection;
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
 import com.bartoszewski.erpone.Repository.ContractorRepository;
+import com.bartoszewski.erpone.Repository.CurrencyRepository;
 import com.bartoszewski.erpone.Repository.DocumentsRepository;
 import com.bartoszewski.erpone.Repository.PaymentFormRepository;
 import com.bartoszewski.erpone.Repository.PaymentTermRepository;
@@ -57,18 +58,18 @@ public class DocumentsServiceImpl implements DocumentsService {
 	@Override
 	public ResponseEntity<?> create(Documents entity, Authentication authentication) {
 		switch (entity.getDocumentTypeEnum()) {
-		case zm:
-			return makeOrder(entity, authentication);
-		case pw:
-		case pz:
-			return makeIncomeOperation(entity, authentication);
-		case rw:
-		case wz:
-			return makeOutgoingOperation(entity, authentication);
-		case zp:
-			return makeProductionOrder(entity, authentication);
-		default:
-			return null;
+			case zm:
+				return makeOrder(entity, authentication);
+			case pw:
+			case pz:
+				return makeIncomeOperation(entity, authentication);
+			case rw:
+			case wz:
+				return makeOutgoingOperation(entity, authentication);
+			case zp:
+				return makeProductionOrder(entity, authentication);
+			default:
+				return null;
 		}
 	}
 
@@ -88,6 +89,13 @@ public class DocumentsServiceImpl implements DocumentsService {
 	public ResponseEntity<Documents> updateById(Long id, Documents entity) {
 		Documents document = documentsRepository.findById(id)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		document.setContractor(entity.getContractor());
+		document.setPaymentForm(entity.getPaymentForm());
+		document.setPaymentTerm(entity.getPaymentTerm());
+		document.setDocumentCurrency(entity.getDocumentCurrency());
+		document.setDescription(entity.getDescription());
+		document.setTargetDateTime(entity.getTargetDateTime());
+		document.setDocumentDetails(entity.getDocumentDetails());
 		return new ResponseEntity<>(documentsRepository.save(document), HttpStatus.OK);
 	}
 
@@ -137,7 +145,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 		}
 		entity.setDocValue(docValue);
 		Long c = documentsRepository.countByYear(LocalDate.now().getYear(), entity.getDocumentTypeEnum()) + 1;
-		entity.setDocNumber(c);
+		entity.settingDocNumber(c);
 		entity.setPaymentForm(paymentFormRepository.getOne(entity.getPaymentForm().getId()));
 		entity.setPaymentTerm(paymentTermRepository.getOne(entity.getPaymentTerm().getId()));
 		// entity.setUser(userRepository.findByEmail(authentication.getName()));
@@ -160,7 +168,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 		}
 		entity.setDocValue(docValue);
 		Long c = documentsRepository.countByYear(LocalDate.now().getYear(), entity.getDocumentTypeEnum()) + 1;
-		entity.setDocNumber(c);
+		entity.settingDocNumber(c);
 		entity.setPaymentForm(paymentFormRepository.getOne(entity.getPaymentForm().getId()));
 		entity.setPaymentTerm(paymentTermRepository.getOne(entity.getPaymentTerm().getId()));
 		// entity.setUser(userRepository.findByEmail(authentication.getName()));
@@ -185,7 +193,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 			}
 			entity.setDocValue(docValue);
 			Long c = documentsRepository.countByYear(LocalDate.now().getYear(), entity.getDocumentTypeEnum()) + 1;
-			entity.setDocNumber(c);
+			entity.settingDocNumber(c);
 			entity.setPaymentForm(paymentFormRepository.getOne(entity.getPaymentForm().getId()));
 			entity.setPaymentTerm(paymentTermRepository.getOne(entity.getPaymentTerm().getId()));
 			entity.setContractor(contractor);

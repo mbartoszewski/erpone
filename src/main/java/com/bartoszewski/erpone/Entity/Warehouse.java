@@ -24,11 +24,11 @@ public class Warehouse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @NotNull
-    @Column(name = "Code", updatable = true, unique = true)
+
+    @Column(name = "Code", updatable = true, unique = true, nullable = false)
     private String code;
-    @NotNull
-    @Column(name = "Name", updatable = true, unique = true)
+
+    @Column(name = "Name", updatable = true, unique = true, nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

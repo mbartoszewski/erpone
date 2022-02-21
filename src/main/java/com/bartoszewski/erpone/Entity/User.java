@@ -28,20 +28,20 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
 	private Long id;
-	@Column(name = "Email", unique = true)
-	@NotNull
+	@Column(name = "Email", unique = true, nullable = false)
+
 	private String email;
-	@Column(name = "Password", length = 60)
-	@NotNull
+	@Column(name = "Password", length = 60, nullable = false)
+
 	private String password;
-	@Column(name = "First_Name")
-	@NotNull
+	@Column(name = "First_Name", nullable = false)
+
 	private String firstName;
-	@Column(name = "Last_Name")
-	@NotNull
+	@Column(name = "Last_Name", nullable = false)
+
 	private String lastName;
 	@Column(name = "Enabled")
-	@NotNull
+
 	private boolean enabled = true;
 
 	@ManyToMany(fetch = FetchType.EAGER)

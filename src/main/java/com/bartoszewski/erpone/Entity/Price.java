@@ -30,22 +30,22 @@ public class Price {
 	private Long id;
 	@Column(name = "Date", columnDefinition = "TIMESTAMP")
 	@CreationTimestamp
-	@NotNull
+
 	private LocalDateTime date;
-	@NotNull
-	@Column(name = "Price")
+
+	@Column(name = "Price", nullable = false)
 	private Double price;
-	@NotNull
+
 	@Column(name = "Type")
 	private String type;
-	@NotNull
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "Thing_Id")
 	private Thing thing;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "Currency_Id")
-	@NotNull
+
 	private Currency currency;
 
 	@OneToOne(fetch = FetchType.LAZY)

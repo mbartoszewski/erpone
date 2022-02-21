@@ -89,9 +89,9 @@ const SalesDashboardPage = () =>
   const { state: YTDLYSalesState, error: YTDLYSalesError, data: YTDLYSalesData } = useApi(`http://localhost:5000/api/documents/value?type=wz&dateFrom=${ReturnYTD(-1, 0, 0, 1)}&dateTo=${ReturnYTD(-1, 0, 0, 0)}`);
   const { state: futureSalesState, error: futureSalesError, data: futureSalesData } = useApi(`http://localhost:5000/api/documents/value?type=zm&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
 
-  const ytdSales = React.useMemo(() => YTDSalesData, YTDSalesState);
-  const ytdLySales = React.useMemo(() => YTDLYSalesData, YTDLYSalesState);
-  const futureSales = React.useMemo(() => futureSalesData, futureSalesState);
+  const ytdSales = React.useMemo(() => YTDSalesData, [YTDSalesState]);
+  const ytdLySales = React.useMemo(() => YTDLYSalesData, [YTDLYSalesState]);
+  const futureSales = React.useMemo(() => futureSalesData, [futureSalesState]);
 
   const ytdSalesValue = DocValue(ytdSales);
   const ytdLySalesValue = DocValue(ytdLySales);

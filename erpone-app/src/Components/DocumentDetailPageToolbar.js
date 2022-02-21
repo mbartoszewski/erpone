@@ -9,6 +9,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import PrintIcon from '@mui/icons-material/Print';
 import DropDownMenu from "./DropDownMenu";
 import ImportExportIcon from '@mui/icons-material/ImportExport';
+import { docStates } from './Helpers';
+import { useParams, useHistory} from "react-router-dom";
+import { useApii } from "./Fetch";
 
 const useStyles = makeStyles(theme => ({
 docNumber: {
@@ -17,11 +20,17 @@ docNumber: {
 	saveButtonHidden: {
 	display: "none"
 	},
+	saveButtonShow: {
+	display: "-webkit-inline-flex"
+	},
 	editButtonHidden: {
 	display: "none"
 	},
 	cancelEditButtonHidden: {
 	display: "none"
+	},
+	cancelEditButtonShow: {
+	display: "-webkit-inline-flex"
 	},
 	deleteButtonHidden: {
 	display: "none"
@@ -33,24 +42,57 @@ docNumber: {
 	display: "none"
 	},
 }));
-const options = ['to Excel', 'to PDF'];
+const options = [{title: 'Excel', function: undefined}, {title: 'PDF', function: undefined}];
 
 const DocumentDetailPageToolbar = (props) =>
 {
 	const classes = useStyles();
-
+	const { id } = useParams();
+	const [{response}, doFetch] = useApii(null, null)
 	const handleEditButtonClick = () =>
 	{
-		props.setIsEdit(true)
+		props.setDocState(docStates.EDIT)
 	}
 	const handleSaveButtonClick = () =>
 	{
-		props.setIsEdit(false)
+		props.setDocState(docStates.VIEW)
+		props.setOriginalDoc(props.doc)
+		//zapisujemy na serwerze
+		console.log(props.doc)
+		doFetch({ url: `http://localhost:5000/api/documents/${id}/`, options: {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(props.doc)
+			}})
 	}
 	const handleCancelButtonClick = () =>
 	{
-		props.setIsEdit(false)
+		
+		if (props.docStateProp !== docStates.ADD)
+		{
+			props.setDoc(props.originalDoc)
+			props.setDocState(docStates.VIEW)
+		} 
+		else
+		{
+			props.setDocState(docStates.VIEW)
 		}
+		
+	}
+	const handleDeleteButtonClick = async e =>
+	{
+		if (id !== undefined && id !== null)
+		{
+			doFetch({ url: `http://localhost:5000/api/documents/${id}/`, options: {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			}})
+		}
+	}
 	return (
 		 <Grid container spacing={1} >
 			<Grid container item xs={12} md={6} xl={6} justifyContent="center">
@@ -63,38 +105,39 @@ const DocumentDetailPageToolbar = (props) =>
 					<Button
 						color='inherit'
 						startIcon={<SaveIcon />}
-						className={clsx(classes.saveButton, !props.isEditProp && classes.saveButtonHidden)}
+						className={clsx(classes.saveButtonHidden, (props.docStateProp === docStates.EDIT || props.docStateProp === docStates.ADD) && classes.saveButtonShow)}
 						onClick={handleSaveButtonClick}>
-								Save
+						Save
 						</Button>
 					<Button
 						color='inherit'
 						startIcon={<EditIcon />}
-						className={clsx(classes.editButton, props.isEditProp && classes.editButtonHidden)}
+						className={clsx(classes.editButton, (props.docStateProp === docStates.EDIT || props.docStateProp === docStates.ADD) && classes.editButtonHidden)}
 						onClick={handleEditButtonClick}>
 								Edit
 						</Button>
 						<Button
 						color='inherit'
 						startIcon={<CloseIcon />}
-						className={clsx(classes.cancelEditButton, !props.isEditProp && classes.cancelEditButtonHidden)}
+						className={clsx(classes.cancelEditButtonHidden, (props.docStateProp === docStates.EDIT || props.docStateProp === docStates.ADD) && classes.cancelEditButtonShow)}
 						onClick={handleCancelButtonClick}>
 								Cancel
 						</Button>
 						<Button
 						color='inherit'
 						startIcon={<DeleteForeverIcon />}
-						className={clsx(classes.deleteButton, props.isEditProp && classes.deleteButtonHidden)}>
+						className={clsx(classes.deleteButton, (props.docStateProp === docStates.EDIT || props.docStateProp === docStates.ADD) && classes.deleteButtonHidden)}
+						onClick={handleDeleteButtonClick}>
 								Delete
 						</Button>
 					<Button
 						color='inherit'
 						startIcon={<PrintIcon />}
-						className={clsx(classes.printButton, props.isEditProp && classes.printButtonHidden)}>
+						className={clsx(classes.printButton, (props.docStateProp === docStates.EDIT || props.docStateProp === docStates.ADD) && classes.printButtonHidden)}>
 								Print
 					</Button>
 					<DropDownMenu
-						hidden={props.isEditProp === true ? true : false}
+						hidden={(props.docStateProp === docStates.EDIT || props.docStateProp === docStates.ADD) ? true : false}
 						buttonTitle={"Export"}
 						icon={<ImportExportIcon />}
 						menuOptions={options} />

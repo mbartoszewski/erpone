@@ -144,7 +144,7 @@ const [open, setOpen] = React.useState(false);
                 : theme.palette.grey[200],
             flexGrow: 1,
             pt: (theme) =>
-              theme.spacing(9),
+              theme.spacing(10),
             pb: (theme) =>
               theme.spacing(1),
             pl: (theme) =>
@@ -155,9 +155,7 @@ const [open, setOpen] = React.useState(false);
             overflow: 'auto',
           }}
         >
-          <Container maxWidth="">
             {props.children}
-          </Container>
         </Box>
       </Box>
     </ThemeProvider>

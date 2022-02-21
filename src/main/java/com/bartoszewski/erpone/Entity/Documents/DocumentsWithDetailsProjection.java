@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
-import com.bartoszewski.erpone.Entity.PaymentForm;
 import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
 
 public interface DocumentsWithDetailsProjection {
@@ -84,6 +83,8 @@ public interface DocumentsWithDetailsProjection {
 	}
 
 	interface DocumentDetails {
+		Long getId();
+
 		Double getQuantity();
 
 		Thing getThing();
@@ -98,6 +99,8 @@ public interface DocumentsWithDetailsProjection {
 			String getName();
 
 			Unit getUnit();
+
+			int getActive();
 
 			interface Unit {
 				String getCode();

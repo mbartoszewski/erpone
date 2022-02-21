@@ -1,9 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { makeStyles } from '@mui/styles';
-import AddIcon from '@material-ui/icons/Add'
 import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogContent from '@mui/material/DialogContent'
 import {Box, Grid, IconButton, Typography } from '@mui/material';
 import PropTypes from 'prop-types'
 import Switch from '@mui/material/Switch'

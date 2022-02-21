@@ -35,7 +35,7 @@ const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref)
 	)
 })
 const options = ['Thing'];
-
+ 
 const ThingsTable = ({data, columns}) =>
 	{
 	const {

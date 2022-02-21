@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -21,8 +20,7 @@ public class PaymentForm {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
 	private Long id;
-	@NotNull
-	@Column(name = "Form")
+	@Column(name = "Form", nullable = false)
 	private String form;
 	@OneToMany(mappedBy = "paymentForm", fetch = FetchType.LAZY)
 	private List<Documents> documents;

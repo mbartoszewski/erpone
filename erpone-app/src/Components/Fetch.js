@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef} from 'react'
+import { useState, useEffect} from 'react'
 
 export const apiStates = {
   LOADING: 'Loading',
@@ -14,7 +14,6 @@ export const useApi = (url, options) =>
     error: '',
     data: null,
   });
-  const setPartData = (partialData) => setData({ ...data, ...partialData });
   const fetchData = async () =>
   {
       await fetch(url, options)
@@ -22,7 +21,7 @@ export const useApi = (url, options) =>
         {
           if (!response.ok)
           {
-          setPartData({
+          setData({
             state: apiStates.ERROR,
             error: "Error",
             data: null
@@ -31,35 +30,81 @@ export const useApi = (url, options) =>
         })
     .then((data) =>
     {
-    if (data !== null && Object.keys(data)[0] === "content") {
-       {console.log("połączenie: " + url + " data content:  " + data.content)}
-      setPartData({
+    if (data !== null) {
+      setData({
         state: apiStates.SUCCESS,
-        data: data.content
-      });
-    } else if (data !== null && Object.keys(data)[0] !== "content")
-    {
-       {console.log("połączenie: " + url + " data:  " + data)}
-      setPartData({
-        state: apiStates.SUCCESS,
-        data: data
+        error: '',
+        data: Object.keys(data)[0] === "content" ? data.content : data
       });
     }
      
     })
-    .catch(() =>
+    .catch((e) =>
     {
-      setPartData({
+      setData({
         state: apiStates.ERROR,
-        error: "E"
+        error: e.message,
+        data: null
       });
     });
   }
   
   useEffect(() =>
   {
-    setPartData({ state: apiStates.LOADING, });
+    setData({ state: apiStates.LOADING,  error: '', data: null});
     fetchData();
   }, []); //check if this is the best solution. 
   return data;
+}
+
+export const useApii = (initialUrl, initialOptions) =>
+{
+  const [data, setData] = useState({
+    state: apiStates.LOADING,
+    error: '',
+    data: {},
+  });
+  
+  const [callProperties, setCallProperties] = useState({url: initialUrl, options: initialOptions})
+  const fetchData = async () =>
+  {
+      await fetch(callProperties.url, callProperties.options)
+        .then((response) =>
+        {
+          if (!response.ok)
+          {
+          setData({
+            state: apiStates.ERROR,
+            error: 'Error, response not ok',
+            data: null
+          });
+          } else return response.json()
+        })
+    .then((data) =>
+    {
+    if (data !== null) {
+      setData({
+        state: apiStates.SUCCESS,
+        error: '',
+        data: Object.keys(data)[0] === "content" ? data.content : data
+      });
+    }
+     
+    })
+    .catch((e) =>
+    {
+      setData({
+        state: apiStates.ERROR,
+        error: e.message,
+        data: null
+      });
+    });
+  }
+  
+  useEffect(() =>
+  {
+    setData({ state: apiStates.LOADING, error: '', data: null });
+    fetchData();
+  }, [callProperties]); //check if this is the best solution. 
+  return [{data}, setCallProperties];
 }

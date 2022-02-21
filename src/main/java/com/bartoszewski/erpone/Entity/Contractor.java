@@ -13,31 +13,27 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@JsonIgnoreProperties(value = { "foreignCodes", "contactDetails", "address", "defaultCurrency", "orderDocumentDetails",
-        "nip", "regon" }, allowSetters = true)
+@JsonIgnoreProperties(value = { "foreignCodes", "contactDetails", "defaultCurrency", "orderDocumentDetails",
+}, allowSetters = true)
 public class Contractor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @NotNull
-    @Column(name = "Name", unique = false)
+    @Column(name = "Name", unique = false, nullable = false)
     private String name;
-    @NotNull
-    @Column(name = "NIP", unique = true)
+    @Column(name = "NIP", unique = true, nullable = false)
     private String nip;
-    @Column(name = "Regon", unique = true)
+    @Column(name = "Regon", unique = true, nullable = false)
     private String regon;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "Currency_Id")
-    @NotNull
     private Currency defaultCurrency;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

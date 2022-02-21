@@ -17,7 +17,7 @@ const options = ['Thing'];
 const Warehouse = () =>
 {
   const { state, error, data } = useApi('http://localhost:5000/api/things/');
-  const fetchedData = React.useMemo(() => data, state);
+  const fetchedData = React.useMemo(() => data, [state]);
   const columns = React.useMemo(() => [
       { Header: 'Code', accessor: 'code' },
       { Header: 'Name', accessor: 'name' },

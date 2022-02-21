@@ -3,18 +3,24 @@ import { apiStates, useApi } from '../../../Components/Fetch'
 import DropDownMenu from '../../../Components/DropDownMenu'
 import AddIcon from '@mui/icons-material/Add';
 import DocumentsTable from '../../../Components/DocumentsTable'
+import DocumentsDetailsPage from '../../../Components/DocumentsDetailsPage';
+import { useHistory, Link } from "react-router-dom";
+import { docStates } from '../../../Components/Helpers';
 
 const errorMsg = (theme) => ({
   position: 'absolute',
   top: '50%',
   left: '50%'
 })
-const options = ['PZ', 'WZ', 'PW'];
+
+const addButtonCliclHandler = (documentType) => {  }
+const options = [{title: 'PZ', function: addButtonCliclHandler, pathname: "/documents/add", state: {docState: docStates.ADD}}, {title: 'WZ', function: addButtonCliclHandler, pathname: "/documents/add", state: {docState: docStates.ADD}}, {title: 'PW', function: undefined, pathname: "/documents/add", state: {docState: docStates.ADD}}];
 
 const WarehouseDocuments = () =>
 {
+
   const { state, error, data } = useApi('http://localhost:5000/api/documents?type=pw&type=pz&type=rw&type=wz');
-  const fetchedData = React.useMemo(() => data, state);
+  const fetchedData = React.useMemo(() => data, [state]);
   const columns = React.useMemo(() => [
     { Header: 'Status', accessor: 'documentStatusEnum' },
     { Header: 'Document', accessor: 'docNumber' },
@@ -31,11 +37,11 @@ const WarehouseDocuments = () =>
       return <p sx={errorMsg}>Error: {error} || 'General error'</p>;
     case apiStates.SUCCESS:
       return (
-               <DocumentsTable
-          data={fetchedData}
-          columns={columns}
-          manual
-           tToolbar={<DropDownMenu
+            <DocumentsTable
+            data={data}
+            columns={columns}
+            manual
+            tToolbar={<DropDownMenu
             buttonTitle={"Add"}
             menuOptions={options}
             icon={<AddIcon/>}>

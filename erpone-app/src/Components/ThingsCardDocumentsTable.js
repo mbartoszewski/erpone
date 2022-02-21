@@ -32,7 +32,6 @@ const ThingsCardDocumentsTable = ({ title, columns, data }) =>
 									{columns.Header}
 								</TableCell>
 							))}
-							{console.log(data)}
 						</TableRow>
 					</TableHead>
 				<TableBody {...getTableBodyProps()}>

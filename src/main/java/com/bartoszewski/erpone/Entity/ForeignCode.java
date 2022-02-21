@@ -19,17 +19,17 @@ public class ForeignCode {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @NotNull
-    @Column(name = "Code", unique = true)
+
+    @Column(name = "Code", unique = true, nullable = false)
     private String code;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
+
     @JoinColumn(name = "Thing_Id")
     Thing thing;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
+
     @JoinColumn(name = "Contractor_Id")
     Contractor contractor;
 

@@ -13,7 +13,7 @@ function StocksCard()
 {
   const { id } = useParams();
   const { state, error, data } = useApi(`http://localhost:5000/api/documents/details/last?thing=${id}&size=7&type=zm`);
-  const fetchedData = React.useMemo(() => data, state);
+  const fetchedData = React.useMemo(() => data, [state]);
   const columns = React.useMemo(() => [
       { Header: 'Document', accessor: 'document.docNumber' },
       { Header: 'Quantity', accessor: 'quantity' },

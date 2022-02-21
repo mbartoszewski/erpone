@@ -1,8 +1,8 @@
-import { Divider, Grid } from '@mui/material'
-import React, { useState } from 'react';
+import { Grid } from '@mui/material'
+import React from 'react';
 import { LineChart, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 import DashboardTile from '../../../Components/DashboardTile';
-import { apiStates, useApi } from '../../../Components/Fetch'
+import { useApi } from '../../../Components/Fetch'
 import {ReturnYTD, UnitConverter, VariationCalculator, DocValue} from '../../../Components/Helpers'
 
 const dummy = [
@@ -83,28 +83,15 @@ const dummy = [
   },
 ];
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
-
 const PurchaseDashboard = () =>
 {
   const { state: YTDPurchaseState, error: YTDPurchaseError, data: YTDPurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=pz&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
   const { state: YTDLYPurchaseState, error: YTDLYPurchaseError, data: YTDLYPurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=pz&dateFrom=${ReturnYTD(-1, 0, 0, 1)}&dateTo=${ReturnYTD(-1, 0, 0, 0)}`);
   const { state: futurePurchaseState, error: futurePurchaseError, data: futurePurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=zm&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
 
-  const ytdPurchase = React.useMemo(() => YTDPurchaseData, YTDPurchaseState);
-  const ytdLyPurchase = React.useMemo(() => YTDLYPurchaseData, YTDLYPurchaseState);
-  const futurePurchase = React.useMemo(() => futurePurchaseData, futurePurchaseState);
+  const ytdPurchase = React.useMemo(() => YTDPurchaseData, [YTDPurchaseState]);
+  const ytdLyPurchase = React.useMemo(() => YTDLYPurchaseData, [YTDLYPurchaseState]);
+  const futurePurchase = React.useMemo(() => futurePurchaseData, [futurePurchaseState]);
 
   const ytdPurchaseValue = DocValue(ytdPurchase);
   const ytdLyPurchaseValue = DocValue(ytdLyPurchase);

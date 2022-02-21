@@ -10,14 +10,14 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableToolbar from './TableToolbar'
 import ReactDOM from 'react-dom'
-import DropDownMenu from './DropDownMenu'
-import AddIcon from '@mui/icons-material/Add';
 import {
   useGlobalFilter,
   useRowSelect,
   useSortBy,
   useTable,
 } from 'react-table'
+import { TableFooter } from '@mui/material';
+
 const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref) =>
 {
 	const defaultRef = React.useRef()
@@ -34,7 +34,6 @@ const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref)
 		</>
 	)
 })
-const options = ['ZM'];
 
 const DocumentsTable = ({data, columns, tToolbar, detailLink}) =>
 {
@@ -44,6 +43,7 @@ const DocumentsTable = ({data, columns, tToolbar, detailLink}) =>
 		getTableProps,
 		getTableBodyProps,
 		headerGroups,
+		footerGroups,
 		rows,
 		prepareRow,
 		preGlobalFilteredRows,
@@ -76,7 +76,7 @@ const DocumentsTable = ({data, columns, tToolbar, detailLink}) =>
 		})
 		
 	return (
-		<TableContainer>
+		<TableContainer sx={{maxHeight: "800px", }}>
 			{ReactDOM.createPortal(<TableToolbar
 				dropDownMenu={tToolbar}
 				numSelected={Object.keys(selectedRowIds).length}
@@ -84,11 +84,11 @@ const DocumentsTable = ({data, columns, tToolbar, detailLink}) =>
 				setGlobalFilter={setGlobalFilter}
 				globalFilter={globalFilter}/>, document.getElementById("option-toolbar"))}
 				<MaUTable {...getTableProps()} size = "small">
-				<TableHead>
+				<TableHead sx={{position: "sticky", top: "0px", backgroundColor: "white", zIndex: "1"}}>
 						{headerGroups.map(headerGroup => (
 							<TableRow {...headerGroup.getHeaderGroupProps()}>
 								{headerGroup.headers.map(column => (
-									<TableCell {...column.getHeaderProps(column.getSortByToggleProps())}>
+									<TableCell {...column.getHeaderProps(column.getSortByToggleProps())} sx={{fontSize: "0.9em", fontWeight: "bold"}}>
 										{column.render('Header')}
 										 <span>
                     {column.isSorted
@@ -124,7 +124,18 @@ const DocumentsTable = ({data, columns, tToolbar, detailLink}) =>
 								)
 							})
 						}
-					</TableBody>
+				</TableBody>
+				<TableFooter sx={{backgroundColor: "white", zIndex: "1", position: "sticky", bottom: "0px", borderCollapse: "unset"}}>
+					{footerGroups.map(group => (
+						<TableRow {...group.getFooterGroupProps()}>
+							{group.headers.map(column => (
+								<TableCell {...column.getFooterProps()} style={{fontSize: "0.9em", fontWeight: "bold"}}>
+									{column.render('Footer')}
+								</TableCell>
+							))}
+						</TableRow>
+					))}
+				</TableFooter>
 				</MaUTable>			
 			</TableContainer>
 		);

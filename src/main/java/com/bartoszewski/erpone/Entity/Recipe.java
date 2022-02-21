@@ -23,17 +23,16 @@ public class Recipe {
 	@Column(name = "Id")
 	private Long id;
 
-	@NotNull
-	@Column(name = "Name")
+	@Column(name = "Name", nullable = false)
 	private String name;
 	@Column(name = "Description")
 	private String description;
 
 	@OneToMany
-	@NotNull
+
 	private List<DocumentDetails> documentDetails;
 	@ManyToOne
-	@NotNull
+
 	@JoinColumn(name = "Thing_Id")
 	private Thing thing;
 

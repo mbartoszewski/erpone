@@ -21,8 +21,7 @@ public class PaymentTerm {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id")
 	private Long id;
-	@NotNull
-	@Column(name = "Term")
+	@Column(name = "Term", nullable = false)
 	private int term;
 	@OneToMany(mappedBy = "paymentTerm", fetch = FetchType.LAZY)
 	private List<Documents> documents;

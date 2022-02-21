@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
-import { BrowserRouter, useHistory, Link } from "react-router-dom";
-import { makeStyles } from '@mui/styles';
+import { useHistory, Link } from "react-router-dom";
 import Collapse from '@mui/material/Collapse';
 import { List, Divider, Tooltip, Zoom } from '@mui/material';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';

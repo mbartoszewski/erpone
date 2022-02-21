@@ -24,11 +24,11 @@ public class Unit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
-    @NotNull
-    @Column(name = "Code", unique = true)
+
+    @Column(name = "Code", unique = true, nullable = false)
     private String code;
-    @NotNull
-    @Column(name = "Name", unique = true)
+
+    @Column(name = "Name", unique = true, nullable = false)
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "unit")
