@@ -15,13 +15,13 @@ const TableToolbar = (props) => {
     dropDownMenu
   } = props
   return (
-     <Grid container spacing={1} justifyContent="space-between" alignItems="center">
+     <Grid container spacing={1} justifyContent="space-between" alignItems="left">
           <Grid item xs={4} md={4} xl={4}>
-            {dropDownMenu}
+            {dropDownMenu != undefined ? dropDownMenu : null}
           </Grid>
            <Grid item xs={8} md={4} xl={4}>
             <Typography variant="h6">
-          {title !== null ? title : ""}
+          {title != null ? title : ""}
             </Typography>
           </Grid>
           <Grid item xs={12} md={4} xl={4}>
@@ -29,10 +29,11 @@ const TableToolbar = (props) => {
           (<Typography sx={{ fontSize: '1.2em' }}>{numSelected} selected</Typography>)
           :
           (
-            <GlobalFilter 
+            globalFilter != undefined ? 
+            (<GlobalFilter 
             preGlobalFilteredRows={preGlobalFilteredRows}
             globalFilter={globalFilter}
-            setGlobalFilter={setGlobalFilter}/>
+            setGlobalFilter={setGlobalFilter}/>) : null
           )}
         </Grid>
         </Grid> 

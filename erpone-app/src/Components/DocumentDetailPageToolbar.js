@@ -57,8 +57,7 @@ const DocumentDetailPageToolbar = (props) =>
 	{
 		props.setDocState(docStates.VIEW)
 		props.setOriginalDoc(props.doc)
-		//zapisujemy na serwerze
-		console.log(props.doc)
+	
 		doFetch({ url: `http://localhost:5000/api/documents/${id}/`, options: {
 			method: "PUT",
 			headers: {
@@ -83,7 +82,7 @@ const DocumentDetailPageToolbar = (props) =>
 	}
 	const handleDeleteButtonClick = async e =>
 	{
-		if (id !== undefined && id !== null)
+		if (id != undefined && id != null)
 		{
 			doFetch({ url: `http://localhost:5000/api/documents/${id}/`, options: {
 			method: "DELETE",
@@ -94,13 +93,18 @@ const DocumentDetailPageToolbar = (props) =>
 		}
 	}
 	return (
-		 <Grid container spacing={1} >
-			<Grid container item xs={12} md={6} xl={6} justifyContent="center">
+		<Grid container spacing={1}>
+			<Grid  item xs={6} md={3} xl={3} justifyContent="flex-start" >
 				<Typography variant="h6">
-				{props.title !== null ? props.title : ""} {props.docNumber}
+				{props.docNumber != null ? props.docNumber : ""}
 				</Typography>
 			</Grid>
-			<Grid container item xs={12} md={6} xl={6} justifyContent="flex-end">
+			<Grid  item xs={6} md={3} xl={3} justifyContent="center" >
+				<Typography variant="h6">
+				{props.selected != null ? "selected: " : "x"}
+				</Typography>
+			</Grid>
+			<Grid item xs={12} md={6} xl={6} justifyContent="flex-end">
 			<Stack direction="row" spacing={1}>
 					<Button
 						color='inherit'

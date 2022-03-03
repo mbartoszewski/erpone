@@ -11,14 +11,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { docStates, pathTo } from './Helpers';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { display, style } from '@mui/system';
-const root = (theme) => ({
-		flexGrow: '1',
-		'& .MuiTextField-root': {
-      margin: theme.spacing(1),
-			minWidth: '20ch',
-    },
-})
+import Checkbox from '@mui/material/Checkbox'
 
 const DocumentHeader = styled('div')(({ theme }) => ({
   position: 'sticky',
@@ -37,7 +30,7 @@ const DocumentsDetailsPage = (props) =>
 {
 	const location = useLocation()
 	const { id } = useParams();
-	const [docState, setDocState] = useState(location.state !== undefined && location.state.docState !== undefined? location.state.docState : docStates.VIEW)
+	const [docState, setDocState] = useState(location.state != undefined && location.state.docState != undefined? location.state.docState : docStates.VIEW)
 	const globalContext = useContext(globalStateContext);
 	const currencies = globalContext.dataCurrencies;
 	const warehouses = globalContext.dataWarehouses;
@@ -54,7 +47,7 @@ const DocumentsDetailsPage = (props) =>
     documentCurrency: {},
     paymentForm: {},
     paymentTerm: {},
-		documentDetails: null
+		documentDetails: []
 	})
 	const [originalDoc, setOriginalDoc] = useState();
 	const { state: documentDetailState, error: documentDetailError, data: documentDetailData } = useApi(`http://localhost:5000/api/documents/${id}/details`);
@@ -70,6 +63,7 @@ const DocumentsDetailsPage = (props) =>
 	}, [documentDetailData]);
 	
 	React.useEffect(() => { setDomReady(true) }, [])
+	
 	const handleCurrencyChange = (event, child) =>
 	{
 		setDoc((prevState) => ({
@@ -92,7 +86,7 @@ const DocumentsDetailsPage = (props) =>
 	{
 		contractors.map((c) =>
 		{
-			if (values !== null && values.id === c.id) {
+			if (values != null && values.id === c.id) {
 			setDoc((prevState) => ({
 				...prevState, contractor: c,
 			}))
@@ -132,7 +126,58 @@ const DocumentsDetailsPage = (props) =>
 			...prevState, targetDateTime: event.target.value
 		}))
 	}
+	const handleAddItemClick = () => 
+	{
+		setDoc((prevState) => ({
+			...prevState, documentDetails: [...prevState.documentDetails, {}],
+		}))
+	}
+	const handleDeleteItemClick = (selectedRowIds) => 
+	{
+		console.log("delete item ", selectedRowIds)
+		/*setDoc((prevState) => ({
+			...prevState, documentDetails: [...prevState.documentDetails.filter((row, index) =>
+			
+				index === rowIndex.index
+				
+			)],
+		}))*/
+		console.log(doc)
+	}
+	const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref) =>
+{
+	const defaultRef = React.useRef()
+	const resolvedRef = ref || defaultRef
+
+	React.useEffect(() =>
+	{
+		resolvedRef.current.indeterminate = indeterminate
+	}, [resolvedRef, indeterminate])
+
+	return (
+		<>
+			<Checkbox ref={resolvedRef} {...rest}/>
+		</>
+	)
+})
 	const columns = React.useMemo(() => [
+		{
+					id: 'selection',
+					// The header can use the table's getToggleAllRowsSelectedProps method
+					// to render a checkbox
+					Header: ({ getToggleAllRowsSelectedProps }) => (
+						<div>
+							<IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+						</div>
+					),
+					// The cell can use the individual row's getToggleRowSelectedProps method
+					// to the render a checkbox
+			Cell: ({ row }) => (		
+						<div>
+							<IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+						</div>
+					),
+				},
 		{
 			Header: 'Code', accessor: 'thing.code',
 			Cell: function Cell({cell, row, column, handleThingChange, value: initialValue})
@@ -148,7 +193,7 @@ const DocumentsDetailsPage = (props) =>
 
 				const onBlur = () =>
 				{
-					handleThingChange(row, column, value, thing)
+					handleThingChange(row, column, value)
 				}
 
 				React.useEffect(() =>
@@ -264,7 +309,7 @@ const DocumentsDetailsPage = (props) =>
 
 	return (
 		<div >
-			{domReady ? ReactDOM.createPortal(<DocumentDetailPageToolbar docNumber={doc != null ? doc.docNumber : ""} docStateProp={docState} setDocState={setDocState} setDoc={setDoc} originalDoc={originalDoc} setOriginalDoc={setOriginalDoc} doc={doc}/>, document.getElementById("option-toolbar")): null}
+			{domReady ? ReactDOM.createPortal(<DocumentDetailPageToolbar docNumber={doc != null ? doc.docNumber : ""} docStateProp={docState} setDocState={setDocState} setDoc={setDoc} originalDoc={originalDoc} setOriginalDoc={setOriginalDoc} doc={doc} selected={"asd"}/>, document.getElementById("option-toolbar")): null}
 			<DocumentHeader>
 			<Grid container spacing={2}>	  	 
 			<Grid item xs={12} md={4} xl={6}>
@@ -393,33 +438,34 @@ const DocumentsDetailsPage = (props) =>
 				</Grid>
 			</Grid>	
 			</Grid>	
-			<Grid container spacing={2}>
-				<Grid item xs={3} md={3} xl={3} sx={(docState === docStates.EDIT || docState === docStates.ADD) ? null : {display:"none"} }>
-					<ButtonGroup variant="outlined" size="small">
-							<Button
-								size='small'
-								startIcon={<AddIcon/>}
-								color='inherit'>
-								Add item
-							</Button>
-							<Button
-								size='smal'
-								startIcon={<RemoveIcon/>}
-								color='inherit'>
-								Delete item
-							</Button>
-					</ButtonGroup>		
-				</Grid>
-			</Grid>
+			<Grid item xs={3} md={3} xl={3} sx={(docState === docStates.EDIT || docState === docStates.ADD) ? null : {display:"none"} }>
+				<ButtonGroup variant="outlined" size="small" >
+						<Button
+							size='small'
+							startIcon={<AddIcon/>}
+								color='inherit'
+							onClick={handleAddItemClick}>
+							Add item
+						</Button>
+						<Button
+							size='smal'
+							startIcon={<RemoveIcon/>}
+								color='inherit'
+							onClick={handleDeleteItemClick}>
+							Delete item
+						</Button>
+				</ButtonGroup>		
+					</Grid>
 		</Grid>	
 			</DocumentHeader>
 			<DocumentTable>
 					<DocumentsDetailsTable
-						data={doc !== undefined && doc.documentDetails !== null ? doc.documentDetails : [0]}
+						data={doc != undefined && doc.documentDetails != null ? doc.documentDetails : [0]}
 						columns={columns}
 						docState={docState}
 						manual
 						handleThingChange={handleThingChange}
+						handleDeleteItemClick={handleDeleteItemClick}
 					/>
 			</DocumentTable>		
 	</div>

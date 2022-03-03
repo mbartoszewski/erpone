@@ -84,7 +84,7 @@ export const VariationCalculator = (firstValue, secondValue) =>
 export const DocValue = (data) =>
 {
 	let value = 0;
-  if (data !== null)
+  if (data != null)
   {
     data.map(v =>
     {
@@ -98,11 +98,11 @@ export const DocValue = (data) =>
 export const DocValueByProperties = (data, properties) =>
 {
 	let idValueMap = {}
-	if (data !== null)
+	if (data != null)
 	{
 		data.forEach(d =>
 		{
-			if (idValueMap !== null)
+			if (idValueMap != null)
 			{
 				
 				}

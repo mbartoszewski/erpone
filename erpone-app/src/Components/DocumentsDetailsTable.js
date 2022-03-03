@@ -8,16 +8,17 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { useParams } from "react-router-dom";
 import {
-  useGlobalFilter,
   useSortBy,
-  useTable,
+	useTable,
+    useRowSelect,
+
 } from 'react-table'
-import { TableFooter } from '@mui/material';
+import { TableFooter, Typography } from '@mui/material';
 
-
-const DocumentsDetailsTable = ({data, columns, docState, handleThingChange}) =>
+const DocumentsDetailsTable = ({data, columns, docState, handleThingChange, handleDeleteItemClick}) =>
 {
 	const { id } = useParams();
+	
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -25,10 +26,11 @@ const DocumentsDetailsTable = ({data, columns, docState, handleThingChange}) =>
 		footerGroups,
 		rows,
 		prepareRow,
-	} = useTable({ data, columns, docState, handleThingChange}, useSortBy)
+		state:{selectedRowIds}
+	} = useTable({ data, columns, docState, handleThingChange, handleDeleteItemClick}, useSortBy, useRowSelect)
 		
 	return (
-		<TableContainer sx={{maxHeight: "600px", }}>
+		<TableContainer sx={{ maxHeight: "600px", }}>
 				<MaUTable {...getTableProps()} size = "small" >
 					<TableHead sx={{position: "sticky", top: "0px", backgroundColor: "white", zIndex: "1"}}>
 						{headerGroups.map(headerGroup => (
