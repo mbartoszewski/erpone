@@ -3,13 +3,15 @@ import { apiStates, useApi } from '../../../Components/Fetch'
 import DocumentsTable from '../../../Components/DocumentsTable'
 import DropDownMenu from '../../../Components/DropDownMenu'
 import AddIcon from '@mui/icons-material/Add';
+import { docStates } from '../../../Components/Helpers';
+
   const errorMsg = (theme) => ({
   position: 'absolute',
   top: '50%',
   left: '50%'
 })
 
-const options = ['ZM', 'PW'];
+const options = [{title: 'ZM', function: undefined, pathname: "/documents/add", state: {docState: docStates.ADD}},];
 
 const PurchaseDocuments = () =>
 {

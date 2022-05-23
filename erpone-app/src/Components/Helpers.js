@@ -1,29 +1,105 @@
-export const ReturnYTD = (yearOffset, monthOffset, dayOffset, firstDayOdYear) =>
+export const ReturnYTD = (yearOffset, monthOffset, dayOffset, firstDayOfYear) =>
 {
 	const date = new Date();
-	const fullYear = date.getFullYear();
-	const month = date.getMonth();
-	const day = date.getDate();
+	const fullYear = date.getUTCFullYear();
+	const month = date.getUTCMonth();
+	const day = date.getUTCDate();
 	
 	if (yearOffset !== null & yearOffset !== 0)
 	{
-		date.setFullYear(fullYear + yearOffset)
+		date.setUTCFullYear(fullYear + yearOffset)
 	}
 	if (monthOffset !== null & monthOffset !== 0)
 	{
-		date.setMonth(month + monthOffset)
+		date.setUTCMonth(month + monthOffset)
 	}
 	if (dayOffset !== null & dayOffset !== 0)
 	{
-		date.setDate(day + dayOffset)	
+		date.setUTCDate(day + dayOffset)	
 	}
-	if (firstDayOdYear !== null & firstDayOdYear === 1)
+	if (firstDayOfYear !== null & firstDayOfYear === 1)
 	{
-		date.setMonth(0);
-		date.setDate(1);
+		date.setUTCMonth(0);
+		date.setUTCDate(1);
 	}	
 	
 	return date.toJSON();
+}
+
+export const getISODateOfWeek = (w, y) => {
+    let simple = new Date(Date.UTC(y, 0, 1 + (w - 1) * 7));
+    let dow = simple.getUTCDay();
+	let ISOweekStart = simple;
+	let dates = [];
+    if (dow <= 4)
+        ISOweekStart.setUTCDate(simple.getUTCDate() - simple.getUTCDay() + 1);
+    else
+		ISOweekStart.setUTCDate(simple.getUTCDate() + 8 - simple.getUTCDay());
+	
+	let day = new Date(Date.UTC(ISOweekStart.getUTCFullYear(), ISOweekStart.getUTCMonth(), ISOweekStart.getUTCDate()))
+
+	for (let i = 1; i <= 7; i++)
+	{
+		dates.push(day.toISOString().split('T')[0])
+		day.setUTCDate(day.getUTCDate() + 1);
+	}
+	return dates;
+}
+
+export const groupByDate = (xs, key) =>
+{
+	return xs.reduce((rv, x) => {
+	(rv[x[key].split('T')[0]] = rv[x[key].split('T')[0]] || []).push(x);
+	return rv;
+	}, {});
+};
+
+export const transposeJson = (json) =>
+{
+	let keys = []
+	let newObj = []
+	let newMap = {}
+	let maxLength = 0;
+
+	if (json !== undefined && json !== null && Object.keys(json).length)
+	{
+		Object.keys(json).forEach((o) =>
+		{
+			keys.push(o)
+			maxLength =  maxLength < json[o].length ? json[o].length : maxLength
+		})
+		}	
+	
+	if (json !== undefined && json !== null && Object.keys(json).length)
+	{
+		for (let i = 0; i < maxLength; i++)
+		{		
+			
+			Object.keys(json).forEach((o) =>
+			{	
+				if (json[o].find(x => x !== undefined))
+				{
+					newMap = { ...{ [`${o}`]: json[o].shift() }, ...newMap }
+				}
+			})
+			newObj.push(newMap)
+			newMap = {}
+		}
+	}
+	return newObj;
+}
+
+export const getISO8601WeekNumberFromDate = (date) =>
+{
+	var tdt = new Date(date.valueOf());
+    var dayn = (date.getDay() + 6) % 7;
+    tdt.setDate(tdt.getDate() - dayn + 3);
+    var firstThursday = tdt.valueOf();
+    tdt.setMonth(0, 1);
+    if (tdt.getDay() !== 4) {
+        tdt.setMonth(0, 1 + ((4 - tdt.getDay()) + 7) % 7);
+    }
+    return 1 + Math.ceil((firstThursday - tdt) / 604800000);
 }
 
 export const docStates = {
@@ -59,26 +135,9 @@ export const VariationCalculator = (firstValue, secondValue) =>
 	let varValues = 0;
 	if (firstValue > 0 & secondValue > 0)
 	{
-		if (firstValue > secondValue)
-	{
 		varValues = (firstValue / secondValue)
-	} else
-	{
-		varValues = -(secondValue / firstValue)
 	}
-	
-	if (varValues > 1)
-	{
-		return ((varValues - 1) * 100).toFixed(2);
-	} else if (varValues < -1)
-	{
-		return ((varValues + 1) * 100).toFixed(2);
-	}else
-	{
-		return (varValues*100).toFixed(2);
-		}
-		}
-	return 0;
+	return (varValues*100).toFixed(2);
 }
 
 export const DocValue = (data) =>

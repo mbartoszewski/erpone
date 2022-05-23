@@ -58,12 +58,12 @@ public class Currency {
     }
 
     public void addPrices(Price price) {
-        prices.add(price);
+        this.prices.add(price);
         price.setCurrency(this);
     }
 
     public void removePrices(Price price) {
-        prices.remove(price);
+        this.prices.remove(price);
         price.setCurrency(null);
     }
 

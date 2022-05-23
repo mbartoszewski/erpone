@@ -3,8 +3,7 @@ import { apiStates, useApi } from '../../../Components/Fetch'
 import DropDownMenu from '../../../Components/DropDownMenu'
 import AddIcon from '@mui/icons-material/Add';
 import DocumentsTable from '../../../Components/DocumentsTable'
-import DocumentsDetailsPage from '../../../Components/DocumentsDetailsPage';
-import { useHistory, Link } from "react-router-dom";
+
 import { docStates } from '../../../Components/Helpers';
 
 const errorMsg = (theme) => ({

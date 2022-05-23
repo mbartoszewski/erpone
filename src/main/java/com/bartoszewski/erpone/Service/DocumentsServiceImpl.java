@@ -4,8 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.bartoszewski.erpone.Entity.Contractor;
@@ -14,16 +16,17 @@ import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
 import com.bartoszewski.erpone.Entity.Documents.DocumentValueProjection;
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsProjection;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsProjectionOrderShedule;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsWithDetailsProjection;
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
 import com.bartoszewski.erpone.Repository.ContractorRepository;
-import com.bartoszewski.erpone.Repository.CurrencyRepository;
 import com.bartoszewski.erpone.Repository.DocumentsRepository;
 import com.bartoszewski.erpone.Repository.PaymentFormRepository;
 import com.bartoszewski.erpone.Repository.PaymentTermRepository;
 import com.bartoszewski.erpone.Repository.ThingRepository;
 import com.bartoszewski.erpone.Repository.UserRepository;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -89,21 +92,42 @@ public class DocumentsServiceImpl implements DocumentsService {
 	public ResponseEntity<Documents> updateById(Long id, Documents entity) {
 		Documents document = documentsRepository.findById(id)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		List<DocumentDetails> detailsWithoutStock = new ArrayList<>(0);
+		double docValue = 0.0;
+		for (Iterator<DocumentDetails> documentsDetails = entity.getDocumentDetails().iterator(); documentsDetails
+				.hasNext();) {
+			DocumentDetails documentDetail = documentsDetails.next();
+			Thing thing = thingsRepository.getOne(documentDetail.getThing().getId());
+			documentDetail.setThing(thing);
+			docValue += (documentDetail.getQuantity() * documentDetail.getDetailPrice());
+			if (documentDetail.getThing().getQuantity() >= documentDetail.getQuantity()) {
+				thing.setQuantity(thing.getQuantity() - documentDetail.getQuantity());
+				documentDetail.setBalance(documentDetail.getQuantity());
+				// documentDetail.getPrice().setCurrency(entity.getDocumentCurrency());
+				// documentDetail.getPrice().setThing(thing);
+				// documentDetail.getPrice().setDocumentsDetails(documentDetail);
+			} else {
+				documentsDetails.remove();
+				detailsWithoutStock.add(documentDetail);
+			}
+		}
+		document.setDocValue(docValue);
 		document.setContractor(entity.getContractor());
 		document.setPaymentForm(entity.getPaymentForm());
 		document.setPaymentTerm(entity.getPaymentTerm());
 		document.setDocumentCurrency(entity.getDocumentCurrency());
 		document.setDescription(entity.getDescription());
 		document.setTargetDateTime(entity.getTargetDateTime());
+		document.removeDocumentDetails();
 		document.setDocumentDetails(entity.getDocumentDetails());
-		return new ResponseEntity<>(documentsRepository.save(document), HttpStatus.OK);
+		return new ResponseEntity<>(documentsRepository.save(document), HttpStatus.ACCEPTED);
 	}
 
 	@Override
 	public ResponseEntity<?> deleteById(Long id) {
 		if (documentsRepository.getOne(id) != null) {
 			documentsRepository.deleteById(id);
-			return new ResponseEntity<>("Deleted", HttpStatus.OK);
+			return new ResponseEntity<>("Deleted", HttpStatus.GONE);
 		}
 		return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
 	}
@@ -150,7 +174,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 		entity.setPaymentTerm(paymentTermRepository.getOne(entity.getPaymentTerm().getId()));
 		// entity.setUser(userRepository.findByEmail(authentication.getName()));
 		return detailsWithoutStock.size() > 0 ? new ResponseEntity<>(detailsWithoutStock, HttpStatus.BAD_REQUEST)
-				: new ResponseEntity<>(documentsRepository.save(entity), HttpStatus.OK);
+				: new ResponseEntity<>(documentsRepository.save(entity), HttpStatus.CREATED);
 	}
 
 	private ResponseEntity<?> makeIncomeOperation(Documents entity, Authentication authentication) {
@@ -172,7 +196,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 		entity.setPaymentForm(paymentFormRepository.getOne(entity.getPaymentForm().getId()));
 		entity.setPaymentTerm(paymentTermRepository.getOne(entity.getPaymentTerm().getId()));
 		// entity.setUser(userRepository.findByEmail(authentication.getName()));
-		return new ResponseEntity<>(documentsRepository.save(entity), HttpStatus.OK);
+		return new ResponseEntity<>(documentsRepository.save(entity), HttpStatus.CREATED);
 	}
 
 	private ResponseEntity<?> makeOrder(Documents entity, Authentication authentication) {
@@ -207,7 +231,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
 	private ResponseEntity<?> makeProductionOrder(Documents entity, Authentication authentication) {
 
-		return new ResponseEntity<>("status", HttpStatus.OK);
+		return new ResponseEntity<>("status", HttpStatus.CREATED);
 	}
 
 	@Override
@@ -250,5 +274,39 @@ public class DocumentsServiceImpl implements DocumentsService {
 				: null;
 		return new ResponseEntity<>(documentsRepository.getDocumentValue(pageable, typeEnum, statusEnum, contractor,
 				targetDateFrom, targetDateTo, dateFromLDT, dateToLDT), HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Map<String, String>> getDocumentNumber(String documentType) {
+
+		DocumentTypeEnum typeEnum = documentType != null
+				? DocumentTypeEnum.valueOf(documentType.toLowerCase())
+				: null;
+
+		Long countByYear = documentsRepository.countByYear(LocalDate.now().getYear(), typeEnum) + 1;
+		String documentNumber = documentType.toUpperCase() + "/" + countByYear.toString() + "/"
+				+ LocalDate.now().getYear();
+
+		Map<String, String> json = new HashMap<>();
+		json.put("type", documentNumber);
+
+		return new ResponseEntity<>(json, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<Page<DocumentsProjectionOrderShedule>> getDocumentsShedule(Pageable pageable,
+			List<String> type, List<String> status, LocalDate targetDateFrom, LocalDate targetDateTo,
+			String contractor) {
+		List<DocumentStatusEnum> statusEnum = status != null
+				? status.stream().map((s) -> DocumentStatusEnum.valueOf(s)).collect(Collectors.toList())
+				: null;
+
+		List<DocumentTypeEnum> typeEnum = type != null
+				? type.stream().map((t) -> DocumentTypeEnum.valueOf(t)).collect(Collectors.toList())
+				: null;
+		return new ResponseEntity<>(
+				documentsRepository.getDocumentsShedule(pageable, typeEnum, statusEnum, targetDateFrom, targetDateTo,
+						contractor),
+				HttpStatus.OK);
 	}
 }

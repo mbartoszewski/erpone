@@ -11,10 +11,11 @@ const DashboardTile = (props) =>
 	return (
 		<Card sx= {{backgroundColor: "#f4f4f4"}}>
 			<CardHeader
-				titleTypographyProps={{variant:"h5"}}
-				subheaderTypographyProps={{variant:"body2"}}
+				titleTypographyProps={{ variant: "h5" }}
+				subheaderTypographyProps={{ variant: "body2" }}
 				title={props.title}
-				subheader={props.subHeader}/>
+				subheader={props.subHeader}
+				action={props.action} />
 			<CardContent>
 				<Typography variant="h2" align="center">
 					{props.content}

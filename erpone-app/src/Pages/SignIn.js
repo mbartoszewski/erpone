@@ -47,7 +47,6 @@ function login()
 		.then(response => 
 		{
 			const data = response.json();
-			console.log(data);
 		})
 	.then(data => console.log(data));
 	}

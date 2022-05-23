@@ -1,10 +1,12 @@
-import { Grid } from '@mui/material'
-import React from 'react';
+import { Button, Grid, TextField, Typography } from '@mui/material'
+import React, { useState } from 'react';
 import { LineChart, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 import DashboardTile from '../../../Components/DashboardTile';
-import { useApi } from '../../../Components/Fetch'
-import {ReturnYTD, UnitConverter, VariationCalculator, DocValue} from '../../../Components/Helpers'
-
+import { useApi, useApii } from '../../../Components/Fetch'
+import {ReturnYTD, UnitConverter, VariationCalculator, DocValue, getISODateOfWeek, getISO8601WeekNumberFromDate, groupBy, groupByDate, transposeJson} from '../../../Components/Helpers'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import DeliveriesSheduleTable from '../../../Components/DeliveriesSheduleTable'
 const dummy = [
   {
     date: '2021-01',
@@ -85,10 +87,14 @@ const dummy = [
 
 const PurchaseDashboard = () =>
 {
+  const [currentWeek, setCurrentWeek] = useState(getISO8601WeekNumberFromDate(new Date()))
+  const weekDaysDates = getISODateOfWeek(currentWeek, new Date().getUTCFullYear())
+
   const { state: YTDPurchaseState, error: YTDPurchaseError, data: YTDPurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=pz&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
   const { state: YTDLYPurchaseState, error: YTDLYPurchaseError, data: YTDLYPurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=pz&dateFrom=${ReturnYTD(-1, 0, 0, 1)}&dateTo=${ReturnYTD(-1, 0, 0, 0)}`);
   const { state: futurePurchaseState, error: futurePurchaseError, data: futurePurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=zm&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
-
+  const [{data}, doFetch ] = useApii();
+  
   const ytdPurchase = React.useMemo(() => YTDPurchaseData, [YTDPurchaseState]);
   const ytdLyPurchase = React.useMemo(() => YTDLYPurchaseData, [YTDLYPurchaseState]);
   const futurePurchase = React.useMemo(() => futurePurchaseData, [futurePurchaseState]);
@@ -96,7 +102,243 @@ const PurchaseDashboard = () =>
   const ytdPurchaseValue = DocValue(ytdPurchase);
   const ytdLyPurchaseValue = DocValue(ytdLyPurchase);
   const futurePurchaseValue = DocValue(futurePurchase);
- 
+  const [transponedJson, setTransponedJson] = useState()
+
+  React.useMemo(() =>
+	{
+		if (data.data != null)
+    {
+      const grouped =  groupByDate(data.data, "targetDateTime")
+		  setTransponedJson(transposeJson(grouped))
+    } else 
+    {
+      setTransponedJson([])
+      }
+	}, [data]);
+  
+  const handleWeekChange = (increase) =>
+  {
+   increase === true ? setCurrentWeek(currentWeek +1) : setCurrentWeek(currentWeek -1)
+  }
+
+  React.useEffect(() =>
+  {
+    doFetch({ url: `http://localhost:5000/api/documents/shedule?type=zm&targetDateFrom=${weekDaysDates[0]}&targetDateTo=${weekDaysDates[6]}` })
+  }, [currentWeek])
+
+
+  const columns = React.useMemo(() => [
+    {
+      Header: `${weekDaysDates[0]}`, Cell: (cell) =>
+      {
+        try
+        {
+          return <TextField
+            multiline={true}
+            InputProps={{
+            readOnly: true,
+            }}
+            minRows={4}
+            size='text'
+            fullWidth={true}
+            defaultValue={
+              cell.row.original[weekDaysDates[0]]['documentStatusEnum'] + '\n'
+              + cell.row.original[weekDaysDates[0]]['docNumber'] + '\n'
+              + cell.row.original[weekDaysDates[0]]['contractor']['name'] + '\n'
+              + cell.row.original[weekDaysDates[0]]['description'] + '\n'
+              + cell.row.original[weekDaysDates[0]]['documentDetails'].map((details) =>
+          {
+           return details.thing.code + ' - ' + details.quantity + ' ' + details.thing.unit.code + '\n'
+          })
+              }
+            />
+           
+        } catch (err)
+        {
+          return ""
+        }    
+    } },
+    { 
+      Header: `${weekDaysDates[1]}`, Cell: (cell) =>
+      {
+        try
+        {
+          return <TextField
+            multiline={true}
+            InputProps={{
+            readOnly: true,
+          }}
+            minRows={4}
+            size='text'
+            fullWidth={true}
+            defaultValue={
+              cell.row.original[weekDaysDates[1]]['documentStatusEnum'] + '\n'
+              + cell.row.original[weekDaysDates[1]]['docNumber'] + '\n'
+              + cell.row.original[weekDaysDates[1]]['contractor']['name'] + '\n'
+              + cell.row.original[weekDaysDates[1]]['description'] + '\n'
+              + cell.row.original[weekDaysDates[1]]['documentDetails'].map((details) =>
+          {
+           return details.thing.code + ' - ' + details.quantity + ' ' + details.thing.unit.code + '\n'
+          })
+              }
+            />
+           
+        } catch (err)
+        {
+          return ""
+        }    
+    }  },
+    { 
+      Header: `${weekDaysDates[2]}`, Cell: (cell) =>
+      {
+        try
+        {
+          return <TextField
+            multiline={true}
+            InputProps={{
+            readOnly: true,
+          }}
+            minRows={4}
+            size='text'
+            fullWidth={true}
+            defaultValue={
+              cell.row.original[weekDaysDates[2]]['documentStatusEnum'] + '\n'
+              + cell.row.original[weekDaysDates[2]]['docNumber'] + '\n'
+              + cell.row.original[weekDaysDates[2]]['contractor']['name'] + '\n'
+              + cell.row.original[weekDaysDates[2]]['description'] + '\n'
+              + cell.row.original[weekDaysDates[2]]['documentDetails'].map((details) =>
+          {
+           return details.thing.code + ' - ' + details.quantity + ' ' + details.thing.unit.code + '\n'
+          })
+              }
+            />
+           
+        } catch (err)
+        {
+          return ""
+        }    
+    }  },
+    { 
+      Header: `${weekDaysDates[3]}`, Cell: (cell) =>
+      {
+        try
+        {
+          return <TextField
+            multiline={true}
+            InputProps={{
+            readOnly: true,
+          }}
+            minRows={4}
+            size='text'
+            fullWidth={true}
+            defaultValue={
+              cell.row.original[weekDaysDates[3]]['documentStatusEnum'] + '\n'
+              + cell.row.original[weekDaysDates[3]]['docNumber'] + '\n'
+              + cell.row.original[weekDaysDates[3]]['contractor']['name'] + '\n'
+              + cell.row.original[weekDaysDates[3]]['description'] + '\n'
+              + cell.row.original[weekDaysDates[3]]['documentDetails'].map((details) =>
+          {
+           return details.thing.code + ' - ' + details.quantity + ' ' + details.thing.unit.code + '\n'
+          })
+              }
+            />
+           
+        } catch (err)
+        {
+          return ""
+        }    
+    }  },
+    { 
+      Header: `${weekDaysDates[4]}`, Cell: (cell) =>
+      {
+        try
+        {
+          return <TextField
+            multiline={true}
+            InputProps={{
+            readOnly: true,
+          }}
+            minRows={4}
+            size='text'
+            fullWidth={true}
+            defaultValue={
+              cell.row.original[weekDaysDates[4]]['documentStatusEnum'] + '\n'
+              + cell.row.original[weekDaysDates[4]]['docNumber'] + '\n'
+              + cell.row.original[weekDaysDates[4]]['contractor']['name'] + '\n'
+              + cell.row.original[weekDaysDates[4]]['description'] + '\n'
+              + cell.row.original[weekDaysDates[4]]['documentDetails'].map((details) =>
+          {
+           return details.thing.code + ' - ' + details.quantity + ' ' + details.thing.unit.code + '\n'
+          })
+              }
+            />
+           
+        } catch (err)
+        {
+          return ""
+        }    
+    }  },
+    { 
+      Header: `${weekDaysDates[5]}`, Cell: (cell) =>
+      {
+        try
+        {
+          return <TextField
+            multiline={true}
+            InputProps={{
+            readOnly: true,
+          }}
+            minRows={4}
+            size='text'
+            fullWidth={true}
+            defaultValue={
+              cell.row.original[weekDaysDates[5]]['documentStatusEnum'] + '\n'
+              + cell.row.original[weekDaysDates[5]]['docNumber'] + '\n'
+              + cell.row.original[weekDaysDates[5]]['contractor']['name'] + '\n'
+              + cell.row.original[weekDaysDates[5]]['description'] + '\n'
+              + cell.row.original[weekDaysDates[5]]['documentDetails'].map((details) =>
+          {
+           return details.thing.code + ' - ' + details.quantity + ' ' + details.thing.unit.code + '\n'
+          })
+              }
+            />
+           
+        } catch (err)
+        {
+          return ""
+        }    
+    }  },
+    { 
+      Header: `${weekDaysDates[6]}`, Cell: (cell) =>
+      {
+        try
+        {
+          return <TextField
+            multiline={true}
+            InputProps={{
+            readOnly: true,
+          }}
+            minRows={4}
+            size='text'
+            fullWidth={true}
+            defaultValue={
+              cell.row.original[weekDaysDates[6]]['documentStatusEnum'] + '\n'
+              + cell.row.original[weekDaysDates[6]]['docNumber'] + '\n'
+              + cell.row.original[weekDaysDates[6]]['contractor']['name'] + '\n'
+              + cell.row.original[weekDaysDates[6]]['description'] + '\n'
+              + cell.row.original[weekDaysDates[6]]['documentDetails'].map((details) =>
+          {
+           return details.thing.code + ' - ' + details.quantity + ' ' + details.thing.unit.code + '\n'
+          })
+              }
+            />
+           
+        } catch (err)
+        {
+          return ""
+        }    
+    }  },], [currentWeek]);
+  
   return (
     <div >
       <Grid container direction="row" spacing={2}>
@@ -126,14 +368,14 @@ const PurchaseDashboard = () =>
           <DashboardTile
             title={"Overdue suppliers payments"}
             subHeader={"refreshed at 11:57"}
-            content={"200 tys. €"}
+            content={"do zrobienia"}
           />
         </Grid>
         <Grid item xs={6} md={2} xl={2}>
           <DashboardTile
             title={"Overdue customers payments"}
             subHeader={"refreshed at 11:57"}
-            content={"470 tys. €"}
+            content={"do zrobienia"}
           />
         </Grid>
         <Grid item xs={12} md={6} xl={6}>
@@ -194,7 +436,36 @@ const PurchaseDashboard = () =>
           <DashboardTile
             title={"Deliveries:"}
             subHeader={"refreshed at 15:47"}
-            content={ "Weekly deliveries scheduler."}/>
+            component={<DeliveriesSheduleTable
+              data={transponedJson != undefined && transponedJson != null ? transponedJson : [0]}
+              columns={columns}
+              manual
+              detailLink={"purchase/documents/details"}
+            />}
+            action={<Grid container spacing ={4}>
+                <Grid item xs={2} xm={2} xl={2}>
+                        <Button
+                        color='inherit'
+                  startIcon={<ArrowBackIosNewIcon/>}
+                  onClick = {() => { handleWeekChange(false) }}/>
+                      </Grid>
+                      <Grid item xs={1} xm={1} xl={1}>
+                        <Typography>
+                            {currentWeek}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={2} xm={2} xl={2}>
+                        <Button
+                          color='inherit'
+                  startIcon={<ArrowForwardIosIcon />}
+                  onClick={() => { handleWeekChange(true) }}/>
+                      </Grid>
+                      <Grid item xs={7} xm={7} xl={7}>
+                          <Typography>
+                              {weekDaysDates[0]} - {weekDaysDates[6]}
+                          </Typography>
+                        </Grid>
+                  </Grid>} />
         </Grid>
 		</Grid>
     </div>

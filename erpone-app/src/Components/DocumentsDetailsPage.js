@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from 'react'
-import { Link, useParams, useLocation} from "react-router-dom";
+import { useParams, useLocation} from "react-router-dom";
 import { Grid, MenuItem, TextField, Typography, Button, ButtonGroup, Stack } from '@mui/material'
 import { styled, } from '@mui/material/styles';
 import DocumentsDetailsTable from './DocumentsDetailsTable'
@@ -8,7 +8,7 @@ import { globalStateContext } from '../Pages/ErpOneApp';
 import ReactDOM from 'react-dom';
 import DocumentDetailPageToolbar from './DocumentDetailPageToolbar';
 import Autocomplete from '@mui/material/Autocomplete';
-import { docStates, pathTo } from './Helpers';
+import { docStates} from './Helpers';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Checkbox from '@mui/material/Checkbox'
@@ -38,16 +38,20 @@ const DocumentsDetailsPage = (props) =>
 	const paymentTerms = globalContext.dataPaymentTerms;
 	const contractors = globalContext.dataContractors;
 	const things = globalContext.dataThings;
+	const { state: documentNumberState, error: documentNumberError, data: documentNumberData }  = useApi(`http://localhost:5000/api/documents/number?type=${location.title}`); 
 	const [domReady, setDomReady] = React.useState(false)
-	const [doc, setDoc] = useState({documentStatusEnum: "open",
-    documentTypeEnum: undefined,
+	const [selectedRows, setSelectedRows] = React.useState(null)
+	const [doc, setDoc] = useState({
+	documentStatusEnum: "open",
+	description: "",
+    documentTypeEnum: location.title != undefined? location.title : undefined,
     relatedDocuments: null,
     targetDateTime: undefined,
     contractor: {address: {}},
     documentCurrency: {},
     paymentForm: {},
     paymentTerm: {},
-		documentDetails: []
+	documentDetails: []
 	})
 	const [originalDoc, setOriginalDoc] = useState();
 	const { state: documentDetailState, error: documentDetailError, data: documentDetailData } = useApi(`http://localhost:5000/api/documents/${id}/details`);
@@ -59,11 +63,18 @@ const DocumentsDetailsPage = (props) =>
 		{
 			setDoc(documentDetailData);
 			setOriginalDoc(documentDetailData)
+		} else
+		{
+			
+		setDoc((prevState) => ({
+				...prevState, docNumber: documentNumberState === apiStates.SUCCESS ? documentNumberData.type : "",	
+			}))	
 		}
-	}, [documentDetailData]);
+	
+	}, [documentDetailData, documentNumberData]);
 	
 	React.useEffect(() => { setDomReady(true) }, [])
-	
+
 	const handleCurrencyChange = (event, child) =>
 	{
 		setDoc((prevState) => ({
@@ -93,6 +104,14 @@ const DocumentsDetailsPage = (props) =>
 		}
 		})
 	}
+
+	const handleDescriptionChange = (event) =>
+	{
+		setDoc((prevState) => ({
+				...prevState, description: event.target.value,	
+			}))	
+	}
+
 	const handleThingChange = (rowIndex, columnId, value) =>
 	{
 		setDoc((prevState) => ({
@@ -115,8 +134,7 @@ const DocumentsDetailsPage = (props) =>
 						}
 					
 				}
-					return row;
-				
+					return row;			
 			})],
 		}))
 	}
@@ -132,17 +150,11 @@ const DocumentsDetailsPage = (props) =>
 			...prevState, documentDetails: [...prevState.documentDetails, {}],
 		}))
 	}
-	const handleDeleteItemClick = (selectedRowIds) => 
+	const handleDeleteItemClick = () => 
 	{
-		console.log("delete item ", selectedRowIds)
-		/*setDoc((prevState) => ({
-			...prevState, documentDetails: [...prevState.documentDetails.filter((row, index) =>
-			
-				index === rowIndex.index
-				
-			)],
-		}))*/
-		console.log(doc)
+		setDoc((prevState) => ({
+			...prevState, documentDetails: [...prevState.documentDetails.filter(dd => !selectedRows.includes(dd.id))],
+		}))
 	}
 	const IndeterminateCheckbox = React.forwardRef(({ indeterminate, ...rest }, ref) =>
 {
@@ -183,12 +195,13 @@ const DocumentsDetailsPage = (props) =>
 			Cell: function Cell({cell, row, column, handleThingChange, value: initialValue})
 			{
 				const [value, setValue] = React.useState(initialValue)
-				const [thing, setThing] = React.useState({})
 				const onChange = (event, nValue) =>
 				{
+					if (nValue !== null)
+					{
 					setValue(nValue.code)
-					setThing(nValue)
 					doFetch({url: `http://localhost:5000/api/things/${nValue.id}/`})
+					}
 				}
 
 				const onBlur = () =>
@@ -246,7 +259,9 @@ const DocumentsDetailsPage = (props) =>
 								type="number"
 					variant="standard"
 					fullWidth={true}
-					disabled={(docState === docStates.EDIT || docState === docStates.ADD) ? false : true}
+					InputProps={(docState === docStates.EDIT || docState === docStates.ADD) ? { readOnly: false} : { readOnly: true }}
+					helperText={value <= 0 ? "Error: Quantity must be higher than 0" : false}
+					error={value <= 0 ? true : false}
 					onChange={onChange}
 					onBlur={onBlur}
 					value={value}/>
@@ -279,15 +294,17 @@ const DocumentsDetailsPage = (props) =>
 				}, [initialValue])
 
 				const detailPrice = <TextField
-								id="textfield-detail-price"
-								size="string"
-								type="number"
-								variant="standard"
-								fullWidth={true}
-					disabled={(docState === docStates.EDIT || docState === docStates.ADD) ? false : true}
+					id="textfield-detail-price"
+					size="string"
+					type="number"
+					variant="standard"
+					fullWidth={true}
+					inputProps={{ min: 0} }
 					onChange={onChange}
 					onBlur={onBlur}
-								value={value}/>
+					value={value}
+					helperText={value <= 0 ? "Error: Price must be higher than 0" : false}
+					error={value <= 0 ? true : false} />
 								
 				return detailPrice
 				
@@ -309,7 +326,7 @@ const DocumentsDetailsPage = (props) =>
 
 	return (
 		<div >
-			{domReady ? ReactDOM.createPortal(<DocumentDetailPageToolbar docNumber={doc != null ? doc.docNumber : ""} docStateProp={docState} setDocState={setDocState} setDoc={setDoc} originalDoc={originalDoc} setOriginalDoc={setOriginalDoc} doc={doc} selected={"asd"}/>, document.getElementById("option-toolbar")): null}
+			{domReady ? ReactDOM.createPortal(<DocumentDetailPageToolbar docNumber={doc != null ? doc.docNumber : ""} docStateProp={docState} setDocState={setDocState} setDoc={setDoc} originalDoc={originalDoc} setOriginalDoc={setOriginalDoc} doc={doc}/>, document.getElementById("option-toolbar")): null}
 			<DocumentHeader>
 			<Grid container spacing={2}>	  	 
 			<Grid item xs={12} md={4} xl={6}>
@@ -317,6 +334,7 @@ const DocumentsDetailsPage = (props) =>
 							<Grid item xs={12} md={12} xl={12}>
 								<Autocomplete
 									id="autocomplete-contractor"
+									size="small"
 									autoSelect={true}
 									autoComplete={true}
 									disabled={(docState === docStates.EDIT || docState === docStates.ADD) ? false : true }
@@ -327,20 +345,26 @@ const DocumentsDetailsPage = (props) =>
 									onChange={handleContractorChange}
 									renderInput={(params) => <TextField {...params} variant="outlined" label="Contractor" fullWidth={true}/>} />
 						</Grid>
-						<Grid item xs={12} md={12} xl ={6}>
-							<Typography sx={{spacing: 2}}>
-								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address !== undefined && doc.contractor.address.street ? doc.contractor.address.street + " " : ""}
+						<Grid item xs={12} md={6} xl ={6}>
+							<Typography sx={{spacing: 1}}>
+								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address.street ? doc.contractor.address.street + " " : ""}
 								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address && doc.contractor.address.number ? doc.contractor.address.number + ", " : ""}{<br></br>}
 								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address && doc.contractor.address.postalCode? doc.contractor.address.postalCode + " " : "" }
 								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address && doc.contractor.address.city? doc.contractor.address.city + ", ": "" }{<br></br>}
-								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address && doc.contractor.address.country? doc.contractor.address.country: "" }{<br></br>}
+								{doc !== undefined && doc.contractor !== undefined && doc.contractor.address && doc.contractor.address.country ? doc.contractor.address.country : ""}{<br></br>}
+								NIP: {doc !== undefined && doc.contractor !== undefined && doc.contractor.nip !== undefined ? doc.contractor.nip + `\u2003` : `\u2003`}
+								Regon: {doc !== undefined && doc.contractor !== undefined && doc.contractor.regon !== undefined ? doc.contractor.regon : ""}
 							</Typography>
 						</Grid>
-						<Grid item xs={12} md={12} xl ={6}>
-							<Typography sx={{spacing: 2}}>
-								NIP: {doc !== undefined && doc.contractor !== undefined ? doc.contractor.nip : ""} {<br></br>}
-								Regon: {doc !== undefined && doc.contractor !== undefined ? doc.contractor.regon : ""} {<br></br>}
-							</Typography>
+						<Grid item xs={12} md={6} xl ={6}>
+								<TextField
+									InputProps={(docState === docStates.EDIT || docState === docStates.ADD) ? { readOnly: false} : { readOnly: true}}
+									value={doc !== undefined ? doc.description : ""}
+									fullWidth={true}
+									onChange={handleDescriptionChange}
+									multiline
+									rows={3}
+          							/>
 						</Grid>
 					</Grid>  
 			</Grid>
@@ -348,7 +372,8 @@ const DocumentsDetailsPage = (props) =>
 			<Grid container spacing={2}>
 				<Grid item xs={12} md={6} xl={6}>
 					<TextField
-						type="datetime-local"
+									type="datetime-local"
+									size="small"
 						label="Created date:"
 						InputProps={{ readOnly: true }}
 						InputLabelProps={{ shrink: true }}
@@ -357,7 +382,8 @@ const DocumentsDetailsPage = (props) =>
 				</Grid>
 				<Grid item xs={12} md={6} xl={6}>
 					<TextField
-						type="datetime-local"
+									type="datetime-local"
+									size="small"
 						label="Requested date:"
 						onChange={handleDateTimeChange}
 						InputProps={(docState === docStates.EDIT || docState === docStates.ADD) ? { readOnly: false} : { readOnly: true}}
@@ -375,7 +401,7 @@ const DocumentsDetailsPage = (props) =>
 						InputLabelProps={{ shrink: true }}
 						value={doc !== undefined && doc.paymentForm !== undefined ? doc.paymentForm.form : ""}
 						onChange={handlePaymentFormChange}
-						size="medium"
+						size="small"
 					>
 						{
 							paymentForms != null ? paymentForms.map((option) => (
@@ -395,7 +421,7 @@ const DocumentsDetailsPage = (props) =>
 						InputLabelProps={{ shrink: true }}
 						value={doc !== undefined ? doc.paymentTerm !== undefined ? doc.paymentTerm.term : "" : ""}
 						onChange={handlePaymentTermChange}
-						size="medium"
+						size="small"
 						>
 								{
 								paymentTerms != null ? paymentTerms.map((option) => (
@@ -416,7 +442,7 @@ const DocumentsDetailsPage = (props) =>
 							InputLabelProps={{ shrink: true }}
 							value={doc !== undefined ? doc.documentCurrency !== undefined ? doc.documentCurrency.code : "" : ""}
 							onChange={handleCurrencyChange}
-							size="medium">
+							size="small">
 								{
 							currencies != null ? currencies.map((option) => (
 								<MenuItem key={option.id} id={option.id} value={option.code}>
@@ -433,29 +459,30 @@ const DocumentsDetailsPage = (props) =>
 						label="Status"
 						InputProps={(docState === docStates.EDIT || docState === docStates.ADD) ? { readOnly: true } : { readOnly: true }}
 						value={doc !== undefined ? doc.documentStatusEnum !== undefined ? doc.documentStatusEnum : "" : ""}
-						size="medium">
+						size="small">
 					</TextField>
-				</Grid>
-			</Grid>	
-			</Grid>	
-			<Grid item xs={3} md={3} xl={3} sx={(docState === docStates.EDIT || docState === docStates.ADD) ? null : {display:"none"} }>
+							</Grid>
+							<Grid item xs={12} md={12} xl={12} sx={(docState === docStates.EDIT || docState === docStates.ADD) ? null : {display:"none"} }>
 				<ButtonGroup variant="outlined" size="small" >
 						<Button
 							size='small'
 							startIcon={<AddIcon/>}
-								color='inherit'
+							color='inherit'
 							onClick={handleAddItemClick}>
 							Add item
 						</Button>
 						<Button
 							size='smal'
 							startIcon={<RemoveIcon/>}
-								color='inherit'
+							color='inherit'
 							onClick={handleDeleteItemClick}>
 							Delete item
 						</Button>
 				</ButtonGroup>		
 					</Grid>
+			</Grid>	
+			</Grid>	
+			
 		</Grid>	
 			</DocumentHeader>
 			<DocumentTable>
@@ -464,8 +491,8 @@ const DocumentsDetailsPage = (props) =>
 						columns={columns}
 						docState={docState}
 						manual
+						setSelected={setSelectedRows}
 						handleThingChange={handleThingChange}
-						handleDeleteItemClick={handleDeleteItemClick}
 					/>
 			</DocumentTable>		
 	</div>

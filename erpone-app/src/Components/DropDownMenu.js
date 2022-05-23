@@ -79,7 +79,7 @@ export default function DropDownMenu(props)
                          }
                         }
                       >
-                        {option.pathname !== undefined ? <Link to={{ pathname: `${option.pathname}`, state: option.state}}>{option.title}</Link> : option.title}
+                        {option.pathname !== undefined ? <Link to={{ pathname: `${option.pathname}`, state: option.state, title: option.title}}>{option.title}</Link> : option.title}
                       </MenuItem>
                     ))}
                   </MenuList>

@@ -123,13 +123,13 @@ const SalesDashboardPage = () =>
           <DashboardTile
             title="Budget realization in % YTD:"
             subHeader="refreshed at 17:54"
-            content="85%" />
+            content="do zrobienia" />
 				</Grid>
 				<Grid item xl={2} md={2} xs={6}>
           <DashboardTile
             title="Budget realization in % YTD LY:"
             subHeader="refreshed at 17:55"
-            content="78%" />
+            content="do zrobienia" />
 				</Grid>
 				<Grid item xl={4} md={4} xs={12}>
           <DashboardTile

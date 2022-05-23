@@ -1,44 +1,43 @@
 import React from 'react'
+import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Checkbox from '@mui/material/Checkbox'
 import MaUTable from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import { useParams } from "react-router-dom";
+
 import {
+  useGlobalFilter,
+  useRowSelect,
   useSortBy,
-	useTable,
-    useRowSelect,
-
+  useTable,
 } from 'react-table'
-import { TableFooter, Typography } from '@mui/material';
+import { TableFooter } from '@mui/material';
 
-const DocumentsDetailsTable = ({data, columns, docState, setSelected, handleThingChange}) =>
+const DeliveriesSheduleTable = ({data, columns, tToolbar, detailLink}) =>
 {
 	const { id } = useParams();
-	
 	const {
+	
 		getTableProps,
 		getTableBodyProps,
 		headerGroups,
 		footerGroups,
 		rows,
 		prepareRow,
-		selectedFlatRows,
-		state:{selectedRowIds}
-	} = useTable({ data, columns, docState, setSelected, handleThingChange}, useSortBy, useRowSelect)
+		preGlobalFilteredRows,
+		setGlobalFilter,
+		state:{globalFilter},
+	} = useTable({ data, columns, tToolbar, detailLink}, useGlobalFilter, useSortBy)
 		
-	React.useEffect(() =>
-	{
-		setSelected(selectedFlatRows.map((d)=> d.original.id))
-	}, [selectedFlatRows])
-
 	return (
-		<TableContainer sx={{ maxHeight: "600px", }}>
-				<MaUTable {...getTableProps()} size = "small" >
-					<TableHead sx={{position: "sticky", top: "0px", backgroundColor: "white", zIndex: "1"}}>
+		<TableContainer sx={{maxHeight: "800px", }}>
+
+				<MaUTable {...getTableProps()} size = "small">
+				<TableHead sx={{position: "sticky", top: "0px", backgroundColor: "white", zIndex: "1"}}>
 						{headerGroups.map(headerGroup => (
 							<TableRow {...headerGroup.getHeaderGroupProps()}>
 								{headerGroup.headers.map(column => (
@@ -54,7 +53,7 @@ const DocumentsDetailsTable = ({data, columns, docState, setSelected, handleThin
 									</TableCell>))}
 							</TableRow>))}
 					</TableHead>
-					<TableBody {...getTableBodyProps()} >
+					<TableBody {...getTableBodyProps()}>
 						{
 							rows.map(row =>
 							{
@@ -64,8 +63,13 @@ const DocumentsDetailsTable = ({data, columns, docState, setSelected, handleThin
 										{
 											row.cells.map(cell => 
 											{
-												return (<TableCell {...cell.getCellProps()} >
+												return cell.getCellProps().key.includes("selection") ?  (
+													<TableCell {...cell.getCellProps()} >
 														{cell.render('Cell')}
+													</TableCell>) :
+															 (
+														<TableCell {...cell.getCellProps()} component={Link} to={`/${detailLink}/${row.original[cell.column.id] !== undefined ? row.original[cell.column.id].id : ""}`}>
+															{cell.render('Cell')}
 													</TableCell>)
 											})
 										}
@@ -85,8 +89,8 @@ const DocumentsDetailsTable = ({data, columns, docState, setSelected, handleThin
 						</TableRow>
 					))}
 				</TableFooter>
-			</MaUTable>
+				</MaUTable>			
 			</TableContainer>
 		);
 };
-export default DocumentsDetailsTable;
+export default DeliveriesSheduleTable;

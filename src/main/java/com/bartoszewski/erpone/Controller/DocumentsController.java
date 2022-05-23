@@ -2,10 +2,12 @@ package com.bartoszewski.erpone.Controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentValueProjection;
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsProjection;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsProjectionOrderShedule;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsWithDetailsProjection;
 import com.bartoszewski.erpone.Service.BaseService;
 import com.bartoszewski.erpone.Service.DocumentsService;
@@ -42,6 +44,16 @@ public class DocumentsController extends BaseController<Documents, Long> {
 		return documentsService.getDocuments(pageable, type, status, targetDateFrom, targetDateTo, contractor);
 	}
 
+	@GetMapping("/shedule")
+	public ResponseEntity<Page<DocumentsProjectionOrderShedule>> getAllDocumentsOrderShedule(Pageable pageable,
+			@RequestParam(value = "targetDateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate targetDateFrom,
+			@RequestParam(value = "targetDateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate targetDateTo,
+			@RequestParam(value = "type", required = false) List<String> type,
+			@RequestParam(value = "status", required = false) List<String> status,
+			@RequestParam(value = "contractor", required = false) String contractor) {
+		return documentsService.getDocumentsShedule(pageable, type, status, targetDateFrom, targetDateTo, contractor);
+	}
+
 	@GetMapping("/{id}/details")
 	public ResponseEntity<DocumentsWithDetailsProjection> getDocumentDetailsById(@PathVariable(value = "id") Long id) {
 		return documentsService.getDocumentDetailsById(id);
@@ -59,5 +71,12 @@ public class DocumentsController extends BaseController<Documents, Long> {
 
 		return documentsService.getDocumentValue(pageable, type, status, contractor, targetDateFrom, targetDateTo,
 				dateFrom, dateTo);
+	}
+
+	@GetMapping("/number")
+	public ResponseEntity<Map<String, String>> getDocumentNumber(
+			@RequestParam(value = "type", required = true) String type) {
+
+		return documentsService.getDocumentNumber(type);
 	}
 }

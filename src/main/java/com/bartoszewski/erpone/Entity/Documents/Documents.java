@@ -18,7 +18,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Contractor;
 import com.bartoszewski.erpone.Entity.Currency;
@@ -33,7 +32,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@JsonIgnoreProperties(value = { "documentDetails" }, allowSetters = true)
+@JsonIgnoreProperties(value = {}, allowSetters = true)
 public class Documents {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -167,6 +166,11 @@ public class Documents {
     public void setDocumentDetails(List<DocumentDetails> documentDetails) {
         this.documentDetails = documentDetails;
         documentDetails.stream().forEach(dD -> dD.setDocument(this));
+    }
+
+    public void removeDocumentDetails() {
+        this.documentDetails.stream().forEach(dD -> dD.setDocument(null));
+        this.documentDetails.clear();
     }
 
     public User getUser() {

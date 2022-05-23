@@ -60,9 +60,10 @@ export const useApi = (url, options) =>
 export const useApii = (initialUrl, initialOptions) =>
 {
   const [data, setData] = useState({
+    httpStatus: null,
     state: apiStates.LOADING,
     error: '',
-    data: {},
+    data: null,
   });
   
   const [callProperties, setCallProperties] = useState({url: initialUrl, options: initialOptions})
@@ -73,37 +74,46 @@ export const useApii = (initialUrl, initialOptions) =>
         {
           if (!response.ok)
           {
-          setData({
-            state: apiStates.ERROR,
-            error: 'Error, response not ok',
-            data: null
-          });
-          } else return response.json()
+            setData((prevState) =>
+            ({
+              ...prevState, httpStatus: response.status
+            }))
+            throw new Error(response.status);
+          }
+          else
+          {
+            setData((prevState) =>
+            ({
+              ...prevState, httpStatus: response.status
+            }))
+            return response.json();
+          }
         })
     .then((data) =>
     {
-    if (data !== null) {
-      setData({
+       setData((prevState) =>
+            ({
+         ...prevState,
         state: apiStates.SUCCESS,
         error: '',
         data: Object.keys(data)[0] === "content" ? data.content : data
-      });
+            }))
     }
-     
-    })
+    )
     .catch((e) =>
     {
-      setData({
+      setData((prevState) =>
+            ({
+         ...prevState,
         state: apiStates.ERROR,
         error: e.message,
         data: null
-      });
+            }))
     });
   }
   
   useEffect(() =>
   {
-    setData({ state: apiStates.LOADING, error: '', data: null });
     fetchData();
   }, [callProperties]); //check if this is the best solution. 
   return [{data}, setCallProperties];

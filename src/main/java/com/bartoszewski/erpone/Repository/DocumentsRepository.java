@@ -7,6 +7,7 @@ import java.util.List;
 import com.bartoszewski.erpone.Entity.Documents.DocumentValueProjection;
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsProjection;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsProjectionOrderShedule;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsWithDetailsProjection;
 import com.bartoszewski.erpone.Enum.DocumentTypeEnum;
 import com.bartoszewski.erpone.Enum.DocumentStatusEnum;
@@ -29,6 +30,12 @@ public interface DocumentsRepository extends BaseRepository<Documents, Long> {
 
 	@Query("SELECT d FROM Documents d WHERE ((:targetDateFrom IS NULL OR d.targetDateTime >= CONCAT(:targetDateFrom, 'T00:00:00')) AND (:targetDateTo IS NULL OR d.targetDateTime <= CONCAT(:targetDateTo, 'T23:59:59'))) AND (COALESCE(:type) IS NULL OR d.documentTypeEnum IN :type) AND (COALESCE(:status) IS NULL OR d.documentStatusEnum = :status) AND (:contractor IS NULL OR d.contractor.name LIKE %:contractor%) ORDER BY d.createdAt DESC ")
 	Page<DocumentsProjection> getDocuments(Pageable pageable, @Param("type") List<DocumentTypeEnum> documentTypeEnum,
+			@Param("status") List<DocumentStatusEnum> status, @Param("targetDateFrom") LocalDate targetDateFrom,
+			@Param("targetDateTo") LocalDate targetDateTo, @Param("contractor") String contractor);
+
+	@Query("SELECT d FROM Documents d WHERE ((:targetDateFrom IS NULL OR d.targetDateTime >= CONCAT(:targetDateFrom, 'T00:00:00')) AND (:targetDateTo IS NULL OR d.targetDateTime <= CONCAT(:targetDateTo, 'T23:59:59'))) AND (COALESCE(:type) IS NULL OR d.documentTypeEnum IN :type) AND (COALESCE(:status) IS NULL OR d.documentStatusEnum = :status) AND (:contractor IS NULL OR d.contractor.name LIKE %:contractor%) ORDER BY d.createdAt DESC ")
+	Page<DocumentsProjectionOrderShedule> getDocumentsShedule(Pageable pageable,
+			@Param("type") List<DocumentTypeEnum> documentTypeEnum,
 			@Param("status") List<DocumentStatusEnum> status, @Param("targetDateFrom") LocalDate targetDateFrom,
 			@Param("targetDateTo") LocalDate targetDateTo, @Param("contractor") String contractor);
 

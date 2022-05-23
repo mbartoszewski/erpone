@@ -48,7 +48,13 @@ const DocumentDetailPageToolbar = (props) =>
 {
 	const classes = useStyles();
 	const { id } = useParams();
-	const [{response}, doFetch] = useApii(null, null)
+	const [{data}, doFetch] = useApii(null)
+	const history = useHistory();
+	React.useEffect(() =>
+	{
+		data.httpStatus === 201 ? history.push(`../warehouse/documents/details/${data.data.id}`) : console.log("")
+	}, [data.data])
+
 	const handleEditButtonClick = () =>
 	{
 		props.setDocState(docStates.EDIT)
@@ -57,14 +63,28 @@ const DocumentDetailPageToolbar = (props) =>
 	{
 		props.setDocState(docStates.VIEW)
 		props.setOriginalDoc(props.doc)
-	
 		doFetch({ url: `http://localhost:5000/api/documents/${id}/`, options: {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json"
 			},
 			body: JSON.stringify(props.doc)
-			}})
+		}
+		})
+	}
+	const handleIssueButtonClick = () =>
+	{
+		props.setDocState(docStates.VIEW)
+		props.setOriginalDoc(props.doc)
+		doFetch({ url: `http://localhost:5000/api/documents/`, options: {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(props.doc)
+		}
+		})
+
 	}
 	const handleCancelButtonClick = () =>
 	{
@@ -78,7 +98,6 @@ const DocumentDetailPageToolbar = (props) =>
 		{
 			props.setDocState(docStates.VIEW)
 		}
-		
 	}
 	const handleDeleteButtonClick = async e =>
 	{
@@ -94,24 +113,26 @@ const DocumentDetailPageToolbar = (props) =>
 	}
 	return (
 		<Grid container spacing={1}>
-			<Grid  item xs={6} md={3} xl={3} justifyContent="flex-start" >
+			<Grid  item xs={12} md={9} xl={9} >
 				<Typography variant="h6">
 				{props.docNumber != null ? props.docNumber : ""}
 				</Typography>
 			</Grid>
-			<Grid  item xs={6} md={3} xl={3} justifyContent="center" >
-				<Typography variant="h6">
-				{props.selected != null ? "selected: " : "x"}
-				</Typography>
-			</Grid>
-			<Grid item xs={12} md={6} xl={6} justifyContent="flex-end">
+			<Grid item xs={12} md={3} xl={3}>
 			<Stack direction="row" spacing={1}>
 					<Button
 						color='inherit'
 						startIcon={<SaveIcon />}
-						className={clsx(classes.saveButtonHidden, (props.docStateProp === docStates.EDIT || props.docStateProp === docStates.ADD) && classes.saveButtonShow)}
+						className={clsx(classes.saveButtonHidden, (props.docStateProp === docStates.EDIT) && classes.saveButtonShow)}
 						onClick={handleSaveButtonClick}>
-						Save
+								Save
+					</Button>
+					<Button
+						color='inherit'
+						startIcon={<SaveIcon />}
+						className={clsx(classes.saveButtonHidden, (props.docStateProp === docStates.ADD) && classes.saveButtonShow)}
+						onClick={handleIssueButtonClick}>
+								Issue
 						</Button>
 					<Button
 						color='inherit'

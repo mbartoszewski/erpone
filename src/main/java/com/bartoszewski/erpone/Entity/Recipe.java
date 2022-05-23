@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentDetails;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

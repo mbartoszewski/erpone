@@ -2,10 +2,12 @@ package com.bartoszewski.erpone.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import com.bartoszewski.erpone.Entity.Documents.DocumentValueProjection;
 import com.bartoszewski.erpone.Entity.Documents.Documents;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsProjection;
+import com.bartoszewski.erpone.Entity.Documents.DocumentsProjectionOrderShedule;
 import com.bartoszewski.erpone.Entity.Documents.DocumentsWithDetailsProjection;
 
 import org.springframework.data.domain.Page;
@@ -19,9 +21,14 @@ public interface DocumentsService extends BaseService<Documents, Long> {
 	ResponseEntity<Page<DocumentsProjection>> getDocuments(Pageable pageable, List<String> type, List<String> status,
 			LocalDate targetDateFrom, LocalDate targetDateTo, String contractor);
 
+	ResponseEntity<Page<DocumentsProjectionOrderShedule>> getDocumentsShedule(Pageable pageable, List<String> type,
+			List<String> status, LocalDate targetDateFrom, LocalDate targetDateTo, String contractor);
+
 	ResponseEntity<DocumentsWithDetailsProjection> getDocumentDetailsById(Long id);
 
 	ResponseEntity<Page<DocumentValueProjection>> getDocumentValue(Pageable pageable, List<String> type,
 			List<String> status, List<Long> contractor, LocalDate targetDateFrom, LocalDate targetDateTo,
 			String dateFrom, String dateTo);
+
+	ResponseEntity<Map<String, String>> getDocumentNumber(String documentType);
 }
