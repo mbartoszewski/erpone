@@ -15,12 +15,23 @@ import javax.persistence.OneToOne;
 
 import com.bartoszewski.erpone.Enum.BudgetTypeEnum;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Entity
 public class Budget {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	private String budgetName;
+	@CreationTimestamp
+	@Column(name = "Created_At", columnDefinition = "TIMESTAMP")
+	private LocalDateTime createdAt;
+	@UpdateTimestamp
+	@Column(name = "Updated_At", columnDefinition = "TIMESTAMP")
+	private LocalDateTime updatedAt;
 
 	@Enumerated(EnumType.STRING)
 	private BudgetTypeEnum budgetTypeEnum;
@@ -33,6 +44,9 @@ public class Budget {
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Price price;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Unit unit;
 
 	public Long getId() {
 		return id;

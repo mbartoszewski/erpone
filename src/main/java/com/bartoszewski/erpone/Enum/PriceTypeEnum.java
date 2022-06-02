@@ -1,5 +1,5 @@
 package com.bartoszewski.erpone.Enum;
 
 public enum PriceTypeEnum {
-	companyDefaultPrice, currencyRate
+	companyDefaultPrice, currencyRate, budget
 }

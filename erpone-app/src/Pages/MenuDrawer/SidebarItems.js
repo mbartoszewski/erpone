@@ -7,6 +7,7 @@ import WorkIcon from '@mui/icons-material/Work';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
 
 const SidebarItems = [
   
@@ -14,7 +15,7 @@ const SidebarItems = [
     id: "1",
     nameHeader: "Production",
     icon: WorkIcon,
-    subMenu: [{ id: "1", name: "Dashboard", route: "/production/dashboard", icon: DashboardIcon }, { id: "2", name: "Plan", route: "/production/orders", icon: InboxIcon}]
+    subMenu: [{ id: "1", name: "Dashboard", route: "/production/dashboard", icon: DashboardIcon }, { id: "2", name: "Plan", route: "/production/orders", icon: InboxIcon}, { id: "3", name: "Budget", route: "/production/budget", icon: StackedLineChartIcon }]
   },
   {
     id: "2",
@@ -26,13 +27,13 @@ const SidebarItems = [
     id: "3",
     nameHeader: "Purchase",
     icon: AddShoppingCartIcon,
-    subMenu: [{ id: "1", name: "Dashboard", route: "/purchase/dashboard", icon: DashboardIcon }, { id: "2", name: "Documents", route: "/purchase/documents", icon: DescriptionIcon }, { id: "3", name: "Offers", route: "/purchase/offers", icon: InboxIcon }]
+    subMenu: [{ id: "1", name: "Dashboard", route: "/purchase/dashboard", icon: DashboardIcon }, { id: "2", name: "Documents", route: "/purchase/documents", icon: DescriptionIcon }, { id: "3", name: "Offers", route: "/purchase/offers", icon: InboxIcon }, { id: "4", name: "Budget", route: "/purchase/budget", icon: StackedLineChartIcon }]
   },
   {
     id: "4",
     nameHeader: "Sales",
     icon: MonetizationOnIcon,
-    subMenu: [{ id: "1", name: "Dashboard", route: "/sales/dashboard", icon: DashboardIcon }, { id: "2", name: "Documents", route: "/sales/documents", icon: DescriptionIcon}, { id: "3", name: "Offers", route: "/sales/offers",  icon: InboxIcon }]
+    subMenu: [{ id: "1", name: "Dashboard", route: "/sales/dashboard", icon: DashboardIcon }, { id: "2", name: "Documents", route: "/sales/documents", icon: DescriptionIcon}, { id: "3", name: "Offers", route: "/sales/offers",  icon: InboxIcon }, { id: "4", name: "Budget", route: "/sales/budget", icon: StackedLineChartIcon }]
   },
   {
     id: "5",

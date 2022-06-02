@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
 
 import com.bartoszewski.erpone.Entity.Price;
 import com.bartoszewski.erpone.Entity.Recipe;
@@ -35,7 +34,6 @@ public class DocumentDetails {
 	private Double detailPrice;
 
 	@ManyToOne
-
 	@JoinColumn(name = "Thing_Id")
 	private Thing thing;
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

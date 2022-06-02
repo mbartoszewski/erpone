@@ -1,4 +1,4 @@
-import { Button, Grid, TextField, Typography } from '@mui/material'
+import { Button, Grid, IconButton, TextField, Typography } from '@mui/material'
 import React, { useState } from 'react';
 import { LineChart, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 import DashboardTile from '../../../Components/DashboardTile';
@@ -444,24 +444,26 @@ const PurchaseDashboard = () =>
             />}
             action={<Grid container spacing ={4}>
                 <Grid item xs={2} xm={2} xl={2}>
-                        <Button
+                        <IconButton
                         color='inherit'
-                  startIcon={<ArrowBackIosNewIcon/>}
-                  onClick = {() => { handleWeekChange(false) }}/>
+                        onClick={() => { handleWeekChange(false) }}>
+                          <ArrowBackIosNewIcon/>
+                        </IconButton>
                       </Grid>
-                      <Grid item xs={1} xm={1} xl={1}>
-                        <Typography>
+                      <Grid item xs={2} xm={2} xl={2}>
+                        <Typography variant="h4" align="center">
                             {currentWeek}
                         </Typography>
                       </Grid>
                       <Grid item xs={2} xm={2} xl={2}>
-                        <Button
+                        <IconButton
                           color='inherit'
-                  startIcon={<ArrowForwardIosIcon />}
-                  onClick={() => { handleWeekChange(true) }}/>
+                          onClick={() => { handleWeekChange(true) }}>
+                          <ArrowForwardIosIcon />
+                        </IconButton>
                       </Grid>
-                      <Grid item xs={7} xm={7} xl={7}>
-                          <Typography>
+                      <Grid item xs={6} xm={6} xl={6}>
+                          <Typography variant="h7" align="center">
                               {weekDaysDates[0]} - {weekDaysDates[6]}
                           </Typography>
                         </Grid>

@@ -26,7 +26,6 @@ import com.bartoszewski.erpone.Repository.PaymentFormRepository;
 import com.bartoszewski.erpone.Repository.PaymentTermRepository;
 import com.bartoszewski.erpone.Repository.ThingRepository;
 import com.bartoszewski.erpone.Repository.UserRepository;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -18,7 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @DynamicUpdate
-@JsonIgnoreProperties(value = { "things" }, allowSetters = true)
+@JsonIgnoreProperties(value = { "things", "budget" }, allowSetters = true)
 public class Unit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +34,9 @@ public class Unit {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "unit")
     private List<Thing> things = new ArrayList<>(0);
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private Budget budget;
 
     public Unit() {
     }

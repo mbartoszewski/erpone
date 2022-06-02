@@ -30,13 +30,11 @@ public class Price {
 	@Column(name = "Date", columnDefinition = "TIMESTAMP")
 	@CreationTimestamp
 
+	// price valid from
 	private LocalDateTime date;
 
 	@Column(name = "Price", nullable = false)
 	private Double price;
-
-	@Column(name = "Type")
-	private String type;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "Thing_Id")
@@ -86,14 +84,6 @@ public class Price {
 
 	public void setPrice(Double price) {
 		this.price = price;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public Currency getCurrency() {

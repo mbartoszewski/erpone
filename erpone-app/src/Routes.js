@@ -19,6 +19,7 @@ import WarehouseDashboard from './Pages/Warehouse/DashboardPage/WarehouseDashboa
 import PurchaseDashboard from './Pages/Purchase/DashboardPage/PurchaseDashboardPage'
 import SalesDashboardPage from './Pages/Sales/SalesDashboardPage';
 import Settings from './Pages/Settings/Settings';
+import SalesBudget from './Pages/Sales/SalesBudget';
 
 function Routes() {
   return (
@@ -104,6 +105,11 @@ function Routes() {
           <Route exact path="/sales/documents">
               <ErpOneApp {...props}>
                 <SalesDocuments/>
+              </ErpOneApp>
+          </Route>
+           <Route exact path="/sales/budget">
+              <ErpOneApp {...props}>
+                <SalesBudget/>
               </ErpOneApp>
           </Route>
           <Route exact path="/sales/documents/details/:id">

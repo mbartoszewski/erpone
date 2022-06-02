@@ -35,7 +35,7 @@ const Settings = () =>
 					title={"Company warehouses:"}
 					subHeader={"autohide if logged user role !== Admin || Director"}
 					component={ <CompanySettings/>}/>
-				</Grid>
+			</Grid>
 			</Grid>
 	);
 }
