@@ -48,10 +48,14 @@ export const getISODateOfWeek = (w, y) => {
 
 export const groupByDate = (xs, key) =>
 {
-	return xs.reduce((rv, x) => {
+	if (xs !== null && xs !== undefined && xs.length > 0)
+	{
+		return xs.reduce((rv, x) => {
 	(rv[x[key].split('T')[0]] = rv[x[key].split('T')[0]] || []).push(x);
 	return rv;
 	}, {});
+		}
+	return null;
 };
 
 export const transposeJson = (json) =>

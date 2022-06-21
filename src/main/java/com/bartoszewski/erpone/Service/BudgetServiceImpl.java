@@ -1,7 +1,12 @@
 package com.bartoszewski.erpone.Service;
 
 import com.bartoszewski.erpone.Entity.Budget;
+import com.bartoszewski.erpone.Enum.BudgetTypeEnum;
 import com.bartoszewski.erpone.Repository.BudgetRepository;
+import com.bartoszewski.erpone.Repository.UnitRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,14 +21,18 @@ import org.springframework.web.server.ResponseStatusException;
 public class BudgetServiceImpl implements BudgetService {
 
 	BudgetRepository budgetRepository;
+	UnitRepository unitRepository;
 
 	@Autowired
-	public BudgetServiceImpl(BudgetRepository budgetRepository) {
+	public BudgetServiceImpl(BudgetRepository budgetRepository, UnitRepository unitRepository) {
 		this.budgetRepository = budgetRepository;
+		this.unitRepository = unitRepository;
 	}
 
 	@Override
 	public ResponseEntity<?> create(Budget entity, Authentication authentication) {
+		entity.setUnit(unitRepository.getOne(entity.getUnit().getId()));
+		entity.addBudgeValue(entity.getBudgetValues());
 		return new ResponseEntity<>(budgetRepository.save(entity), HttpStatus.OK);
 	}
 
@@ -52,6 +61,15 @@ public class BudgetServiceImpl implements BudgetService {
 			return new ResponseEntity<>("Deleted", HttpStatus.OK);
 		}
 		return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
+	}
+
+	@Override
+	public ResponseEntity<Page<Budget>> getBudgetsList(Pageable pageable, List<String> type, Integer active,
+			List<Integer> year) {
+		List<BudgetTypeEnum> typeEnum = type != null
+				? type.stream().map((t) -> BudgetTypeEnum.valueOf(t)).collect(Collectors.toList())
+				: null;
+		return new ResponseEntity<>(budgetRepository.getBudgetsList(pageable, typeEnum, active, year), HttpStatus.OK);
 	}
 
 }

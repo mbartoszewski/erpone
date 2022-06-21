@@ -3,7 +3,7 @@ import { useParams, useLocation} from "react-router-dom";
 import { Grid, MenuItem, TextField, Typography, Button, ButtonGroup, Stack } from '@mui/material'
 import { styled, } from '@mui/material/styles';
 import DocumentsDetailsTable from './DocumentsDetailsTable'
-import { apiStates, useApi, useApii } from './Fetch'
+import { apiStates, useFetch } from './Fetch'
 import { globalStateContext } from '../Pages/ErpOneApp';
 import ReactDOM from 'react-dom';
 import DocumentDetailPageToolbar from './DocumentDetailPageToolbar';
@@ -38,7 +38,7 @@ const DocumentsDetailsPage = (props) =>
 	const paymentTerms = globalContext.dataPaymentTerms;
 	const contractors = globalContext.dataContractors;
 	const things = globalContext.dataThings;
-	const { state: documentNumberState, error: documentNumberError, data: documentNumberData }  = useApi(`http://localhost:5000/api/documents/number?type=${location.title}`); 
+	const [ {data: documentsNumberDetails}, doDocumentsNumberDetails ]  = useFetch(`http://localhost:5000/api/documents/number?type=${location.title}`, null);  
 	const [domReady, setDomReady] = React.useState(false)
 	const [selectedRows, setSelectedRows] = React.useState(null)
 	const [doc, setDoc] = useState({
@@ -54,24 +54,25 @@ const DocumentsDetailsPage = (props) =>
 	documentDetails: []
 	})
 	const [originalDoc, setOriginalDoc] = useState();
-	const { state: documentDetailState, error: documentDetailError, data: documentDetailData } = useApi(`http://localhost:5000/api/documents/${id}/details`);
-	const [{data}, doFetch] = useApii(null);
+	const [ {data: documentDetailData}, doDocumentsDetails ] = useFetch(`http://localhost:5000/api/documents/${id}/details` , null);
+	const [{data: thingDetailsData}, doThingdetails] = useFetch(null);
 
 	React.useMemo(() =>
 	{
-		if (documentDetailData != null)
+		if (documentDetailData.data != null)
 		{
-			setDoc(documentDetailData);
-			setOriginalDoc(documentDetailData)
+			setDoc(documentDetailData.data);
+			setOriginalDoc(documentDetailData.data)
+			
 		} else
 		{
 			
 		setDoc((prevState) => ({
-				...prevState, docNumber: documentNumberState === apiStates.SUCCESS ? documentNumberData.type : "",	
+				...prevState, docNumber: documentsNumberDetails.state === apiStates.SUCCESS ? documentsNumberDetails.data.type : "",	
 			}))	
 		}
-	
-	}, [documentDetailData, documentNumberData]);
+	console.log("doc: ",documentDetailData)
+	}, [documentDetailData, documentsNumberDetails]);
 	
 	React.useEffect(() => { setDomReady(true) }, [])
 
@@ -129,7 +130,7 @@ const DocumentsDetailsPage = (props) =>
 					{	
 						return {
 						...prevState.documentDetails[rowIndex.index],
-							thing: data.data,	
+							thing: thingDetailsData.data,	
 						}
 						}
 					
@@ -200,7 +201,7 @@ const DocumentsDetailsPage = (props) =>
 					if (nValue !== null)
 					{
 					setValue(nValue.code)
-					doFetch({url: `http://localhost:5000/api/things/${nValue.id}/`})
+					doThingdetails({url: `http://localhost:5000/api/things/${nValue.id}/`, option: null})
 					}
 				}
 

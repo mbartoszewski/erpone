@@ -2,7 +2,7 @@ import { Button, Grid, IconButton, TextField, Typography } from '@mui/material'
 import React, { useState } from 'react';
 import { LineChart, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 import DashboardTile from '../../../Components/DashboardTile';
-import { useApi, useApii } from '../../../Components/Fetch'
+import { useFetch } from '../../../Components/Fetch'
 import {ReturnYTD, UnitConverter, VariationCalculator, DocValue, getISODateOfWeek, getISO8601WeekNumberFromDate, groupBy, groupByDate, transposeJson} from '../../../Components/Helpers'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -90,31 +90,31 @@ const PurchaseDashboard = () =>
   const [currentWeek, setCurrentWeek] = useState(getISO8601WeekNumberFromDate(new Date()))
   const weekDaysDates = getISODateOfWeek(currentWeek, new Date().getUTCFullYear())
 
-  const { state: YTDPurchaseState, error: YTDPurchaseError, data: YTDPurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=pz&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
-  const { state: YTDLYPurchaseState, error: YTDLYPurchaseError, data: YTDLYPurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=pz&dateFrom=${ReturnYTD(-1, 0, 0, 1)}&dateTo=${ReturnYTD(-1, 0, 0, 0)}`);
-  const { state: futurePurchaseState, error: futurePurchaseError, data: futurePurchaseData } = useApi(`http://localhost:5000/api/documents/value?type=zm&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
-  const [{data}, doFetch ] = useApii();
+  const [ {data: YTDPurchase}, doYTDPurchase ] = useFetch(`http://localhost:5000/api/documents/value?type=pz&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`, null);
+  const [ {data: YTDLYPurchase}, doYTDLYPurchase ] = useFetch(`http://localhost:5000/api/documents/value?type=pz&dateFrom=${ReturnYTD(-1, 0, 0, 1)}&dateTo=${ReturnYTD(-1, 0, 0, 0)}`, null);
+  const [ {data: futurePurchase}, doFuturePurchase ] = useFetch(`http://localhost:5000/api/documents/value?type=zm&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`, null);
+  const [{data: deliveriesSheduleData}, doDeliveriesShedule ] = useFetch(null);
   
-  const ytdPurchase = React.useMemo(() => YTDPurchaseData, [YTDPurchaseState]);
-  const ytdLyPurchase = React.useMemo(() => YTDLYPurchaseData, [YTDLYPurchaseState]);
-  const futurePurchase = React.useMemo(() => futurePurchaseData, [futurePurchaseState]);
+  const ytdPurchaseMemo = React.useMemo(() => YTDPurchase.data, [YTDPurchase.state]);
+  const ytdLyPurchaseMemo = React.useMemo(() => YTDLYPurchase.data, [YTDLYPurchase.state]);
+  const futurePurchaseMemo = React.useMemo(() => futurePurchase.data, [futurePurchase.state]);
 
-  const ytdPurchaseValue = DocValue(ytdPurchase);
-  const ytdLyPurchaseValue = DocValue(ytdLyPurchase);
-  const futurePurchaseValue = DocValue(futurePurchase);
+  const ytdPurchaseValue = DocValue(ytdPurchaseMemo);
+  const ytdLyPurchaseValue = DocValue(ytdLyPurchaseMemo);
+  const futurePurchaseValue = DocValue(futurePurchaseMemo);
   const [transponedJson, setTransponedJson] = useState()
 
   React.useMemo(() =>
 	{
-		if (data.data != null)
+		if (deliveriesSheduleData.data != null)
     {
-      const grouped =  groupByDate(data.data, "targetDateTime")
+      const grouped =  groupByDate(deliveriesSheduleData.data, "targetDateTime")
 		  setTransponedJson(transposeJson(grouped))
     } else 
     {
       setTransponedJson([])
       }
-	}, [data]);
+	}, [deliveriesSheduleData]);
   
   const handleWeekChange = (increase) =>
   {
@@ -123,7 +123,7 @@ const PurchaseDashboard = () =>
 
   React.useEffect(() =>
   {
-    doFetch({ url: `http://localhost:5000/api/documents/shedule?type=zm&targetDateFrom=${weekDaysDates[0]}&targetDateTo=${weekDaysDates[6]}` })
+    doDeliveriesShedule({ url: `http://localhost:5000/api/documents/shedule?type=zm&targetDateFrom=${weekDaysDates[0]}&targetDateTo=${weekDaysDates[6]}`, option: null})
   }, [currentWeek])
 
 

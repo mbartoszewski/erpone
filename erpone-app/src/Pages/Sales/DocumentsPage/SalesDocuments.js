@@ -1,5 +1,5 @@
 import React from 'react'
-import { apiStates, useApi } from '../../../Components/Fetch'
+import { apiStates, useFetch } from '../../../Components/Fetch'
 import DropDownMenu from '../../../Components/DropDownMenu'
 import AddIcon from '@mui/icons-material/Add';
 import DocumentsTable from '../../../Components/DocumentsTable'
@@ -13,8 +13,8 @@ const options = ['PZ', 'WZ'];
 
 const SalesDocuments = () =>
 {
-  const { state, error, data } = useApi('http://localhost:5000/api/documents?type=fv&type=wz');
-  const fetchedData = React.useMemo(() => data, [state]);
+  const [{data: salesDocuments}, doSalesDocuments] = useFetch('http://localhost:5000/api/documents?type=fv&type=wz', null);
+  const fetchedData = React.useMemo(() => salesDocuments.data, [salesDocuments.state]);
   const columns = React.useMemo(() => [
     { Header: 'Status', accessor: 'documentStatusEnum' },
     { Header: 'Document', accessor: 'docNumber' },
@@ -24,11 +24,11 @@ const SalesDocuments = () =>
     { Header: 'Target', accessor: 'targetDateTime' },
     { Header: 'Description', accessor: 'description' }
     ], []);
-  switch (state)
+  switch (salesDocuments.state)
   {
     case apiStates.ERROR:
     case apiStates.EMPTY:
-      return <p sx={errorMsg}>Error: {error} || 'General error'</p>;
+      return <p sx={errorMsg}>Error: {salesDocuments.error} || 'General error'</p>;
     case apiStates.SUCCESS:
       return (
                <DocumentsTable

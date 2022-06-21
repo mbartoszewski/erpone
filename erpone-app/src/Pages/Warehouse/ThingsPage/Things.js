@@ -1,6 +1,5 @@
 import React from 'react'
-import ThingsTable from './ThingsTable'
-import { apiStates, useApi } from '../../../Components/Fetch'
+import { apiStates, useFetch } from '../../../Components/Fetch'
 import DropDownMenu from '../../../Components/DropDownMenu'
 import AddIcon from '@mui/icons-material/Add';
 import DocumentsTable from '../../../Components/DocumentsTable'
@@ -16,19 +15,19 @@ const options = ['Thing'];
 
 const Warehouse = () =>
 {
-  const { state, error, data } = useApi('http://localhost:5000/api/things/');
-  const fetchedData = React.useMemo(() => data, [state]);
+  const [{data: warehouseThings}, doWarehouseThings] = useFetch('http://localhost:5000/api/things/', null);
+  const fetchedData = React.useMemo(() => warehouseThings.data, [warehouseThings.state]);
   const columns = React.useMemo(() => [
       { Header: 'Code', accessor: 'code' },
       { Header: 'Name', accessor: 'name' },
       { Header: 'Quantity', accessor: 'quantity' },
       { Header: "Unit", accessor: "unit.code" }], []);
   
-  switch (state)
+  switch (warehouseThings.state)
   {
     case apiStates.ERROR:
     case apiStates.EMPTY:
-      return <p sx={errorMsg}>Error: {error} || 'General error'</p>;
+      return <p sx={errorMsg}>Error: {warehouseThings.error} || 'General error'</p>;
     case apiStates.SUCCESS:
       return (
         <div>

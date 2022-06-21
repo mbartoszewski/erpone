@@ -11,7 +11,7 @@ import Slide from '@mui/material/Slide';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import CloseIcon from '@material-ui/icons/Close';
-import { apiStates, useApi} from './Fetch';
+import { apiStates, useFetch} from './Fetch';
 import { List, Divider, Tooltip, Zoom } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
@@ -44,7 +44,8 @@ const AddDocument = props =>
   const [open, setOpen] = React.useState(false)
   const [switchState, setSwitchState] = React.useState({addMultiple: false,})
   const globalContext = useContext(globalStateContext);
-
+  const [{ data }, doFetch] = useFetch(null);
+  
   const handleSwitchChange = thingInfo => event => {
     setSwitchState({ ...switchState, [thingInfo]: event.target.checked })
   }
@@ -65,8 +66,17 @@ const AddDocument = props =>
   {
     e.preventDefault();
     //setThing(initialThing)
-    console.log(thing);
     //useApi('http://localhost:5000/api/things/');
+    doFetch({
+      url: "http://localhost:5000/api/things/", option: {
+       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(thing)
+    }})
+/*
+
     await fetch("http://localhost:5000/api/things/", {
       method: "POST",
       headers: {
@@ -74,6 +84,8 @@ const AddDocument = props =>
       },
       body: JSON.stringify(thing)
     });
+
+*/
     switchState.addMultiple ? setOpen(true) : setOpen(false)  
   }
 

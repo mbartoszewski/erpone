@@ -48,9 +48,6 @@ public class Price {
 	@OneToOne(fetch = FetchType.LAZY)
 	private DocumentDetails documentsDetails;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	private Budget budget;
-
 	@Enumerated(EnumType.STRING)
 	private PriceTypeEnum priceTypeEnum;
 
@@ -60,14 +57,6 @@ public class Price {
 
 	public void setPriceTypeEnum(PriceTypeEnum priceTypeEnum) {
 		this.priceTypeEnum = priceTypeEnum;
-	}
-
-	public Budget getBudget() {
-		return budget;
-	}
-
-	public void setBudget(Budget budget) {
-		this.budget = budget;
 	}
 
 	public LocalDateTime getDate() {

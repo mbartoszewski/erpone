@@ -3,7 +3,7 @@ import React from 'react'
 import DashboardTile from '../../Components/DashboardTile';
 import { LineChart, BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
 import { ReturnYTD, UnitConverter, VariationCalculator, DocValue, DocValueByProperties } from '../../Components/Helpers'
-import { apiStates, useApi } from '../../Components/Fetch'
+import { apiStates, useFetch } from '../../Components/Fetch'
 
 const data = [
   {
@@ -85,18 +85,18 @@ const data = [
 
 const SalesDashboardPage = () =>
 {
-  const { state: YTDSalesState, error: YTDSalesError, data: YTDSalesData } = useApi(`http://localhost:5000/api/documents/value?type=wz&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
-  const { state: YTDLYSalesState, error: YTDLYSalesError, data: YTDLYSalesData } = useApi(`http://localhost:5000/api/documents/value?type=wz&dateFrom=${ReturnYTD(-1, 0, 0, 1)}&dateTo=${ReturnYTD(-1, 0, 0, 0)}`);
-  const { state: futureSalesState, error: futureSalesError, data: futureSalesData } = useApi(`http://localhost:5000/api/documents/value?type=zm&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`);
+  const [ {data: YTDSales}, doYTDSales ] = useFetch(`http://localhost:5000/api/documents/value?type=wz&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`, null);
+  const [{ data: YTDLYSales}, doYTDLYSales ] = useFetch(`http://localhost:5000/api/documents/value?type=wz&dateFrom=${ReturnYTD(-1, 0, 0, 1)}&dateTo=${ReturnYTD(-1, 0, 0, 0)}`, null);
+  const [ {data: futureSales}, doFutureSales ] = useFetch(`http://localhost:5000/api/documents/value?type=zm&dateFrom=${ReturnYTD(0,0,0,1)}&dateTo=${ReturnYTD(0,0,0,0)}`, null);
 
-  const ytdSales = React.useMemo(() => YTDSalesData, [YTDSalesState]);
-  const ytdLySales = React.useMemo(() => YTDLYSalesData, [YTDLYSalesState]);
-  const futureSales = React.useMemo(() => futureSalesData, [futureSalesState]);
+  const ytdSalesMemo = React.useMemo(() => YTDSales.data, [YTDSales.state]);
+  const ytdLySalesMemo = React.useMemo(() => YTDLYSales.data, [YTDLYSales.state]);
+  const futureSalesMemo = React.useMemo(() => futureSales.data, [futureSales.state]);
 
-  const ytdSalesValue = DocValue(ytdSales);
-  const ytdLySalesValue = DocValue(ytdLySales);
-  const futureSalesValue = DocValue(futureSales);
-  const YTDSalesValueByCustomer = DocValueByProperties(ytdSales, 'contractor');
+  const ytdSalesValue = DocValue(ytdSalesMemo);
+  const ytdLySalesValue = DocValue(ytdLySalesMemo);
+  const futureSalesValue = DocValue(futureSalesMemo);
+  const YTDSalesValueByCustomer = DocValueByProperties(ytdSalesMemo, 'contractor');
 	return (
     <div>
 			<Grid container spacing={2}>

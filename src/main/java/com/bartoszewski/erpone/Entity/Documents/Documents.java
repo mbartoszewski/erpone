@@ -70,7 +70,6 @@ public class Documents {
     private DocumentTypeEnum documentTypeEnum;
 
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-
     private List<DocumentDetails> documentDetails = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

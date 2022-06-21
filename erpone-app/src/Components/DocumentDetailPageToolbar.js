@@ -10,8 +10,8 @@ import PrintIcon from '@mui/icons-material/Print';
 import DropDownMenu from "./DropDownMenu";
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import { docStates } from './Helpers';
-import { useParams, useHistory} from "react-router-dom";
-import { useApii } from "./Fetch";
+import { useParams, useNavigate} from "react-router-dom";
+import { useFetch } from "./Fetch";
 
 const useStyles = makeStyles(theme => ({
 docNumber: {
@@ -48,8 +48,8 @@ const DocumentDetailPageToolbar = (props) =>
 {
 	const classes = useStyles();
 	const { id } = useParams();
-	const [{data}, doFetch] = useApii(null)
-	const history = useHistory();
+	const [{data}, doFetch] = useFetch(null)
+	const history = useNavigate();
 	React.useEffect(() =>
 	{
 		data.httpStatus === 201 ? history.push(`../warehouse/documents/details/${data.data.id}`) : console.log("")

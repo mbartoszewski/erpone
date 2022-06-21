@@ -57,7 +57,7 @@ export const useApi = (url, options) =>
   return data;
 }
 
-export const useApii = (initialUrl, initialOptions) =>
+export const useFetch = (initialUrl, initialOptions) =>
 {
   const [data, setData] = useState({
     httpStatus: null,
@@ -66,28 +66,20 @@ export const useApii = (initialUrl, initialOptions) =>
     data: null,
   });
   
-  const [callProperties, setCallProperties] = useState({url: initialUrl, options: initialOptions})
+  const [callProperties, setCallProperties] = useState({ url: initialUrl, options: initialOptions })
+  
   const fetchData = async () =>
   {
+    if (callProperties.url !== null && callProperties.url !== undefined)
+    {
       await fetch(callProperties.url, callProperties.options)
         .then((response) =>
         {
-          if (!response.ok)
-          {
-            setData((prevState) =>
+           setData((prevState) =>
             ({
               ...prevState, httpStatus: response.status
             }))
-            throw new Error(response.status);
-          }
-          else
-          {
-            setData((prevState) =>
-            ({
-              ...prevState, httpStatus: response.status
-            }))
-            return response.json();
-          }
+          return response.json();
         })
     .then((data) =>
     {
@@ -110,11 +102,18 @@ export const useApii = (initialUrl, initialOptions) =>
         data: null
             }))
     });
+      }   
   }
   
   useEffect(() =>
   {
-    fetchData();
+    let ignore = false
+    if (!ignore) fetchData();
+    return () =>
+    {
+      ignore = true
+    };
   }, [callProperties]); //check if this is the best solution. 
+  
   return [{data}, setCallProperties];
 }

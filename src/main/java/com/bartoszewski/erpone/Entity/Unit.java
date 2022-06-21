@@ -35,8 +35,8 @@ public class Unit {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "unit")
     private List<Thing> things = new ArrayList<>(0);
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private Budget budget;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "unit")
+    private List<Budget> budgets;
 
     public Unit() {
     }
@@ -73,6 +73,16 @@ public class Unit {
     public void removeThings(Thing thing) {
         things.remove(thing);
         thing.setUnit(null);
+    }
+
+    public void addBudget(Budget budget) {
+        budgets.add(budget);
+        budget.setUnit(this);
+    }
+
+    public void removeBudget(Budget budget) {
+        budgets.remove(budget);
+        budget.setUnit(null);
     }
 
     public Long getId() {

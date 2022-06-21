@@ -9,7 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
-import { useHistory, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
 	dropDownMenuHidden: {

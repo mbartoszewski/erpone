@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Collapse from '@mui/material/Collapse';
 import { List, Divider, Tooltip, Zoom } from '@mui/material';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
@@ -50,7 +50,7 @@ const mdTheme = createTheme();
 
 const Sidebar = ({open}) =>
 {
-  const history = useHistory();
+  const history = useNavigate();
 	const [expand, setExpand] = useState([{ id: "1", isExpand: false, expandable: true },
     { id: "2", isExpand: false, expandable: true },
     { id: "3", isExpand: false, expandable: true },
